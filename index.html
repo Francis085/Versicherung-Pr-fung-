@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>§34d Übungsquiz</title>
+<style>
+:root{
+  --bg:#dfeee9; --card:rgba(255,255,255,.9); --ink:#232323; --sub:#5a6068; --border:rgba(0,0,0,.09);
+  --A:#3b6ea5; --B:#2f9e7d; --C:#c9622a; --D:#a13d7c; --E:#c0392b;
+  --ok:#2f9e7d; --bad:#c0392b;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#15171a; --card:rgba(28,32,38,.88); --ink:#eef0f2; --sub:#a9b1bb; --border:rgba(255,255,255,.12); }
+}
+:root[data-theme="dark"]{ --bg:#15171a; --card:rgba(28,32,38,.88); --ink:#eef0f2; --sub:#a9b1bb; --border:rgba(255,255,255,.12); }
+*{box-sizing:border-box}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px);}
+.card,.mini,.examcard,.catcard,.chip{backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+.themebtn{position:fixed; right:12px; bottom:calc(12px + env(safe-area-inset-bottom,0px)); z-index:9; border:none; border-radius:999px; padding:10px 14px; background:var(--card); color:var(--ink); font-size:.82rem; font-weight:700; box-shadow:0 2px 10px rgba(0,0,0,.2); cursor:pointer;}
+body{ min-height:100%; margin:0; background:var(--bg) center/cover fixed no-repeat; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; display:flex; flex-direction:column; align-items:center; padding:0 14px 32px; }
+.wrap{width:100%; max-width:520px;}
+.hero{ background:linear-gradient(135deg,#3b6ea5,#2f9e7d 50%,#c9622a); color:#fff; margin:0 -14px 16px; padding:22px 16px 20px; border-radius:0 0 22px 22px; }
+.hero h1{font-size:1.15rem; margin:0 0 4px; font-weight:700;}
+.hero .sub{color:rgba(255,255,255,.9); font-size:.82rem; margin:0;}
+.catbar{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px;}
+.chip{border:2px solid var(--chipcolor,var(--border)); border-radius:999px; padding:7px 13px; font-size:.78rem; background:var(--card); cursor:pointer; color:var(--chipcolor,var(--sub)); font-weight:600;}
+.chip.active{background:var(--chipcolor,var(--ink)); color:#fff; border-color:var(--chipcolor,var(--ink));}
+.bar{height:8px; background:var(--border); border-radius:99px; overflow:hidden; margin-bottom:10px;}
+.bar-fill{height:100%; border-radius:99px; transition:width .25s;}
+.progress{font-size:.82rem; color:var(--sub); margin-bottom:10px; font-weight:600;}
+.card{background:var(--card); border:1px solid var(--border); border-left:6px solid var(--catcolor,var(--border)); border-radius:14px; padding:18px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.04);}
+.tag{display:inline-block; font-size:.72rem; letter-spacing:.03em; color:#fff; font-weight:700; background:var(--catcolor); padding:3px 10px; border-radius:999px; margin-bottom:10px;}
+.q{font-size:1.02rem; margin:0 0 14px; line-height:1.45; font-weight:600;}
+.opt{display:block; width:100%; text-align:left; padding:11px 13px; margin-bottom:9px; border:2px solid var(--border); border-radius:11px; background:transparent; color:var(--ink); font-size:.94rem; cursor:pointer; transition:.15s;}
+.opt:active{transform:scale(.98);}
+.opt.correct{border-color:var(--ok); background:rgba(47,158,125,.14); font-weight:700;}
+.opt.wrong{border-color:var(--bad); background:rgba(192,57,43,.14);}
+.expl{font-size:.87rem; color:var(--ink); margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);}
+.expl b{display:block; margin-bottom:4px;}
+.nextbtn{display:block; width:100%; margin-top:14px; padding:12px; border-radius:11px; background:linear-gradient(135deg,#3b6ea5,#2f9e7d); color:#fff; border:none; font-size:.94rem; font-weight:700; cursor:pointer;}
+.result{text-align:center; padding:30px 18px;}
+.result .pct{font-size:3rem; font-weight:800; margin:10px 0 0; background:linear-gradient(135deg,#3b6ea5,#2f9e7d); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.result .grade{font-size:1.3rem; font-weight:700; margin-bottom:6px;}
+.result .verdict{font-size:.92rem; color:var(--sub); margin-bottom:20px;}
+.btn{display:inline-block; margin-top:6px; padding:12px 20px; border-radius:12px; background:linear-gradient(135deg,#3b6ea5,#2f9e7d); color:#fff; border:none; font-size:.92rem; font-weight:700; cursor:pointer;}
+.byCat{text-align:left; margin-top:20px; font-size:.86rem;}
+.byCat .row{display:flex; align-items:center; gap:10px; padding:7px 0;}
+.byCat .dot{width:10px; height:10px; border-radius:50%; flex:none;}
+.byCat .name{flex:1; color:var(--sub);}
+.byCat .val{font-weight:700;}
+.hint{font-size:.78rem; color:var(--sub); margin-top:18px; line-height:1.5;}
+.homegrid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;}
+.mini{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; text-align:center;}
+.mini .big{font-size:1.5rem; font-weight:800;}
+.mini .lbl{font-size:.72rem; color:var(--sub); margin-top:2px;}
+.dailybtn{display:block; width:100%; padding:16px; border-radius:16px; border:none; cursor:pointer; margin-bottom:14px;
+  background:linear-gradient(135deg,#3b6ea5,#2f9e7d); color:#fff; text-align:left;}
+.dailybtn .t1{font-size:1.05rem; font-weight:800;}
+.dailybtn .t2{font-size:.8rem; opacity:.9; margin-top:2px;}
+.examcard{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.examcard input{border:1px solid var(--border); border-radius:8px; padding:7px 9px; font-size:.85rem; background:transparent; color:var(--ink);}
+.sectionlbl{font-size:.78rem; color:var(--sub); font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin:6px 0 8px;}
+.catgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;}
+.catcard{border:2px solid var(--catcolor,var(--border)); border-radius:12px; padding:12px; background:var(--card); cursor:pointer;}
+.catcard .cn{font-weight:700; font-size:.85rem; color:var(--catcolor);}
+.catcard .cs{font-size:.72rem; color:var(--sub); margin-top:2px;}
+.statbar-row{margin-bottom:10px;}
+.statbar-row .lbl{display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:4px;}
+.statbar-track{height:9px; background:var(--border); border-radius:99px; overflow:hidden;}
+.statbar-fill{height:100%; border-radius:99px;}
+.topnav{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+.linkbtn{background:none; border:none; color:var(--sub); font-size:.82rem; font-weight:600; cursor:pointer; padding:4px 0;}
+</style>
+</head>
+<body>
+<button class="themebtn" id="themeBtn">🎨</button>
+<div class="wrap">
+  <div class="hero">
+    <h1>📋 Übungsquiz Sachkundeprüfung §34d</h1>
+    <div class="sub">Jeden Tag ein bisschen üben – Fortschritt bleibt auf diesem Gerät gespeichert</div>
+  </div>
+  <div class="catbar" id="catbar" style="display:none;"></div>
+  <div id="app"></div>
+  <div class="hint">Fragen bilden nur die allgemeinen fachlichen Grundlagen ab. Die eigentliche Prüfung stützt sich auf das offizielle Bedingungswerk „Proximus 5“ (BWV) – urheberrechtlich geschützt, erhältlich im BWV-Shop oder über den Vorbereitungskurs.</div>
+</div>
+
+<script>
+const CAT = {
+  A:{name:"Vorsorge (Leben/Rente/BU)", color:"var(--A)"},
+  B:{name:"Unfall/Kranken/Pflege", color:"var(--B)"},
+  C:{name:"Rechtliche Grundlagen", color:"var(--C)"},
+  D:{name:"Gebäude/Hausrat", color:"var(--D)"},
+  E:{name:"Haftpflicht/Kfz/Rechtsschutz", color:"var(--E)"}
+};
+
+const questions = [
+// --- A (20) ---
+{cat:"A", q:"Was versteht man unter der 'Unverfallbarkeit' einer betrieblichen Altersversorgung?", opts:["Der Anspruch bleibt auch nach Ausscheiden erhalten, wenn Mindestvoraussetzungen erfüllt sind","Der Vertrag kann nie gekündigt werden","Die Beiträge sind steuerfrei","Der Arbeitgeber haftet nie für die Zusage"], c:0, e:"Bei Erfüllung bestimmter Fristen bleibt der erdiente Anspruch trotz Ausscheidens bestehen."},
+{cat:"A", q:"Welche Leistung sichert die gesetzliche Rentenversicherung bei dauerhafter Erwerbsminderung ab?", opts:["Erwerbsminderungsrente","Altersrente für langjährig Versicherte","Waisenrente","Kinderzuschuss"], c:0, e:"Bei teilweiser oder voller Erwerbsminderung zahlt die GRV eine Erwerbsminderungsrente."},
+{cat:"A", q:"Was ist bei der Berufsunfähigkeitsversicherung mit 'abstrakter Verweisung' gemeint?", opts:["Verweis auf einen anderen, zumutbaren Beruf ohne konkrete Ausübung","Automatische Weiterzahlung","Abstrakte Prämienberechnung","Keine Wartezeit"], c:0, e:"Moderne BU-Bedingungen schließen die abstrakte Verweisung meist vertraglich aus."},
+{cat:"A", q:"Was ist der Rückkaufswert einer Lebensversicherung?", opts:["Der Betrag, der bei vorzeitiger Kündigung ausgezahlt wird","Die garantierte Ablaufleistung","Die jährliche Überschussbeteiligung","Der Beitrag im ersten Jahr"], c:0, e:"Bei vorzeitiger Kündigung erhält der VN den Rückkaufswert, meist unter den eingezahlten Beiträgen."},
+{cat:"A", q:"Wie werden Riester-Renten grundsätzlich gefördert?", opts:["Durch staatliche Zulagen und ggf. Sonderausgabenabzug","Nur durch Steuerfreiheit im Alter","Durch Arbeitgeberzuschuss verpflichtend","Gar nicht gefördert"], c:0, e:"Riester-Verträge erhalten Grund- und Kinderzulagen sowie ggf. einen zusätzlichen Sonderausgabenabzug."},
+{cat:"A", q:"Was ist eine Dread-Disease-Versicherung?", opts:["Absicherung bei Diagnose schwerer Krankheiten mit Einmalzahlung","Eine Form der Kfz-Versicherung","Zusatz zur Hausratversicherung","Teil der Pflegepflichtversicherung"], c:0, e:"Bei Diagnose bestimmter schwerer Erkrankungen wird eine vereinbarte Summe ausgezahlt."},
+{cat:"A", q:"Welche Durchführungswege der bAV kennt man u.a.?", opts:["Direktversicherung und Pensionskasse","Nur die gesetzliche Rentenversicherung","Nur die private Rentenversicherung","Nur Riester-Verträge"], c:0, e:"Klassische Durchführungswege: Direktversicherung, Pensionskasse, Pensionsfonds, Unterstützungskasse, Direktzusage."},
+{cat:"A", q:"Was bedeutet 'Nachversicherungsgarantie' bei der BU?", opts:["Erhöhung des Schutzes ohne erneute Gesundheitsprüfung bei bestimmten Ereignissen","Automatische Beitragssenkung","Verlängerung der Wartezeit","Wegfall der Leistungspflicht"], c:0, e:"Bei definierten Ereignissen kann die Rente ohne neue Risikoprüfung erhöht werden."},
+{cat:"A", q:"Was ist die 'Wartezeit' bei einer Risikolebensversicherung typischerweise?", opts:["Eine anfängliche Frist mit eingeschränktem Schutz bei bestimmten Ursachen","Die Zeit bis zur ersten Beitragszahlung","Die Kündigungsfrist am Vertragsende","Es gibt bei LV nie eine Wartezeit"], c:0, e:"Manche Bedingungen sehen z.B. bei Suizid eine Wartezeit vor, danach besteht voller Schutz."},
+{cat:"A", q:"Was ist eine 'Dynamik' in der Lebens- oder BU-Versicherung?", opts:["Eine automatische, regelmäßige Erhöhung von Beitrag und Leistung","Ein einmaliger Bonus bei Vertragsabschluss","Ein Rabatt für Nichtraucher","Ein Zusatzbaustein für Unfälle"], c:0, e:"Die Dynamik passt Beitrag und Leistung meist jährlich an, um Kaufkraftverlust auszugleichen."},
+{cat:"A", q:"Wer zahlt in eine Direktversicherung typischerweise die Beiträge?", opts:["Der Arbeitgeber (oft aus Entgeltumwandlung des Arbeitnehmers)","Ausschließlich der Staat","Die Krankenkasse","Der Rentenversicherungsträger"], c:0, e:"Bei der Direktversicherung schließt der Arbeitgeber ab, häufig finanziert durch Entgeltumwandlung."},
+{cat:"A", q:"Was ist der Unterschied zwischen Kapitallebensversicherung und Risikolebensversicherung?", opts:["Kapital-LV spart zusätzlich an, Risiko-LV zahlt nur im Todesfall","Beide zahlen nur im Erlebensfall","Risiko-LV hat immer eine Überschussbeteiligung","Es gibt keinen Unterschied"], c:0, e:"Die Risiko-LV sichert reinen Todesfallschutz, die Kapital-LV kombiniert Sparen und Risikoschutz."},
+{cat:"A", q:"Was ist eine fondsgebundene Rentenversicherung?", opts:["Beiträge werden in Fonds angelegt, die Rentenhöhe hängt vom Fondswert ab","Eine Rente mit garantiertem Festzins","Eine Variante der gesetzlichen Rente","Eine reine Risikoversicherung"], c:0, e:"Anders als klassische Policen trägt der VN hier das Anlagerisiko/-chance über die Fondswertentwicklung."},
+{cat:"A", q:"Für wen ist die Basisrente (Rürup-Rente) besonders gedacht?", opts:["V.a. Selbstständige/Gutverdiener zur steuerlich geförderten Altersvorsorge","Nur für Beamte","Nur für Minijobber","Nur für Kinder"], c:0, e:"Die Basisrente ist nicht vererbbar/beleihbar, dafür steuerlich attraktiv – besonders für Selbstständige ohne GRV."},
+{cat:"A", q:"Was passiert bei einer Beitragsfreistellung einer Lebensversicherung?", opts:["Der Vertrag läuft mit reduzierter Leistung ohne weitere Beitragszahlung weiter","Der Vertrag endet sofort","Die Leistung erhöht sich automatisch","Es gibt eine sofortige Auszahlung"], c:0, e:"Statt zu kündigen kann der VN den Vertrag beitragsfrei stellen; die Leistung wird entsprechend reduziert."},
+{cat:"A", q:"Was ist der Sinn einer Hinterbliebenenrente in der GRV?", opts:["Absicherung von Ehepartnern/Kindern nach dem Tod des Versicherten","Absicherung bei Erwerbsminderung","Absicherung im Pflegefall","Absicherung bei Arbeitslosigkeit"], c:0, e:"Witwen-, Witwer- und Waisenrente sichern Hinterbliebene finanziell nach dem Tod des Versicherten ab."},
+{cat:"A", q:"Was bedeutet 'Überschussbeteiligung' bei Lebensversicherungen?", opts:["Der VN erhält zusätzlich zur Garantieleistung einen Anteil an den Überschüssen des Versicherers","Der Versicherer behält alle Überschüsse selbst","Überschüsse gibt es nur bei Kündigung","Überschussbeteiligung ist gesetzlich verboten"], c:0, e:"Versicherer müssen einen gesetzlich vorgeschriebenen Mindestanteil der Überschüsse an die Versicherten weitergeben."},
+{cat:"A", q:"Worin unterscheidet sich eine aufgeschobene Rentenversicherung von einer Sofortrente?", opts:["Aufgeschoben: Ansparphase vor Rentenbeginn; Sofortrente: Einmalbeitrag, Rente startet sofort","Beide starten immer sofort","Sofortrente hat immer eine Ansparphase","Es gibt keinen Unterschied"], c:0, e:"Bei der Sofortrente wird i.d.R. ein Einmalbeitrag gezahlt und die Rente beginnt unmittelbar, bei der aufgeschobenen Variante folgt erst eine Ansparphase."},
+{cat:"A", q:"Was leistet eine Grundfähigkeitsversicherung?", opts:["Leistung bei Verlust bestimmter Grundfähigkeiten (z.B. Sehen, Gehen), unabhängig vom Beruf","Leistung nur bei Berufsunfähigkeit im engeren Sinn","Leistung nur bei Tod","Leistung nur bei Pflegebedürftigkeit"], c:0, e:"Anders als die BU knüpft die Grundfähigkeitsversicherung an konkrete körperliche/geistige Fähigkeiten an, nicht an den ausgeübten Beruf."},
+{cat:"A", q:"Wie werden Auszahlungen aus einer nach 2005 abgeschlossenen Kapitallebensversicherung steuerlich behandelt, wenn Auszahlung erst nach 12 Jahren Laufzeit und nach dem 62. Lebensjahr erfolgt?", opts:["Nur die Hälfte der Erträge ist steuerpflichtig (Halbeinkünfteverfahren)","Die gesamte Auszahlung ist steuerfrei","Die gesamte Auszahlung ist voll steuerpflichtig","Es fällt immer nur Kapitalertragsteuer auf die Einzahlungen an"], c:0, e:"Bei Mindestlaufzeit 12 Jahre und Auszahlung nach dem 62. Lebensjahr greift das Halbeinkünfteverfahren – nur die Hälfte der Erträge wird versteuert."},
+{cat:"A", q:"Was passiert bei vorzeitiger Kündigung eines Riester-Vertrags hinsichtlich der erhaltenen Zulagen?", opts:["Die schädliche Verwendung führt zur Rückforderung von Zulagen und Steuervorteilen","Die Zulagen bleiben in jedem Fall vollständig erhalten","Es gibt nie eine Rückforderung bei Riester-Verträgen","Nur die Kinderzulage muss zurückgezahlt werden"], c:0, e:"Bei schädlicher Verwendung (z.B. Kündigung ohne Rentenbezug) müssen erhaltene Zulagen und Steuervorteile zurückgezahlt werden."},
+{cat:"A", q:"Welche Folge hat eine verspätete Beitragszahlung bei einer laufenden Lebensversicherung typischerweise nach § 38 VVG?", opts:["Der Versicherer kann nach erfolgloser Mahnung mit Fristsetzung leistungsfrei werden","Der Vertrag erlischt automatisch ohne Mahnung","Es gibt keine Konsequenzen","Die Versicherungssumme wird automatisch erhöht"], c:0, e:"Nach Mahnung mit angemessener Zahlungsfrist kann der Versicherer bei weiterem Zahlungsverzug leistungsfrei werden."},
+{cat:"A", q:"Was unterscheidet die 'garantierte' von der 'nicht garantierten' Rente bei einer fondsgebundenen Rentenversicherung?", opts:["Die garantierte Rente basiert auf einer Mindestleistung, die nicht garantierte hängt von der tatsächlichen Fondsentwicklung ab","Beide sind immer identisch hoch","Die nicht garantierte Rente ist immer die höhere feste Rente","Es gibt bei fondsgebundenen Renten keine Garantien"], c:0, e:"Fondsgebundene Rentenversicherungen kombinieren oft eine Mindestgarantie mit einem chancenreichen, aber schwankenden Fondsanteil."},
+{cat:"A", q:"Was passiert mit bereits gezahlten Beiträgen, wenn eine Berufsunfähigkeit rückwirkend anerkannt wird?", opts:["Nach Eintritt der BU gezahlte Beiträge werden i.d.R. erstattet (Beitragsrückgewähr)","Beiträge werden nie erstattet","Nur die Hälfte der Beiträge wird erstattet","Der Vertrag wird rückwirkend für nichtig erklärt"], c:0, e:"Wird die BU rückwirkend anerkannt, werden die seither gezahlten Beiträge im Rahmen der Beitragsbefreiung meist zurückerstattet."},
+{cat:"A", q:"Was regelt § 165 VVG im Zusammenhang mit der Kündigung einer Lebensversicherung?", opts:["Der VN kann statt Kündigung die Umwandlung in eine beitragsfreie Versicherung verlangen","Eine Kündigung ist grundsätzlich ausgeschlossen","Nur der Versicherer darf kündigen","Es entfällt bei Kündigung jeglicher Anspruch"], c:0, e:"§ 165 VVG räumt dem VN das Recht ein, statt einer Kündigung die Beitragsfreistellung zu verlangen."},
+{cat:"A", q:"Was bedeutet es, wenn ein VN eine angebotene Beitragsdynamik ablehnt?", opts:["Beitrag und Leistung bleiben unverändert, keine automatische Anpassung","Der Vertrag wird automatisch gekündigt","Die Leistung erhöht sich trotzdem","Es entfällt die Überschussbeteiligung komplett"], c:0, e:"Ohne Dynamik bleiben Beitrag und Leistungshöhe konstant, was angesichts Inflation die reale Absicherung mindern kann."},
+
+// --- B (20) ---
+{cat:"B", q:"Was bedeutet der 'Progressionsfaktor' in der privaten Unfallversicherung?", opts:["Bei höherem Invaliditätsgrad steigt die Leistung überproportional","Die Prämie steigt jährlich automatisch","Der Invaliditätsgrad sinkt mit dem Alter","Es gibt keinen Leistungsanspruch"], c:0, e:"Ab einem bestimmten Invaliditätsgrad wird die Auszahlung überproportional erhöht."},
+{cat:"B", q:"In welchem Pflegegrad-System werden Pflegebedürftige seit 2017 eingestuft?", opts:["Pflegegrade 1–5","Pflegestufen 0–3","Pflegeklassen I–IV","Pflegekategorien A–E"], c:0, e:"Seit der Pflegereform 2017 gibt es fünf Pflegegrade statt der früheren drei Pflegestufen."},
+{cat:"B", q:"Was ist die Wartezeit bei der GKV für Krankengeld in der Regel?", opts:["Grundsätzlich keine Wartezeit bei Pflichtmitgliedschaft","5 Jahre","10 Jahre","1 Jahr"], c:0, e:"Krankengeld wird ab Mitgliedschaft und ärztlich festgestellter Arbeitsunfähigkeit ohne Wartezeit gezahlt."},
+{cat:"B", q:"Was deckt die Pflegepflichtversicherung typischerweise NICHT vollständig ab?", opts:["Die tatsächlich anfallenden Pflegekosten (Teilkasko-Prinzip)","Jegliche Pflegekosten vollständig","Nur ambulante Pflege","Nur stationäre Pflege"], c:0, e:"Die gesetzliche Pflegeversicherung leistet nur einen Teil der Kosten."},
+{cat:"B", q:"Was ist eine Gliedertaxe in der Unfallversicherung?", opts:["Eine feste prozentuale Bewertung des Invaliditätsgrads je Körperteil","Die monatliche Prämienhöhe","Eine Zusatzklausel für Sportunfälle","Die Wartezeit bis zur ersten Leistung"], c:0, e:"Die Gliedertaxe legt fest, mit welchem Invaliditätsgrad z.B. der Verlust einer Hand bewertet wird."},
+{cat:"B", q:"Wer ist grundsätzlich in der gesetzlichen Krankenversicherung versicherungspflichtig?", opts:["Arbeitnehmer unterhalb der Jahresarbeitsentgeltgrenze","Nur Selbstständige","Nur Beamte","Nur Studenten über 30"], c:0, e:"Arbeitnehmer unterhalb der Jahresarbeitsentgeltgrenze sind grundsätzlich GKV-pflichtversichert."},
+{cat:"B", q:"Was ist der Unterschied zwischen Kranken-Vollversicherung und Krankenzusatzversicherung?", opts:["Vollversicherung ersetzt die GKV, Zusatzversicherung ergänzt sie","Beide sind identisch","Zusatzversicherung ersetzt die GKV vollständig","Vollversicherung gilt nur für Beamte"], c:0, e:"Private Vollversicherung tritt an die Stelle der GKV, Zusatzversicherung ergänzt bestehenden Schutz."},
+{cat:"B", q:"Ab welchem Pflegegrad besteht in der Regel Anspruch auf Leistungen der Pflegeversicherung?", opts:["Ab Pflegegrad 1","Erst ab Pflegegrad 3","Erst ab Pflegegrad 5","Nur bei vollstationärer Pflege"], c:0, e:"Bereits ab Pflegegrad 1 bestehen eingeschränkte Leistungsansprüche, z.B. der Entlastungsbetrag."},
+{cat:"B", q:"Wie berechnet sich der Beitrag in der GKV grundsätzlich?", opts:["Ein einkommensabhängiger Prozentsatz plus ggf. Zusatzbeitrag der Kasse","Ein fixer Betrag unabhängig vom Einkommen","Nur der Arbeitgeber zahlt","Beitragsfrei bis 30 Jahre"], c:0, e:"Der GKV-Beitrag richtet sich nach dem beitragspflichtigen Einkommen, zzgl. kassenindividuellem Zusatzbeitrag."},
+{cat:"B", q:"Was regelt die Familienversicherung in der GKV?", opts:["Ehepartner/Kinder ohne eigenes Einkommen können beitragsfrei mitversichert werden","Nur Kinder bis 6 Jahre sind mitversicherbar","Familienversicherung kostet immer extra","Es gibt keine Familienversicherung in der GKV"], c:0, e:"Unter bestimmten Einkommensgrenzen können Angehörige beitragsfrei mitversichert werden."},
+{cat:"B", q:"Wofür ist eine Krankentagegeldversicherung gedacht?", opts:["Sie sichert Einkommensverlust bei längerer Arbeitsunfähigkeit ab (v.a. Selbstständige/PKV)","Sie zahlt nur bei Krankenhausaufenthalt","Sie ersetzt die Pflegeversicherung","Sie ist Teil der Unfallversicherung"], c:0, e:"Krankentagegeld sichert das laufende Einkommen ab, wenn kein oder nur begrenztes Krankengeld greift."},
+{cat:"B", q:"Was ist eine Krankenhaustagegeldversicherung?", opts:["Sie zahlt einen festen Tagessatz bei stationärem Krankenhausaufenthalt","Sie deckt nur ambulante Behandlungen","Sie ersetzt die Pflegeversicherung","Sie zahlt nur bei Reha-Aufenthalten"], c:0, e:"Unabhängig von den tatsächlichen Kosten wird ein vereinbarter Tagessatz je Krankenhaustag ausgezahlt."},
+{cat:"B", q:"Was ist der Basistarif in der PKV?", opts:["Ein Tarif mit Kontrahierungszwang, GKV-vergleichbaren Leistungen und gedeckeltem Beitrag","Ein Tarif nur für Beamte","Ein Tarif ohne Leistungsanspruch","Ein Tarif nur für Kinder"], c:0, e:"Der Basistarif muss von PKV-Anbietern angeboten werden und ist in Leistung/Beitrag an die GKV angelehnt."},
+{cat:"B", q:"Was ist der Standardtarif in der PKV?", opts:["Ein Tarif für Altversicherte mit an die GKV angelehnten Leistungen","Ein Tarif nur für Neukunden","Ein Tarif ohne Beitrag","Ein Tarif nur für Auslandsreisen"], c:0, e:"Der Standardtarif richtet sich an bestimmte Altversicherte und orientiert sich in Leistung und Beitrag an der GKV."},
+{cat:"B", q:"Was bedeutet 'Portabilität der Alterungsrückstellungen' in der PKV?", opts:["Bei Wechsel des PKV-Anbieters kann ein Teil der Rückstellungen mitgenommen werden","Alterungsrückstellungen verfallen bei jedem Wechsel vollständig","Es gibt keine Alterungsrückstellungen in der PKV","Nur die GKV kennt Alterungsrückstellungen"], c:0, e:"Seit 2009 kann bei einem Wechsel der Übertragungswert (kalkulatorische Rückstellung) mitgenommen werden."},
+{cat:"B", q:"Warum ist eine Auslandsreisekrankenversicherung wichtig?", opts:["Weil die GKV im Ausland (v.a. außerhalb EU) oft nur eingeschränkt leistet","Weil die GKV im Ausland gar nicht existiert","Weil sie die Pflegeversicherung ersetzt","Weil sie gesetzlich vorgeschrieben ist"], c:0, e:"Außerhalb der EU/EWR übernimmt die GKV oft keine oder nur reduzierte Kosten – eine Zusatzversicherung schließt diese Lücke."},
+{cat:"B", q:"Was ist der Hauptunterschied zwischen Grundfähigkeits- und Berufsunfähigkeitsversicherung?", opts:["Grundfähigkeit ist unabhängig vom Beruf, BU ist berufsbezogen","Beide sind identisch aufgebaut","Grundfähigkeit zahlt nur im Todesfall","BU zahlt nur bei Unfällen"], c:0, e:"Die Grundfähigkeitsversicherung knüpft an konkrete Fähigkeiten an, die BU an die Fähigkeit, den zuletzt ausgeübten Beruf auszuüben."},
+{cat:"B", q:"Was deckt eine Auslandskrankenversicherung typischerweise zusätzlich ab?", opts:["Medizinisch notwendigen Rücktransport", "Nur den Zahnersatz im Inland","Nur Reisegepäckschäden","Nur Verspätungen bei Flügen"], c:0, e:"Neben Behandlungskosten übernehmen viele Auslandskrankenversicherungen auch einen medizinisch notwendigen Rücktransport."},
+{cat:"B", q:"Was bedeutet der Kontrahierungszwang beim PKV-Basistarif konkret für die Versicherer?", opts:["Sie müssen jeden Antragsteller unabhängig vom Gesundheitszustand aufnehmen","Sie dürfen frei entscheiden, wen sie aufnehmen","Der Kontrahierungszwang gilt nur für unter 18-Jährige","Es gibt im Basistarif keinerlei Aufnahmepflicht"], c:0, e:"Im Basistarif besteht Aufnahmepflicht ohne Risikoprüfung, Risikozuschläge sind aber in engen Grenzen möglich."},
+{cat:"B", q:"Was war die 'Öffnungsaktion' in der PKV?", opts:["Eine befristete Möglichkeit für gesetzlich Versicherte, ohne Gesundheitsprüfung in bestimmte PKV-Tarife zu wechseln","Eine dauerhafte Regel zur Kündigung von PKV-Verträgen","Ein Programm nur für Beamte","Eine Aktion, die nur für Zahnzusatztarife galt"], c:0, e:"Die Öffnungsaktion war eine zeitlich begrenzte Übergangsregelung mit erleichtertem Zugang zur PKV."},
+{cat:"B", q:"Wie unterscheidet sich die Beitragskalkulation der PKV grundsätzlich von der GKV?", opts:["PKV: individuelles Äquivalenzprinzip (Beitrag nach Risiko); GKV: Solidarprinzip (Beitrag nach Einkommen)","Beide kalkulieren ausschließlich nach Einkommen","Beide kalkulieren ausschließlich nach Risiko","Es gibt keinen kalkulatorischen Unterschied"], c:0, e:"Die PKV bemisst den Beitrag nach individuellem Risiko (Alter, Gesundheit), die GKV nach Einkommen im Solidarprinzip."},
+{cat:"B", q:"Was ist eine Anwartschaftsversicherung in der PKV?", opts:["Sie sichert das Recht, später ohne neue Gesundheitsprüfung in den ursprünglichen Tarif zurückzukehren","Sie ist eine Zusatzversicherung für Zahnersatz","Sie ersetzt die Pflegepflichtversicherung","Sie gilt nur für Kinder von PKV-Versicherten"], c:0, e:"Bei vorübergehendem Ausscheiden aus der PKV (z.B. Auslandsaufenthalt) sichert die Anwartschaft die späteren Konditionen."},
+{cat:"B", q:"Was passiert bei Arbeitslosigkeit (Bezug von Arbeitslosengeld I) eines PKV-Versicherten hinsichtlich der Krankenversicherung?", opts:["Häufig entsteht (wieder) GKV-Versicherungspflicht","Die PKV bleibt immer automatisch unverändert bestehen","Es entsteht automatisch Beitragsfreiheit in der PKV","Der Versicherungsschutz entfällt vollständig"], c:0, e:"Beim Bezug von ALG I wird man i.d.R. wieder GKV-pflichtversichert, sofern keine Ausnahme greift."}
+];
+
+const catQuestionsC = [
+{cat:"C", q:"Nach welcher Vorschrift benötigt ein Versicherungsmakler eine Erlaubnis?", opts:["§ 34d GewO","§ 34c GewO","§ 34f GewO","§ 84 HGB"], c:0, e:"§ 34d Gewerbeordnung regelt die Erlaubnispflicht für Versicherungsvermittler und -berater."},
+{cat:"C", q:"Was unterscheidet den Versicherungsmakler grundlegend vom Versicherungsvertreter?", opts:["Der Makler ist im Kundenauftrag tätig, der Vertreter im Auftrag des Versicherers","Der Makler darf keine Beratung durchführen","Der Vertreter erhält keine Vergütung","Es gibt keinen Unterschied"], c:0, e:"Der Makler ist Sachwalter des Versicherungsnehmers, der Vertreter vertraglich an ein/mehrere Versicherer gebunden."},
+{cat:"C", q:"Wie lange muss der Vermittler laut VVG grundsätzlich für Beratungsfehler haften (regelmäßige Verjährung)?", opts:["3 Jahre ab Kenntnis, spätestens 10 Jahre ab Entstehung","1 Jahr","30 Jahre","Es gibt keine Verjährung"], c:0, e:"Regelmäßige Verjährungsfrist des BGB: 3 Jahre ab Kenntnis (Jahresende), max. 10 Jahre ab Entstehung."},
+{cat:"C", q:"Was ist die Beratungspflicht des Vermittlers nach § 61 VVG?", opts:["Er muss nach Wünschen/Bedürfnissen befragen, beraten und die Gründe dokumentieren","Er muss nur Produkte einer Gesellschaft anbieten","Er muss keine Dokumentation erstellen","Er darf keine Empfehlung aussprechen"], c:0, e:"§ 61 VVG verpflichtet zur bedarfsgerechten Beratung inkl. Dokumentation."},
+{cat:"C", q:"Was regelt das Widerrufsrecht des Versicherungsnehmers nach § 8 VVG?", opts:["Widerruf des Vertrags i.d.R. innerhalb von 14 Tagen nach Vertragsschluss","Ein lebenslanges Rücktrittsrecht","Nur Widerruf bei Kfz-Versicherungen","Kein Widerrufsrecht bei Lebensversicherungen"], c:0, e:"Der VN kann seine Willenserklärung grundsätzlich innerhalb von 14 Tagen widerrufen."},
+{cat:"C", q:"Wer überwacht in Deutschland die Registrierungspflicht der Versicherungsvermittler?", opts:["Die zuständige Industrie- und Handelskammer (Vermittlerregister)","Das Bundeskartellamt","Die Bundesbank","Das Finanzamt"], c:0, e:"Die Registrierung erfolgt im Versicherungsvermittlerregister, geführt von den IHKs (organisiert über den DIHK)."},
+{cat:"C", q:"Was versteht man unter der vorvertraglichen Anzeigepflicht des Versicherungsnehmers?", opts:["Er muss gefahrerhebliche Umstände wahrheitsgemäß angeben, wenn danach gefragt wird","Er muss von sich aus alles offenlegen, auch ohne Frage","Es gibt keine Anzeigepflicht mehr seit 2008","Die Anzeigepflicht gilt nur für Kfz-Versicherungen"], c:0, e:"Nach § 19 VVG muss der VN die in Textform gestellten Fragen wahrheitsgemäß beantworten."},
+{cat:"C", q:"Was passiert bei einer arglistigen Täuschung im Rahmen der Anzeigepflichtverletzung?", opts:["Der Versicherer kann den Vertrag anfechten, Versicherungsschutz entfällt rückwirkend","Der Vertrag bleibt unverändert bestehen","Der Beitrag wird nur erhöht","Es gibt automatisch eine Kulanzregelung"], c:0, e:"Bei Arglist kann der Versicherer anfechten, der Vertrag gilt dann als von Anfang an nichtig."},
+{cat:"C", q:"Was ist der Unterschied zwischen einem Vertreter nach § 34d Abs.1 und einem gebundenen Vertreter nach § 34d Abs.4?", opts:["Der gebundene Vertreter ist von der eigenen Erlaubnispflicht befreit, da der Versicherer haftet","Beide brauchen zwingend eine eigene Erlaubnis","Der gebundene Vertreter darf nur online arbeiten","Es gibt diese Unterscheidung nicht"], c:0, e:"Gebundene Vertreter sind von der eigenen Erlaubnis befreit, weil das vertretene Unternehmen die Haftung übernimmt."},
+{cat:"C", q:"Was muss ein Vermittler dem Kunden vor Vertragsschluss offenlegen (Statusoffenlegung)?", opts:["U.a. seinen Vermittlerstatus (Makler/Vertreter) und seine Registrierungsnummer","Nur seinen Namen","Nur seine Kontodaten","Gar nichts, das regelt der Versicherer"], c:0, e:"Nach § 15 VersVermV muss der Vermittler seinen Status, seine Registernummer und weitere Angaben offenlegen."},
+{cat:"C", q:"Was ist der Zweck der Weiterbildungspflicht nach § 34d Abs. 9 GewO?", opts:["Vermittler müssen jährlich eine Mindeststundenzahl Weiterbildung nachweisen","Es gibt keine Weiterbildungspflicht","Weiterbildung ist nur für Berater verpflichtend, nicht für Vermittler","Die Pflicht gilt nur alle 5 Jahre"], c:0, e:"Vermittler und Berater müssen sich regelmäßig weiterbilden, um ihre fachliche Eignung aktuell zu halten."},
+{cat:"C", q:"Was ist das Vermittlerregister (§ 34d GewO)?", opts:["Ein öffentlich einsehbares Register aller zugelassenen Versicherungsvermittler","Ein internes Register nur der Versicherer","Eine reine Steuerdatenbank","Ein Register nur für Kfz-Versicherungen"], c:0, e:"Verbraucher können über das Vermittlerregister prüfen, ob ein Vermittler zugelassen und registriert ist."},
+{cat:"C", q:"Was regelt die IDD (Insurance Distribution Directive) grundsätzlich?", opts:["EU-weite Vorgaben zu Vertrieb, Beratung und Information beim Versicherungsvertrieb","Nur die Kfz-Zulassung in der EU","Ausschließlich Steuerfragen der Versicherer","Die Bankenaufsicht in der EU"], c:0, e:"Die IDD harmonisiert EU-weit Beratungs-, Informations- und Transparenzpflichten im Versicherungsvertrieb."},
+{cat:"C", q:"Was ist ein Produktinformationsblatt (IPID)?", opts:["Ein standardisiertes, kurzes Dokument mit den wichtigsten Produktinfos vor Vertragsschluss","Ein vollständiger Vertragstext","Eine reine Werbebroschüre","Ein internes Dokument nur für den Versicherer"], c:0, e:"Das IPID informiert Kunden kompakt über Leistungen, Ausschlüsse und wesentliche Pflichten vor Abschluss."},
+{cat:"C", q:"Was setzt § 34d Abs. 2 GewO für die Erlaubniserteilung u.a. voraus?", opts:["Persönliche Zuverlässigkeit und geordnete Vermögensverhältnisse","Nur eine Mindestanzahl an Kunden","Nur eine bestandene Führerscheinprüfung","Keinerlei persönliche Voraussetzungen"], c:0, e:"Die Erlaubnis wird nur erteilt, wenn u.a. Zuverlässigkeit und geordnete Vermögensverhältnisse vorliegen."},
+{cat:"C", q:"Ist eine Berufshaftpflichtversicherung für Versicherungsvermittler nach der GewO verpflichtend?", opts:["Ja, mit gesetzlich vorgeschriebener Mindestversicherungssumme","Nein, sie ist freiwillig","Nur für Makler, nicht für Vertreter","Nur bei Vermittlung von Lebensversicherungen"], c:0, e:"Der Nachweis einer Berufshaftpflicht mit Mindestdeckungssumme ist Voraussetzung für die Erlaubnis."},
+{cat:"C", q:"Wie kann ein Dauerschuldverhältnis wie eine Versicherung in der Regel gekündigt werden?", opts:["Meist mit Frist zum Ende der Versicherungsperiode","Nie kündbar","Nur durch den Versicherer","Nur fristlos möglich"], c:0, e:"Versicherungsverträge sind i.d.R. ordentlich mit Frist zum Ende der Versicherungsperiode kündbar."},
+{cat:"C", q:"Worauf stützt sich die Haftung bei Falschberatung durch einen Vermittler?", opts:["Verletzung der Beratungs- und Dokumentationspflicht nach §§ 61, 63 VVG","Ausschließlich auf das Strafrecht","Auf eine reine Kulanzregelung des Versicherers","Es gibt keine Haftungsgrundlage"], c:0, e:"Verletzt der Vermittler seine Beratungs-/Dokumentationspflichten, kann er nach §§ 61, 63 VVG haften."},
+{cat:"C", q:"Wo gilt im Versicherungsrecht ausnahmsweise ein Kontrahierungszwang?", opts:["Z.B. bei der Kfz-Haftpflichtversicherung","Bei jeder Art von Versicherung ohne Ausnahme","Nirgends, es gilt immer volle Vertragsfreiheit","Nur bei privaten Rentenversicherungen"], c:0, e:"Bei Pflichtversicherungen wie der Kfz-Haftpflicht besteht ein Kontrahierungszwang der Versicherer."},
+{cat:"C", q:"Was regelt § 63 VVG im Zusammenhang mit Beratungsfehlern des Vermittlers?", opts:["Der Vermittler haftet auf Schadenersatz bei schuldhafter Verletzung der Beratungs-/Dokumentationspflichten","Der Vermittler haftet nie persönlich","Nur der Versicherer haftet, nie der Vermittler","§ 63 VVG betrifft ausschließlich Kfz-Versicherungen"], c:0, e:"§ 63 VVG begründet einen Schadenersatzanspruch des VN bei schuldhafter Pflichtverletzung des Vermittlers."},
+{cat:"C", q:"Was unterscheidet Kündigung und Rücktritt im Versicherungsvertragsrecht rechtlich?", opts:["Kündigung wirkt für die Zukunft (ex nunc), Rücktritt wirkt rückwirkend (ex tunc)","Beide wirken immer rückwirkend","Beide wirken immer nur für die Zukunft","Es gibt keinen rechtlichen Unterschied"], c:0, e:"Die Kündigung beendet den Vertrag ab dem Wirksamwerden, der Rücktritt lässt ihn rückwirkend als nicht geschlossen gelten."},
+{cat:"C", q:"Was regelt § 28 VVG bei Verletzung einer vertraglichen Obliegenheit?", opts:["Bei vorsätzlicher Verletzung kann der Versicherer leistungsfrei werden, bei grober Fahrlässigkeit quotal kürzen","Der Versicherer muss immer voll leisten","Obliegenheitsverletzungen haben nie Konsequenzen","Nur bei Vorsatz wird gekürzt, bei grober Fahrlässigkeit nie"], c:0, e:"§ 28 VVG differenziert nach Verschuldensgrad: Vorsatz kann volle Leistungsfreiheit, grobe Fahrlässigkeit eine Quotelung nach sich ziehen."},
+{cat:"C", q:"Wie ist das Verhältnis zwischen VVG und den Allgemeinen Versicherungsbedingungen (AVB) einzuordnen?", opts:["AVB dürfen nicht zum Nachteil des VN von zwingenden VVG-Vorschriften abweichen (halbzwingendes Recht)","AVB stehen immer über dem VVG","Das VVG gilt nur, wenn keine AVB vereinbart wurden","AVB und VVG haben keinerlei Bezug zueinander"], c:0, e:"Viele VVG-Vorschriften sind halbzwingend – AVB dürfen davon nur zugunsten, nicht zulasten des VN abweichen."},
+{cat:"C", q:"Was sind die 'Grundsätze ordnungsmäßiger Versicherungsvermittlung' (GOV)?", opts:["Freiwillige Verhaltensstandards zur Qualitätssicherung in der Maklertätigkeit","Ein Teil des Gewerbeordnung-Gesetzestextes","Eine Pflichtprüfung der BaFin","Ein Synonym für die Sachkundeprüfung"], c:0, e:"Die GOV sind ein von Maklerverbänden entwickeltes freiwilliges Regelwerk zur Qualitätssicherung, kein Gesetz."},
+{cat:"C", q:"Was gilt für produktakzessorische Versicherungsvermittler (§ 34d Abs. 9 GewO), z.B. bei Restschuldversicherungen?", opts:["Unter bestimmten Voraussetzungen ist eine erleichterte Regelung statt der vollen Erlaubnispflicht möglich","Sie benötigen immer eine volle Maklererlaubnis wie jeder andere Vermittler","Sie dürfen grundsätzlich gar nicht vermitteln","Die Regelung betrifft nur Lebensversicherungen"], c:0, e:"Für bestimmte akzessorische, geringwertige Versicherungsprodukte sieht das Gesetz erleichterte Anforderungen vor."}
+];
+questions.push(...catQuestionsC);
+
+const catQuestionsD = [
+{cat:"D", q:"Was deckt die verbundene Gebäudeversicherung typischerweise ab?", opts:["Feuer, Leitungswasser, Sturm/Hagel","Nur Feuer","Nur Einbruchdiebstahl","Nur Sturmschäden am Grundstück"], c:0, e:"Klassisch kombiniert die verbundene Gebäudeversicherung die Gefahren Feuer, Leitungswasser und Sturm/Hagel."},
+{cat:"D", q:"Was bedeutet 'Unterversicherung' in der Hausratversicherung?", opts:["Die Versicherungssumme liegt unter dem tatsächlichen Wert des Hausrats","Es besteht kein Versicherungsschutz","Die Prämie wurde nicht bezahlt","Der Vertrag ist gekündigt"], c:0, e:"Bei Unterversicherung wird im Schadenfall die Leistung anteilig gekürzt."},
+{cat:"D", q:"Welche zusätzliche Gefahr kann in der Hausratversicherung typischerweise mitversichert werden?", opts:["Elementarschäden (z.B. Überschwemmung)","Kfz-Diebstahl","Berufsunfähigkeit","Arbeitslosigkeit"], c:0, e:"Elementarschadenversicherung ist ein üblicher optionaler Baustein."},
+{cat:"D", q:"Was ist der Versicherungswert 1914 in der Gebäudeversicherung?", opts:["Eine Rechengröße zur Ermittlung der Versicherungssumme, angepasst über einen Baupreisindex","Der reale Verkaufswert des Hauses","Der Wert nur für historische Gebäude","Ein reiner Steuerwert"], c:0, e:"Der Wert 1914 dient als Rechenbasis, angepasst über den gleitenden Neuwertfaktor."},
+{cat:"D", q:"Was zählt üblicherweise NICHT vollständig zum versicherten Hausrat?", opts:["Bargeld über festgelegten Entschädigungsgrenzen","Möbel","Kleidung","Elektrogeräte"], c:0, e:"Für Bargeld, Wertsachen und Wertpapiere gelten meist eng begrenzte Entschädigungsgrenzen."},
+{cat:"D", q:"Was regelt die Wiederherstellungsklausel bei der Gebäudeversicherung?", opts:["Die Neuwertentschädigung wird erst fällig, wenn die Wiederherstellung sichergestellt ist","Es gibt nie eine Neuwertentschädigung","Der Zeitwert wird immer ausgezahlt","Die Klausel betrifft nur Mobiliar"], c:0, e:"Die volle Neuwertspanne wird nur bei tatsächlicher Wiederherstellung gezahlt."},
+{cat:"D", q:"Welche Schäden sind in der Leitungswasserversicherung typischerweise mitversichert?", opts:["Bruchschäden an Zu- und Ableitungsrohren im Gebäude","Nur Schäden an Außenrohren","Nur Schäden durch Regenwasser","Nur Frostschäden im Garten"], c:0, e:"Die Leitungswasserversicherung deckt bestimmungswidrig austretendes Wasser aus Zu-/Ableitungsrohren."},
+{cat:"D", q:"Was ist bei der Hausratversicherung mit 'Außenversicherung' gemeint?", opts:["Zeitlich begrenzter Schutz für Hausrat, der sich vorübergehend außerhalb der Wohnung befindet","Versicherungsschutz nur für das Grundstück","Ein Schutz nur für Gartenmöbel","Es gibt keine Außenversicherung"], c:0, e:"Die Außenversicherung schützt Hausrat z.B. im Urlaub für begrenzte Zeit und Höhe."},
+{cat:"D", q:"Was ist typischerweise vom Elementarschadenschutz erfasst?", opts:["Überschwemmung, Rückstau, Erdbeben, Schneedruck, Erdsenkung/-rutsch","Nur Blitzschlag","Nur Vandalismus","Nur Glasbruch"], c:0, e:"Elementarschäden umfassen u.a. Überschwemmung, Rückstau, Erdbeben, Erdsenkung/-rutsch, Schneedruck, Lawinen."},
+{cat:"D", q:"Was passiert bei grober Fahrlässigkeit des VN in der Wohngebäude-/Hausratversicherung?", opts:["Der Versicherer kann die Leistung entsprechend der Schwere des Verschuldens kürzen","Der Versicherer muss immer voll zahlen","Der Vertrag endet automatisch","Es gibt keine Konsequenzen"], c:0, e:"Nach § 81 VVG kann bei grober Fahrlässigkeit die Leistung anteilig gekürzt werden (Quotelung)."},
+{cat:"D", q:"Was ist eine Glasversicherung als Zusatzbaustein?", opts:["Deckt Glasbruch an Fenstern, Duschkabinen etc.","Deckt nur Autoscheiben","Deckt nur Handydisplays","Ist Teil der Kfz-Versicherung"], c:0, e:"Die Glasversicherung sichert Bruchschäden an Gebäude- oder Mobiliarverglasungen ab."},
+{cat:"D", q:"Wie werden 'Sengschäden' in der Hausratversicherung meist behandelt?", opts:["Sie sind i.d.R. ausgeschlossen, da kein Feuer im Sinne der Bedingungen vorliegt","Sie sind immer voll versichert","Sie fallen unter Leitungswasser","Sie fallen unter Elementarschäden"], c:0, e:"Sengschäden ohne Flammenbildung gelten meist nicht als 'Brand' im Sinne der Bedingungen und sind ausgeschlossen."},
+{cat:"D", q:"Was ist der Unterschied zwischen Neuwert und Zeitwert?", opts:["Neuwert = Wiederbeschaffungspreis neu, Zeitwert = Neuwert abzüglich Alter/Abnutzung","Beide sind identisch","Zeitwert ist immer höher als Neuwert","Neuwert gilt nur für Gebäude"], c:0, e:"Der Zeitwert berücksichtigt Alter und Abnutzung und liegt daher meist unter dem Neuwert."},
+{cat:"D", q:"Was deckt die oft mit der Gebäudeversicherung verbundene Grundstückshaftpflicht ab?", opts:["Haftpflichtansprüche Dritter durch Gefahren des Grundstücks/Gebäudes","Schäden am eigenen Gebäude durch Sturm","Diebstahl aus dem Gebäude","Elementarschäden am Gebäude"], c:0, e:"Sie schützt vor Ansprüchen Dritter, z.B. wenn jemand auf dem Grundstück stürzt (Verkehrssicherungspflicht)."},
+{cat:"D", q:"Wozu dient eine Vorsorgeversicherung in der Sachversicherung?", opts:["Automatischer Schutz für neu hinzukommende Werte bis zur nächsten Anpassung","Vorzeitige Kündigung des Vertrags","Ein Zusatz nur für Elektrogeräte","Ein reiner Marketingbegriff ohne Wirkung"], c:0, e:"Die Vorsorgeversicherung fängt kurzfristige Werterhöhungen auf, bis die Versicherungssumme angepasst wird."},
+{cat:"D", q:"Was regelt eine Selbstbeteiligung (SB) im Schadenfall?", opts:["Der VN trägt einen vereinbarten Anteil des Schadens selbst","Der Versicherer zahlt grundsätzlich nichts","Die SB gilt nur bei Totalschäden","Die SB erhöht automatisch die Versicherungssumme"], c:0, e:"Eine vereinbarte Selbstbeteiligung senkt meist den Beitrag, der VN trägt dafür einen Teil kleinerer Schäden selbst."},
+{cat:"D", q:"Was ist mit einer 'Rohbauversicherung' im Rahmen der Gebäudeversicherung gemeint?", opts:["Schutz während der Bauphase, bevor das Gebäude bezugsfertig ist","Schutz nur für fertige Gebäude","Ein Zusatz für Gartenanlagen","Ein Ersatz für die Bauleistungsversicherung"], c:0, e:"Die Rohbauversicherung (oft Feuer-Rohbauversicherung) schützt das im Bau befindliche Gebäude vor Fertigstellung."},
+{cat:"D", q:"Was regelt die Repräsentantenhaftung in der Wohngebäudeversicherung?", opts:["Das Verhalten eines Repräsentanten (z.B. Hausverwalter) wird dem VN zugerechnet","Nur das eigene Verhalten des VN zählt, nie das Dritter","Repräsentanten haften immer persönlich gegenüber dem Versicherer","Die Regelung betrifft nur Mieter"], c:0, e:"Wer dem VN vergleichbar Verfügungsgewalt über das Risiko hat (Repräsentant), dessen Verschulden wird dem VN zugerechnet."},
+{cat:"D", q:"Was ist der Unterschied zwischen Neuwertversicherung und gleitender Neuwertversicherung?", opts:["Die gleitende Neuwertversicherung passt die Versicherungssumme automatisch an einen Baupreisindex an","Beide sind identisch","Die gleitende Neuwertversicherung gilt nur für Hausrat","Neuwertversicherung schließt Unterversicherung grundsätzlich aus"], c:0, e:"Über den gleitenden Neuwertfaktor wird die Summe laufend an die Baupreisentwicklung angepasst, um Unterversicherung zu vermeiden."},
+{cat:"D", q:"Was bewirkt eine Unterversicherungsverzichtsklausel?", opts:["Der Versicherer verzichtet bis zu einer bestimmten Grenze auf den Einwand der Unterversicherung","Unterversicherung ist dadurch grundsätzlich ausgeschlossen","Die Klausel erhöht automatisch die Versicherungssumme","Die Klausel gilt nur bei Totalschäden"], c:0, e:"Bis zu einer vereinbarten Grenze verzichtet der Versicherer darauf, sich im Schadenfall auf Unterversicherung zu berufen."},
+{cat:"D", q:"Wie unterscheidet sich grobe Fahrlässigkeit rechtlich von einfacher Fahrlässigkeit?", opts:["Grobe Fahrlässigkeit bedeutet ein ungewöhnlich hohes Maß an Sorgfaltspflichtverletzung","Beide sind rechtlich identisch zu behandeln","Einfache Fahrlässigkeit führt immer zu Leistungsfreiheit","Grobe Fahrlässigkeit betrifft nur Vorsatztaten"], c:0, e:"Grobe Fahrlässigkeit liegt vor, wenn die im Verkehr erforderliche Sorgfalt in besonders schwerem Maße verletzt wird."},
+{cat:"D", q:"Was ist mit 'Rückstau' im Rahmen der Elementarschadenversicherung gemeint?", opts:["Wasser dringt bei Starkregen durch die Kanalisation zurück ins Gebäude","Wasser tritt aus einem geplatzten Heizungsrohr aus","Schnee drückt das Dach ein","Erdreich rutscht auf das Grundstück"], c:0, e:"Rückstau entsteht, wenn die Kanalisation überlastet ist und Wasser rückwärts in Rohrleitungen und Gebäude gedrückt wird."},
+{cat:"D", q:"Gilt ein Mieter bei einer vermieteten Immobilie automatisch als Repräsentant des Vermieters?", opts:["Nein, der Mieter gilt i.d.R. nicht automatisch als Repräsentant des Vermieters","Ja, immer und ausnahmslos","Nur wenn der Mietvertrag dies ausdrücklich ausschließt","Nur bei gewerblicher Vermietung"], c:0, e:"Der Mieter handelt im eigenen Interesse und gilt grundsätzlich nicht als Repräsentant des VN/Vermieters."}
+];
+questions.push(...catQuestionsD);
+
+const catQuestionsE = [
+{cat:"E", q:"Was ist der zentrale Zweck der privaten Haftpflichtversicherung?", opts:["Abwehr unberechtigter und Ausgleich berechtigter Schadenersatzansprüche Dritter","Absicherung eigener Sachschäden","Absicherung des eigenen Einkommens","Rechtsschutz bei Steuerstreitigkeiten"], c:0, e:"Die Haftpflichtversicherung prüft Ansprüche Dritter, wehrt unberechtigte ab und reguliert berechtigte."},
+{cat:"E", q:"Aus welchen drei Hauptbausteinen besteht die Kfz-Versicherung klassisch?", opts:["Haftpflicht, Teilkasko, Vollkasko","Haftpflicht, Rechtsschutz, Insassenunfall","Vollkasko, Elementar, Glas","Teilkasko, Reisegepäck, Assistance"], c:0, e:"Kfz-Haftpflicht ist Pflicht, Teilkasko und Vollkasko sind freiwillige Zusatzbausteine."},
+{cat:"E", q:"Was regelt typischerweise der Baustein 'Verkehrsrechtsschutz'?", opts:["Rechtliche Auseinandersetzungen im Zusammenhang mit Verkehrsteilnahme","Streitigkeiten mit dem Vermieter","Arbeitsrechtliche Streitigkeiten","Erbstreitigkeiten"], c:0, e:"Verkehrsrechtsschutz deckt rechtliche Konflikte rund um die Teilnahme am Straßenverkehr ab."},
+{cat:"E", q:"Was ist ein Schadenfreiheitsrabatt (SF-Rabatt) in der Kfz-Versicherung?", opts:["Ein Nachlass abhängig von der schadenfreien Fahrzeit","Ein pauschaler Neukundenrabatt","Ein Rabatt nur für Elektrofahrzeuge","Eine gesetzlich fixe Ermäßigung von 10%"], c:0, e:"Je länger schadenfrei gefahren wird, desto günstiger die SF-Klasse und damit der Beitrag."},
+{cat:"E", q:"Was deckt die Vollkaskoversicherung zusätzlich zur Teilkasko ab?", opts:["Schäden durch Unfall und mutwillige Beschädigung durch Dritte","Nur Glasbruch","Nur Diebstahl","Nur Wildunfälle"], c:0, e:"Vollkasko = Teilkasko-Leistungen plus Unfallschäden am eigenen Fahrzeug und mutwillige Beschädigung durch Dritte."},
+{cat:"E", q:"Was bedeutet die 'Mallorca-Police' im Rahmen der Kfz-Haftpflicht?", opts:["Anhebung der Mindestdeckungssumme bei Auslandsfahrten mit Mietwagen auf EU-Niveau","Ein spezieller Tarif nur für Wohnmobile","Eine Zusatzversicherung für Bootsausflüge","Ein Rabatt für Fahrten nach Spanien"], c:0, e:"Die Mallorca-Police stockt die oft niedrigere Auslands-Mindestdeckung eines Mietwagens auf EU-Standardniveau auf."},
+{cat:"E", q:"Was ist bei der Betriebshaftpflichtversicherung typischerweise versichert?", opts:["Schadenersatzansprüche Dritter aus der betrieblichen Tätigkeit","Nur Personenschäden von Mitarbeitern","Nur Sachschäden im eigenen Lager","Ausschließlich Vermögensschäden"], c:0, e:"Sie deckt Ansprüche Dritter, die aus dem Betrieb des Unternehmens resultieren."},
+{cat:"E", q:"Was ist der Unterschied zwischen Reparaturkosten- und fiktiver Abrechnung?", opts:["Bei fiktiver Abrechnung wird nach Gutachten abgerechnet, ohne dass repariert werden muss","Fiktive Abrechnung ist nur bei Totalschaden möglich","Es gibt rechtlich keinen Unterschied","Reparaturkosten werden nie erstattet"], c:0, e:"Bei fiktiver Abrechnung zahlt der Versicherer die im Gutachten festgestellten Kosten aus, auch ohne tatsächliche Reparatur."},
+{cat:"E", q:"Was ist die Grüne Karte (Internationale Versicherungskarte) im Kfz-Bereich?", opts:["Ein international anerkannter Nachweis für bestehenden Kfz-Haftpflichtschutz im Ausland","Ein Rabattprogramm für junge Fahrer","Ein Mitgliedsausweis des ADAC","Ein Nachweis für die Hauptuntersuchung"], c:0, e:"Die Grüne Karte belegt im Ausland, dass für das Fahrzeug ein gültiger Kfz-Haftpflichtschutz besteht."},
+{cat:"E", q:"Was gilt beim Rückgriffsrecht (Regress) des Kfz-Haftpflichtversicherers gegen den VN?", opts:["Bei grober Pflichtverletzung (z.B. Trunkenheit) kann der Versicherer begrenzten Regress nehmen","Der Versicherer darf niemals Regress nehmen","Regress ist unbegrenzt und bei jedem Fehlverhalten möglich","Regress betrifft nur die Kaskoversicherung"], c:0, e:"Nach § 5 KfzPflVV kann der Versicherer bei grober Pflichtverletzung begrenzten Regress nehmen."},
+{cat:"E", q:"Was deckt der Mietsachschäden-Baustein einer Privathaftpflicht typischerweise ab?", opts:["Schäden an gemieteten beweglichen und teils unbeweglichen Sachen","Nur Schäden am eigenen Eigentum","Nur Schäden an Kraftfahrzeugen","Mietsachschäden sind nie versicherbar"], c:0, e:"Der Baustein deckt z.B. Schäden an der gemieteten Ferienwohnung oder an Leihgegenständen ab."},
+{cat:"E", q:"Was ist eine Tierhalterhaftpflichtversicherung?", opts:["Deckt Schäden ab, die z.B. ein Hund oder Pferd Dritten zufügt","Ist Teil der Kfz-Versicherung","Deckt nur Tierarztkosten für das eigene Tier","Ist gesetzlich für alle Haustiere verpflichtend"], c:0, e:"Für bestimmte Tiere (z.B. Hunde, Pferde) ist eine eigene Haftpflicht meist sinnvoll oder je nach Bundesland vorgeschrieben."},
+{cat:"E", q:"Was unterscheidet Privat-Rechtsschutz vom Berufs-Rechtsschutz?", opts:["Privat: private Lebensbereiche; Berufs: Streitigkeiten aus abhängiger Beschäftigung","Beide sind inhaltsgleich","Privat-Rechtsschutz gilt auch für Betriebe","Berufs-Rechtsschutz deckt nur Verkehrsdelikte ab"], c:0, e:"Der Berufs-Rechtsschutz deckt arbeitsrechtliche Streitigkeiten aus dem Anstellungsverhältnis ab, der Privat-Rechtsschutz private Lebensbereiche."},
+{cat:"E", q:"Wofür ist eine Vermögensschadenhaftpflichtversicherung für Freiberufler gedacht?", opts:["Sie deckt reine Vermögensschäden durch Beratungsfehler ab (z.B. Steuerberater, Architekten)","Sie deckt nur Personenschäden ab","Sie ist identisch mit der Betriebshaftpflicht","Sie deckt nur Sachschäden am eigenen Büro ab"], c:0, e:"Reine Vermögensschäden (ohne Personen-/Sachschaden) entstehen z.B. durch Falschberatung – dafür gibt es diesen speziellen Schutz."},
+{cat:"E", q:"Was bedeutet der Direktanspruch des Geschädigten in der Kfz-Haftpflicht?", opts:["Der Geschädigte kann sich direkt an den Versicherer des Schädigers wenden","Der Geschädigte muss immer zuerst gegen den Schädiger persönlich klagen","Der Direktanspruch gilt nur bei Personenschäden","Es gibt keinen Direktanspruch in Deutschland"], c:0, e:"Nach § 115 VVG kann der Geschädigte seinen Anspruch direkt gegenüber dem Haftpflichtversicherer des Schädigers geltend machen."},
+{cat:"E", q:"Wofür ist eine Bauherrenhaftpflichtversicherung gedacht?", opts:["Sie deckt Ansprüche Dritter durch Gefahren des Bauvorhabens während der Bauzeit","Sie deckt Schäden am fertigen Gebäude nach Bauabschluss","Sie ersetzt die Wohngebäudeversicherung dauerhaft","Sie deckt nur Diebstahl von Baumaterial"], c:0, e:"Während der Bauphase gehen von der Baustelle besondere Gefahren für Dritte aus – dafür sichert die Bauherrenhaftpflicht ab."},
+{cat:"E", q:"Was bewirkt § 117 VVG zum Schutz des Geschädigten in der Kfz-Haftpflicht?", opts:["Der Schutz des Geschädigten bleibt bestehen, selbst wenn der Versicherer im Innenverhältnis leistungsfrei wäre","Der Geschädigte verliert seinen Anspruch, wenn der VN Obliegenheiten verletzt hat","§ 117 VVG betrifft nur die Kaskoversicherung","Der Versicherer kann sich gegenüber dem Geschädigten immer auf jede Einwendung berufen"], c:0, e:"Zum Schutz Dritter bleibt der Versicherungsschutz im Außenverhältnis bestehen; der Versicherer kann ggf. beim VN Regress nehmen."},
+{cat:"E", q:"Wofür springt die Verkehrsopferhilfe ein?", opts:["Bei Schäden durch unversicherte oder unbekannte (flüchtige) Fahrzeuge","Bei jedem Kfz-Unfall unabhängig vom Versicherungsstatus","Nur bei Fahrraddiebstahl","Nur bei Bagatellschäden unter 100 Euro"], c:0, e:"Die Verkehrsopferhilfe ist eine Auffanglösung für Geschädigte, wenn kein oder kein bekannter Haftpflichtversicherer existiert."},
+{cat:"E", q:"Was regelt die Subsidiaritätsklausel in der privaten Unfallversicherung bei Arbeitsunfällen?", opts:["Bei Arbeitsunfällen zahlt primär die gesetzliche Unfallversicherung (Berufsgenossenschaft), die private zusätzlich","Die private Unfallversicherung zahlt bei Arbeitsunfällen nie","Nur die private Unfallversicherung ist bei Arbeitsunfällen zuständig","Es gibt bei Arbeitsunfällen keinerlei Leistungspflicht"], c:0, e:"Arbeitsunfälle sind primär über die gesetzliche Unfallversicherung abgesichert; die private UV kann ergänzend leisten."},
+{cat:"E", q:"Was bedeutet der Begriff 'Repräsentant' im Rahmen der Kfz-Kaskoversicherung?", opts:["Eine Person, der der VN die Verfügungsgewalt über das Fahrzeug überlassen hat und deren Verschulden zugerechnet wird","Der Versicherungsvertreter, der den Vertrag vermittelt hat","Ein Synonym für den Halter laut Fahrzeugschein","Der Sachverständige, der den Schaden begutachtet"], c:0, e:"Überlässt der VN einem Dritten die Verfügungsgewalt über das Fahrzeug, wird dessen Verschulden dem VN zugerechnet."},
+{cat:"E", q:"Was leistet eine Vermögensschaden-Rückwärtsversicherung?", opts:["Sie deckt auch Schäden, die vor Vertragsbeginn verursacht, aber erst später gemeldet wurden","Sie deckt nur Schäden nach Vertragsende","Sie ist ein Synonym für die Nachhaftung","Sie gilt nur für Kfz-Schäden"], c:0, e:"Die Rückwärtsdeckung erstreckt den Versicherungsschutz auf Pflichtverletzungen, die vor Vertragsbeginn lagen, aber später gemeldet werden."},
+{cat:"E", q:"Was bedeutet 'Nachhaftung' in der Berufshaftpflichtversicherung bei Aufgabe der beruflichen Tätigkeit?", opts:["Verlängerte Deckung für Schäden, die erst nach Vertragsende gemeldet werden, aber während der Laufzeit verursacht wurden","Der Versicherungsschutz endet sofort mit Aufgabe der Tätigkeit ohne Ausnahme","Nachhaftung gilt nur für Kfz-Versicherungen","Nachhaftung bedeutet eine Beitragserhöhung nach Vertragsende"], c:0, e:"Die Nachhaftungsdeckung schützt davor, dass später gemeldete 'Altschäden' nach Vertragsende ungedeckt bleiben."}
+];
+questions.push(...catQuestionsE);
+
+// --- Kompakte Zusatzfragen: Q(Sachgebiet, Frage, richtige Antwort, falsch1, falsch2, falsch3, Erklärung) ---
+function Q(cat,q,r,w1,w2,w3,e){ questions.push({cat,q,opts:[r,w1,w2,w3],c:0,e}); }
+Q("A","Wer ist bei einer Lebensversicherung der 'Bezugsberechtigte'?","Die Person, die im Leistungsfall die Versicherungsleistung erhält","Die Person, die die Beiträge zahlt","Die Person, auf deren Leben versichert ist","Der vermittelnde Makler","Versicherungsnehmer zahlt, die versicherte Person ist Risikoträger, der Bezugsberechtigte erhält die Leistung.");
+Q("A","Was bedeutet Beitragsbefreiung bei anerkannter Berufsunfähigkeit?","Der Vertrag läuft weiter, der VN muss keine Beiträge mehr zahlen","Der Vertrag endet sofort","Die Beiträge werden verdoppelt","Der Versicherer zahlt alle Beiträge zurück","Bei BU-Zusatzversicherungen übernimmt der Versicherer die Beitragszahlung des Hauptvertrags.");
+Q("A","Was ist der Höchstrechnungszins (Garantiezins)?","Der gesetzlich begrenzte Zins, mit dem Versicherer ihre Leistungen maximal kalkulieren dürfen","Der Zins auf Kredite an Versicherungsnehmer","Der Zins für Beitragsrückstände","Die tatsächliche Verzinsung am Kapitalmarkt","Er begrenzt die garantierte Verzinsung, damit Versicherer dauerhaft leistungsfähig bleiben.");
+Q("A","Was ist Entgeltumwandlung in der betrieblichen Altersversorgung?","Ein Teil des Bruttogehalts wird für die bAV verwendet","Der Arbeitgeber zahlt ein zusätzliches 13. Gehalt","Der Arbeitnehmer erhält sein Gehalt in Sachwerten","Das Gehalt wird in Fremdwährung ausgezahlt","Durch Umwandlung von Gehalt in Beiträge werden meist Steuern und Sozialabgaben gespart.");
+Q("A","Welche Rente erhält man mit Erreichen der Regelaltersgrenze aus der GRV?","Regelaltersrente","Erwerbsminderungsrente","Waisenrente","Teilrente wegen Berufsunfähigkeit","Die Regelaltersrente wird bei Erfüllung der Wartezeit ab der Regelaltersgrenze gezahlt.");
+Q("A","Wer ist bei einer Risikolebensversicherung die 'versicherte Person'?","Die Person, auf deren Leben die Versicherung abgeschlossen wurde","Immer der Versicherungsnehmer","Immer der Bezugsberechtigte","Der Vermittler","Versicherte Person und Versicherungsnehmer können, müssen aber nicht identisch sein.");
+Q("B","Was ist die Beitragsbemessungsgrenze in der GKV?","Bis zu diesem Einkommen werden Beiträge berechnet, darüber hinaus nicht mehr","Die Einkommensgrenze für die Versicherungspflicht","Der Höchstbetrag, den Ärzte abrechnen dürfen","Die Grenze für Familienversicherung","Einkommen oberhalb der Grenze bleibt bei der Beitragsberechnung unberücksichtigt.");
+Q("B","Wie definiert das VVG einen Unfall (§ 178)?","Ein plötzlich von außen auf den Körper wirkendes Ereignis, das unfreiwillig eine Gesundheitsschädigung verursacht","Jede Krankheit mit schnellem Verlauf","Jede vorsätzliche Selbstverletzung","Nur Verkehrsunfälle","Plötzlichkeit, Einwirkung von außen und Unfreiwilligkeit sind die Kernmerkmale.");
+Q("B","Wie lange zahlt der Arbeitgeber bei Krankheit i.d.R. das Entgelt weiter?","Bis zu 6 Wochen","Bis zu 6 Monate","Bis zu 2 Wochen","Unbegrenzt","Danach greift bei gesetzlich Versicherten das Krankengeld.");
+Q("B","Wie funktioniert eine Pflegetagegeldversicherung?","Sie zahlt einen vereinbarten Tagessatz je nach Pflegegrad, frei verwendbar","Sie erstattet nur nachgewiesene Pflegeheimrechnungen","Sie zahlt nur bei Pflegegrad 1","Sie ersetzt die gesetzliche Pflegeversicherung","Das Tagegeld ergänzt die gesetzliche Pflegeversicherung und schließt die Kostenlücke.");
+Q("B","Was regelt die allgemeine Krankenversicherungspflicht (§ 193 VVG)?","Jeder Einwohner Deutschlands muss krankenversichert sein","Nur Arbeitnehmer müssen krankenversichert sein","Nur GKV-Versicherte müssen sich versichern","Nur Kinder müssen versichert sein","Seit 2009 besteht eine Versicherungspflicht für alle Einwohner mit Wohnsitz in Deutschland.");
+Q("B","Was ist der Versicherungsfall in der Krankheitskostenversicherung?","Die medizinisch notwendige Heilbehandlung wegen Krankheit oder Unfallfolgen","Der Abschluss des Vertrags","Jeder Arztbesuch zur Vorsorge","Nur ein Krankenhausaufenthalt","Versichert ist die medizinisch notwendige Heilbehandlung einer versicherten Person.");
+Q("B","Was bedeutet die Gliedertaxe-Zahl für Verlust eines Arms bei der Unfallversicherung typischerweise?","Ein fest vereinbarter Invaliditätsgrad, der unabhängig vom Beruf gilt","Ein individuell am Beruf bemessener Grad","Eine Wartezeit von einem Jahr","Ein Selbstbehalt","Die Gliedertaxe bewertet den Verlust von Körperteilen mit festen Prozentsätzen.");
+Q("C","Wodurch unterscheidet sich der Versicherungsberater (§ 34e GewO) vom Makler?","Er berät gegen Honorar und darf keine Provision annehmen","Er vermittelt nur für einen Versicherer","Er benötigt keine Erlaubnis","Er darf nur Kfz-Versicherungen beraten","Der Berater ist ausschließlich vom Kunden vergütet, Provisionen von Versicherern sind ausgeschlossen.");
+Q("C","Was bedeutet Textform im Versicherungsrecht?","Eine lesbare Erklärung auf dauerhaftem Datenträger, z.B. E-Mail, ohne Unterschrift","Nur ein handschriftlicher Brief","Ein notariell beurkundeter Text","Eine mündliche Erklärung vor Zeugen","Textform ist geringer als die Schriftform (keine eigenhändige Unterschrift nötig).");
+Q("C","Was ist eine Obliegenheit?","Eine Verhaltensanforderung an den VN, deren Verletzung zu Rechtsnachteilen führen kann","Eine einklagbare Hauptpflicht des Versicherers","Eine Gebühr des Vermittlers","Ein Kündigungsgrund des VN","Obliegenheiten sind nicht einklagbar, ihre Verletzung kann aber den Versicherungsschutz gefährden.");
+Q("C","Wann ist ein Beratungsverzicht nach § 61 Abs. 2 VVG möglich?","Durch gesonderte schriftliche Erklärung nach Hinweis auf mögliche Nachteile","Mündlich und ohne Hinweis","Nie","Nur bei Kfz-Versicherungen","Der Kunde muss in einer gesonderten Erklärung bestätigen, dass er auf Beratung/Dokumentation verzichtet.");
+Q("C","Wer ist Versicherungsnehmer?","Der Vertragspartner des Versicherers, der die Beiträge schuldet","Immer die versicherte Person","Der Vermittler","Der Geschädigte","Der VN schließt den Vertrag und ist zur Beitragszahlung verpflichtet.");
+Q("C","Was ist eine Gefahrerhöhung?","Eine nachträgliche Änderung der Umstände, die den Versicherungsfall wahrscheinlicher macht","Eine Beitragserhöhung des Versicherers","Ein Schaden durch höhere Gewalt","Ein neuer Tarif","Wesentliche Gefahrerhöhungen sind dem Versicherer anzuzeigen, sonst drohen Rechtsfolgen.");
+Q("D","Wie wird die Versicherungssumme in der Hausratversicherung oft festgelegt?","Pauschal pro Quadratmeter Wohnfläche","Nach dem Einkommen des VN","Nach dem Wert des Gebäudes","Nach der Zahl der Bewohner allein","Das Wohnflächenmodell erleichtert die Summenermittlung und vermeidet meist Unterversicherung.");
+Q("D","Was deckt ein Überspannungsschaden-Baustein?","Schäden an Elektrogeräten durch Überspannung, z.B. als Blitzfolge","Schäden durch Wasser","Schäden durch Einbruch","Schäden an Fahrzeugen","Überspannung kann Elektrogeräte zerstören, auch ohne direkten Blitzeinschlag.");
+Q("D","Was bewirkt die Nachtzeitklausel beim Fahrraddiebstahl?","Der Schutz für nicht verschlossen abgestellte Räder ist in bestimmten Nachtstunden eingeschränkt","Der Schutz gilt nur nachts","Diebstahl ist immer ausgeschlossen","Sie gilt nur für E-Bikes","Nachts gelten oft strengere Anforderungen an das Abschließen des Fahrrads.");
+Q("D","Wer versichert typischerweise das Gebäude bei einer Mietwohnung?","Der Vermieter","Der Mieter","Beide gemeinsam","Die Gemeinde","Der Mieter braucht in der Regel Hausrat- und Haftpflichtversicherung, das Gebäude versichert der Eigentümer.");
+Q("D","Was bedeutet Neuwertentschädigung in der Hausratversicherung?","Ersatz der Kosten für neue gleichwertige Sachen","Ersatz nur des Zeitwerts","Ersatz nur des Schrottwerts","Keine Entschädigung","Der Neuwert entspricht den Wiederbeschaffungskosten für neue Sachen gleicher Art und Güte.");
+Q("D","Was zählt zu den Gebäudebestandteilen?","Fest mit dem Gebäude verbundene Teile wie Heizungsanlage oder Fenster","Lose Möbel","Bargeld","Kleidung","Gebäudebestandteile sind fest verbunden und gehören zur Gebäudeversicherung, nicht zum Hausrat.");
+Q("E","Was ist die Deckungssumme in der Haftpflichtversicherung?","Der Höchstbetrag, den der Versicherer pro Schadenereignis zahlt","Der Beitrag pro Jahr","Die Selbstbeteiligung","Die Summe aller Beiträge","Übersteigt der Schaden die Deckungssumme, haftet der VN für den Rest.");
+Q("E","Was deckt die Teilkasko bei Wildschäden typischerweise?","Zusammenstoß mit Haarwild im Sinne des Jagdgesetzes","Jeden Unfall mit Tieren","Nur Unfälle mit Haustieren","Keine Wildunfälle","Die genaue Definition des Tieres regeln die Bedingungen des Versicherers.");
+Q("E","Was bedeutet Werkstattbindung in der Kfz-Kasko?","Ein günstigerer Beitrag bei Reparatur in einer Partnerwerkstatt","Ein Zwang zur Reparatur beim Hersteller","Ein Verbot von Reparaturen","Eine Selbstbeteiligung","Die Bindung senkt den Beitrag, schränkt aber die freie Werkstattwahl ein.");
+Q("E","Was gilt für Wartezeiten in der Rechtsschutzversicherung?","Für einzelne Bausteine kann eine Wartezeit (z.B. drei Monate) vereinbart sein","Es gibt nie Wartezeiten","Die Wartezeit beträgt immer 10 Jahre","Sie gilt nur für Verkehrsrechtsschutz","Wartezeiten verhindern, dass der Schutz erst bei bereits absehbaren Streitigkeiten abgeschlossen wird.");
+Q("E","Was bedeutet die Halterhaftung nach § 7 StVG?","Der Halter haftet unabhängig vom Verschulden für Schäden beim Betrieb des Fahrzeugs (Gefährdungshaftung)","Der Halter haftet nur bei Vorsatz","Nur der Fahrer haftet","Es gibt keine Halterhaftung","Die Gefährdungshaftung knüpft an die Betriebsgefahr des Kfz an.");
+Q("E","Was ist die SF-Klasse 0?","Die Einstufung ohne bisherige schadenfreie Jahre, oft für Neu-Einsteiger","Die beste Einstufung mit höchstem Rabatt","Eine Sonderklasse für Oldtimer","Eine Einstufung nur für Motorräder","In SF 0 ist der Beitrag hoch, mit jedem schadenfreien Jahr sinkt er.");
+
+Q("A","Wie lange beträgt die Widerrufsfrist bei einer Lebensversicherung?","30 Tage","14 Tage","7 Tage","6 Wochen","Bei Lebensversicherungen gilt nach § 152 VVG eine Widerrufsfrist von 30 Tagen, sonst meist 14 Tage.");
+Q("A","Was bedeutet Stornohaftung des Vermittlers?","Er muss Provision (anteilig) zurückzahlen, wenn der Vertrag vorzeitig endet","Er haftet für Schäden des Kunden","Er zahlt die Beiträge des Kunden","Er darf keine Verträge mehr vermitteln","Die Abschlussprovision ist an eine Mindestlaufzeit geknüpft, bei früherem Ende wird sie zurückgefordert.");
+Q("A","Was versteht man unter Zillmerung?","Verrechnung der Abschlusskosten mit den ersten Beiträgen","Eine Form der Überschussbeteiligung","Ein Steuerverfahren bei Renten","Die Risikoprüfung bei BU","Wegen der Zillmerung ist der Rückkaufswert in den ersten Jahren oft gering oder null.");
+Q("A","Was regelt eine Rentengarantiezeit?","Die Rente wird mindestens für eine vereinbarte Zeit gezahlt, auch wenn der Rentner früher stirbt","Die Rente wird nur für ein Jahr garantiert","Die Rente steigt jährlich um einen festen Satz","Der Rentenbeginn ist garantiert","Die Restgarantiezeit wird an Hinterbliebene ausgezahlt.");
+Q("A","Welche Wartezeit muss für die Regelaltersrente in der GRV erfüllt sein?","5 Jahre","10 Jahre","15 Jahre","35 Jahre","Die allgemeine Wartezeit beträgt 5 Jahre, für besonders langjährig Versicherte 45 Jahre.");
+Q("A","Wie ist die Basisrente grundsätzlich bei Pfändung gestellt?","Sie ist grundsätzlich vor Pfändung geschützt","Sie ist voll pfändbar","Sie ist nur bei Selbstständigen geschützt","Sie ist nur nach Rentenbeginn geschützt","Der Pfändungsschutz und die Nichtbeleihbarkeit sind typische Merkmale der Basisrente.");
+Q("A","Wann liegt Berufsunfähigkeit nach typischen Bedingungen vor?","Wenn der VN voraussichtlich mindestens sechs Monate zu mindestens 50 % nicht mehr in seinem Beruf arbeiten kann","Bei jeder Krankschreibung","Nur bei völliger Arbeitsunfähigkeit in jedem Beruf","Nur bei Unfällen","Übliche Bedingungen: mindestens 50 % Einschränkung im zuletzt ausgeübten Beruf, voraussichtlich sechs Monate.");
+Q("A","Was ist der Unterschied zwischen Erlebensfall und Todesfall?","Erlebensfall: VN erlebt das Vertragsende; Todesfall: die versicherte Person stirbt","Beide bedeuten das Gleiche","Erlebensfall gilt nur bei Renten","Todesfall gilt nur bei Unfällen","Kapitalversicherungen können bei Ablauf (Erleben) oder bei Tod leisten.");
+Q("B","Welche Wartezeiten gelten typischerweise in der PKV?","Drei Monate allgemein, acht Monate für besondere Leistungen","Keine Wartezeiten","Zwei Jahre für alle Leistungen","Ein Monat für alle Leistungen","Die besondere Wartezeit betrifft z.B. Entbindung, Psychotherapie und Zahnersatz.");
+Q("B","Wozu dient die Alterungsrückstellung in der PKV?","Sie dämpft den Beitragsanstieg im Alter","Sie erstattet Arztkosten sofort","Sie finanziert den Vermittler","Sie ersetzt die Selbstbeteiligung","Junge Versicherte zahlen mehr als ihr Risiko, der Überschuss wird für spätere Jahre angespart.");
+Q("B","Bis wann muss die Invalidität in der Unfallversicherung typischerweise ärztlich festgestellt sein?","Innerhalb von 15 Monaten nach dem Unfall","Innerhalb von 3 Tagen","Innerhalb von 5 Jahren","Gar nicht","Invalidität muss binnen eines Jahres eintreten und innerhalb von 15 Monaten festgestellt und geltend gemacht werden.");
+Q("B","Wann besteht Anspruch auf die Todesfallleistung der Unfallversicherung?","Wenn der Tod innerhalb eines Jahres nach dem Unfall eintritt","Bei jedem Tod","Nur bei Tod am Unfallort","Nur bei Verkehrsunfällen","Der Unfall muss ursächlich sein und der Tod binnen eines Jahres eintreten.");
+Q("B","Wo ist die soziale Pflegeversicherung angesiedelt?","Bei den Pflegekassen, die bei den Krankenkassen bestehen","Bei der Rentenversicherung","Bei der Bundesagentur für Arbeit","Beim Finanzamt","Pflegeversicherung folgt der Krankenversicherung: GKV-Versicherte sind in der sozialen, PKV-Versicherte in der privaten Pflegepflichtversicherung.");
+Q("B","Wer darf sich bei der Krankenversicherung als Arbeitnehmer privat versichern?","Wer dauerhaft über der Jahresarbeitsentgeltgrenze verdient","Jeder Arbeitnehmer","Nur Beamte","Nur Rentner","Oberhalb der Versicherungspflichtgrenze besteht Wahlfreiheit zwischen GKV und PKV.");
+Q("B","Was leistet die Beihilfe für Beamte?","Sie übernimmt einen Teil der Krankheitskosten, der Rest wird meist über die PKV abgesichert","Sie übernimmt alle Kosten vollständig","Sie ersetzt die Pflegeversicherung","Sie zahlt nur bei Unfällen","Beamte sind meist teilweise beihilfeberechtigt und ergänzen mit einer prozentualen PKV.");
+Q("B","Welchen Effekt hat eine Beitragsrückerstattung in der PKV?","Bei Leistungsfreiheit wird ein Teil der Beiträge zurückgezahlt","Sie erhöht den Beitrag","Sie gilt nur bei Krankenhausaufenthalt","Sie ersetzt den Selbstbehalt","Leistungsfreie Jahre können mit Erstattung belohnt werden, das wirkt aber ggf. auf Einreichungsverhalten.");
+Q("C","Wie lange müssen Beratungsdokumentationen des Vermittlers aufbewahrt werden?","Mindestens fünf Jahre","Ein Jahr","Zehn Jahre","Gar nicht","Der Vermittler muss Beratung und Gründe für Empfehlungen dokumentieren und die Unterlagen aufbewahren.");
+Q("C","Wie wird die Vergütung des Versicherungsmaklers üblicherweise bezeichnet?","Courtage","Gehalt","Honorar nach § 34e","Dividende","Der Makler erhält Courtage vom Versicherer, der Vertreter Provision.");
+Q("C","Wer ist als außergerichtliche Schlichtungsstelle für Versicherungsverträge zuständig?","Der Versicherungsombudsmann","Das Amtsgericht","Die IHK","Das Finanzamt","Verbraucher können sich kostenlos an den Ombudsmann wenden.");
+Q("C","Welche Behörde beaufsichtigt Versicherungsunternehmen in Deutschland?","Die BaFin","Das Bundeskartellamt","Die IHK","Das Finanzamt","Die BaFin überwacht Solvenz und Marktverhalten der Versicherer, die IHK Vermittler.");
+Q("C","Was verlangt die DSGVO bei der Verarbeitung personenbezogener Daten?","Eine Rechtsgrundlage, z.B. Einwilligung oder Vertragserfüllung","Gar nichts","Nur eine mündliche Absprache","Ein Verbot jeder Datenspeicherung","Auch Vermittler müssen Datenschutzpflichten erfüllen und Betroffenenrechte wahren.");
+Q("C","Sind Versicherungsvermittler von Lebensversicherungen Verpflichtete nach dem Geldwäschegesetz?","Ja, sie müssen z.B. Kunden identifizieren","Nein, nie","Nur Banken sind verpflichtet","Nur bei Kfz-Versicherungen","Lebensversicherungsvermittler gehören zum Kreis der Verpflichteten nach GwG.");
+Q("C","Was muss der VN nach § 7 VVG vor Antragstellung erhalten?","Vertragsbestimmungen, AVB und Produktinformationsblatt in Textform","Nur eine mündliche Info","Nur den Beitrag","Nichts","Der Versicherer muss den Verbraucher rechtzeitig vor der Vertragserklärung informieren.");
+Q("C","Wer haftet gegenüber dem VN für Pflichtverletzung, wenn der Versicherungsvertreter falsch berät?","Der Vermittler haftet selbst, der Versicherer für seine Vertreter über § 278 BGB","Nur der Kunde","Niemand","Nur die IHK","Neben dem Vermittler kann auch das vertretene Unternehmen zurechnungsweise haften.");
+Q("D","Was zählt zum Hausrat?","Alle Sachen, die dem Gebrauch oder Verbrauch im Haushalt dienen","Nur Möbel","Nur Elektrogeräte","Alles, was fest mit dem Haus verbunden ist","Hausrat sind bewegliche Sachen des Haushalts, Gebäudebestandteile gehören nicht dazu.");
+Q("D","Was ist Brand im Sinne der Sachversicherung?","Ein Feuer mit Flammenbildung, das ohne bestimmungsgemäßen Herd entstanden ist oder ihn verlassen hat","Jede Erwärmung eines Gegenstands","Nur Blitzschlag","Nur Explosionen","Sengschäden ohne Flammenbildung sind meist nicht versichert.");
+Q("D","Ab welcher Windstärke liegt nach typischen Bedingungen ein Sturm vor?","Ab Windstärke 8","Ab Windstärke 3","Ab Windstärke 12","Ab Windstärke 5","Windstärke 8 entspricht etwa 63 km/h.");
+Q("D","Was ist bei der Einbruchdiebstahlversicherung typischerweise Voraussetzung?","Einbruch in Räume durch Aufbrechen oder Nachschlüssel/Diebstahl aus verschlossenen Räumen","Jeder Diebstahl","Nur Taschendiebstahl","Nur Diebstahl aus dem Auto","Der Täter muss in einen umschlossenen Raum eindringen.");
+Q("D","Was deckt Vandalismus nach Einbruch?","Mutwillige Zerstörung durch Täter, die eingebrochen sind","Zerstörung durch Naturereignisse","Verschleiß durch Alterung","Vandalismus im Garten ohne Einbruch","Der Baustein bezieht sich auf Beschädigungen im Zusammenhang mit einem Einbruch.");
+Q("D","Was sind Aufräum-, Abbruch- und Bergungskosten?","Kosten, die nach einem Schaden für Aufräumen, Abriss und Bergung entstehen","Kosten für Neubau","Kosten für die Steuer","Kosten für den Vermittler","Sie sind in der Gebäudeversicherung mitversichert, oft mit Grenzen.");
+Q("D","Was versteht man unter dem Versicherungsort in der Hausratversicherung?","Die im Vertrag bezeichnete Wohnung samt zugehörigen Nebenräumen","Jeder Ort weltweit","Nur das Wohnzimmer","Nur der Keller","Der Versicherungsort ist der Ort, an dem der Schutz grundsätzlich besteht.");
+Q("D","Was ist ein Frostschaden in der Leitungswasserversicherung?","Platzen frostgefährdeter Rohre und die daraus folgenden Schäden","Schäden durch Schnee auf dem Dach","Schäden durch Regenwasser","Hagelschäden","Frostbedingte Bruchschäden an Rohren sind typischerweise mitversichert.");
+Q("E","Womit wird der Kfz-Haftpflichtschutz bei der Zulassung nachgewiesen?","Mit der elektronischen Versicherungsbestätigung (eVB)","Mit dem Führerschein","Mit dem Kaufvertrag","Mit dem Personalausweis","Ohne eVB-Nummer erfolgt keine Zulassung.");
+Q("E","Welche Gefahren sind typischerweise in der Teilkasko versichert?","Diebstahl, Brand, Explosion, Sturm ab Windstärke 8, Hagel, Wildschäden","Selbst verursachte Unfallschäden","Vandalismus durch Dritte","Reifenverschleiß","Der eigene Unfallschaden gehört zur Vollkasko.");
+Q("E","Ab welchem Alter sind Kinder nach BGB nicht deliktsfähig?","Unter sieben Jahren, im Straßenverkehr unter zehn","Unter 14","Unter 3","Unter 18","Kinder unter sieben haften nicht für Schäden, im Straßenverkehr gilt die Grenze von zehn Jahren.");
+Q("E","Was ist die Grundnorm der Verschuldenshaftung im BGB?","§ 823 BGB","§ 34d GewO","§ 61 VVG","§ 7 StVG","Wer vorsätzlich oder fahrlässig ein Rechtsgut verletzt, muss Schadenersatz leisten.");
+Q("E","Was gewährleistet § 127 VVG in der Rechtsschutzversicherung?","Die freie Anwaltswahl","Die Wahl des Gerichts","Die Erstattung ohne Prüfung","Die Deckungssumme","Der VN darf den Rechtsanwalt frei wählen.");
+Q("E","Was ist im Rechtsschutz typischerweise ausgeschlossen?","Streitigkeiten im Zusammenhang mit Erwerb oder Bau eines Grundstücks","Verkehrsrechtliche Streitigkeiten","Arbeitsrechtliche Streitigkeiten im Berufsrechtsschutz","Streitigkeiten mit Nachbarn im Wohnrechtsschutz","Bau- und Baufinanzierungsstreitigkeiten sind meist ausgeschlossen oder nur separat versicherbar.");
+Q("E","Was leistet eine Rechtsschutzversicherung im Kern?","Übernahme von Anwalts-, Gerichts- und Sachverständigenkosten","Zahlung von Schmerzensgeld","Ersatz von Sachschäden","Zahlung der Geldstrafe","Ersetzt werden die Kosten der Rechtsverfolgung, nicht der Streitwert selbst.");
+Q("E","Was ist die Gefährdungshaftung?","Haftung unabhängig vom Verschulden aufgrund einer besonderen Gefahrenquelle","Haftung nur bei Vorsatz","Haftung nur bei grober Fahrlässigkeit","Haftung des Staates","Typische Beispiele sind Kfz-Halter oder Tierhalter.");
+
+// --- Aktuelle Zahlen (Stand 2026) ---
+Q("A","Wie hoch ist der Höchstrechnungszins für neue Lebensversicherungen seit dem 1.1.2025?","1,0 %","0,25 %","2,25 %","4,0 %","Er wurde erstmals seit 30 Jahren von 0,25 % auf 1 % angehoben; er begrenzt den Garantiezins, ist aber nicht dasselbe.");
+Q("A","Wie hoch ist 2026 der steuerlich absetzbare Höchstbetrag für die Basisrente (Alleinstehende)?","30.826 €","29.344 €","20.000 €","61.652 €","Für gemeinsam Veranlagte gilt der doppelte Betrag (61.652 €). 2025 waren es 29.344 €.");
+Q("A","Bis zu welchem Anteil der Beitragsbemessungsgrenze der GRV sind bAV-Beiträge (§ 3 Nr. 63 EStG) steuerfrei?","Bis zu 8 %","Bis zu 4 %","Bis zu 2 %","Bis zu 12 %","Sozialversicherungsfrei sind Beiträge nur bis 4 % der BBG.");
+Q("A","Wie hoch ist der Beitragssatz zur gesetzlichen Rentenversicherung 2026?","18,6 %","14,6 %","3,6 %","2,6 %","Arbeitgeber und Arbeitnehmer tragen je die Hälfte, also 9,3 %.");
+Q("A","Wie hoch ist die Beitragsbemessungsgrenze der Renten- und Arbeitslosenversicherung 2026 (monatlich)?","8.450 €","8.050 €","5.812,50 € ","6.450 €","2025 lag sie bei 8.050 €. Die Jahresgrenze beträgt 101.400 €.");
+Q("B","Wie hoch ist die Beitragsbemessungsgrenze in der GKV/Pflegeversicherung 2026 (monatlich)?","5.812,50 €","5.512,50 €","6.450 €","8.450 €","Jährlich sind das 69.750 €; darüber hinausgehendes Einkommen bleibt beitragsfrei.");
+Q("B","Wie hoch ist die Versicherungspflichtgrenze (JAEG) in der GKV 2026 (jährlich)?","77.400 €","73.800 €","69.750 €","101.400 €","Wer darüber liegt, kann in die PKV wechseln oder freiwillig in der GKV bleiben. 2025: 73.800 €.");
+Q("B","Wie hoch ist der allgemeine GKV-Beitragssatz 2026 (ohne Zusatzbeitrag)?","14,6 %","18,6 %","7,3 %","3,6 %","Davon zahlen Arbeitgeber und Arbeitnehmer je 7,3 %; der Zusatzbeitrag ist kassenindividuell und wird ebenfalls geteilt.");
+Q("B","Wie hoch ist der durchschnittliche Zusatzbeitrag der Krankenkassen 2026?","2,9 %","1,7 %","3,6 %","0,9 %","Der tatsächliche Zusatzbeitrag hängt von der jeweiligen Krankenkasse ab.");
+Q("B","Wie hoch ist der allgemeine Beitragssatz zur sozialen Pflegeversicherung 2026?","3,6 % (Kinderlose 4,2 %)","2,6 %","4,6 %","1,8 %","Kinderlose zahlen einen Zuschlag; für Eltern mit mehreren Kindern gibt es Abschläge.");
+Q("B","Wie hoch ist das monatliche Pflegegeld bei Pflegegrad 3 (2026)?","599 €","347 €","800 €","990 €","Pflegegrad 2: 347 €, PG 4: 800 €, PG 5: 990 €. Bei Pflegegrad 1 gibt es kein Pflegegeld.");
+Q("B","Wie hoch ist das monatliche Pflegegeld bei Pflegegrad 5 (2026)?","990 €","800 €","1.200 €","599 €","Der Betrag gilt seit 2025 unverändert, die nächste Anpassung ist frühestens 2028 geplant.");
+Q("B","Erhält man bei Pflegegrad 1 Pflegegeld?","Nein, nur u.a. den Entlastungsbetrag","Ja, 347 €","Ja, 125 €","Ja, aber nur zur Hälfte","Ab Pflegegrad 1 besteht Anspruch auf den Entlastungsbetrag (131 € monatlich), Pflegegeld erst ab Pflegegrad 2.");
+Q("B","Wie hoch sind die ambulanten Pflegesachleistungen bei Pflegegrad 3 (bis zu, monatlich, 2026)?","1.497 €","796 €","1.859 €","2.299 €","Pflegesachleistungen werden für professionelle Pflegedienste gezahlt: PG 2 796 €, PG 3 1.497 €, PG 4 1.859 €, PG 5 2.299 €.");
+Q("B","Wie hoch ist der monatliche Entlastungsbetrag nach § 45b SGB XI (2026)?","131 €","347 €","599 €","50 €","Er ist zweckgebunden, z.B. für Betreuungs- und Entlastungsangebote.");
+Q("B","Wie hoch ist der gemeinsame Jahresbetrag für Verhinderungs- und Kurzzeitpflege (2026)?","3.539 €","1.612 €","2.418 €","5.000 €","Beide Leistungen wurden zu einem flexibel nutzbaren Jahresbudget zusammengeführt.");
+Q("B","Bis zu welcher Einkommensgrenze ist die beitragsfreie Familienversicherung 2026 möglich (monatlich)?","565 €","538 €","1.000 €","2.000 €","Wer darüber verdient, kann nicht mehr beitragsfrei mitversichert werden.");
+Q("B","Wie hoch ist 2026 der Höchstzuschuss des Arbeitgebers zum PKV-Beitrag?","508,59 €","466,09 €","700,00 €","300,00 €","Er orientiert sich an dem Betrag, den der Arbeitgeber bei einer GKV-Mitgliedschaft zahlen würde.");
+Q("B","Wie oft muss bei reinem Pflegegeldbezug ein Beratungsbesuch erfolgen?","PG 2 und 3 halbjährlich, PG 4 und 5 vierteljährlich","Immer monatlich","Nur einmal jährlich bei allen Pflegegraden","Gar nicht","Die Pflicht dient der Qualitätssicherung der häuslichen Pflege; bei Versäumnis kann das Pflegegeld gekürzt werden.");
+Q("B","Wie hoch ist der Beitragssatz zur Arbeitslosenversicherung 2026?","2,6 %","3,6 %","1,3 %","14,6 %","Er wird je zur Hälfte von Arbeitgeber und Arbeitnehmer getragen.");
+
+// --- Fall- und Begriffsfragen (Sach, Haftpflicht/Kfz, Recht, Personen) ---
+Q("A","Was bedeutet das Kapitalwahlrecht bei einer Rentenversicherung?","Der VN kann statt der lebenslangen Rente eine einmalige Kapitalauszahlung wählen","Der Versicherer darf die Rente kürzen","Der VN darf die Beiträge frei wählen","Die Rente wird verdoppelt","Es muss meist vor Rentenbeginn ausgeübt werden und wirkt sich auch auf die Besteuerung aus.");
+Q("A","Was regelt die Nachprüfung in der Berufsunfähigkeitsversicherung (§ 174 VVG)?","Der Versicherer darf prüfen, ob die BU weiterhin besteht","Der VN muss jährlich neu beantragen","Die Rente endet automatisch nach zwei Jahren","Der Versicherer darf nie nachprüfen","Bei Wegfall der BU kann die Leistung eingestellt werden, das muss der Versicherer in Textform begründen.");
+Q("B","Wie unterscheidet sich das Erstattungsprinzip der PKV vom Sachleistungsprinzip der GKV?","PKV: VN zahlt zunächst selbst und reicht die Rechnung ein; GKV: Abrechnung meist direkt über die Karte","Beide funktionieren identisch","GKV erstattet immer nachträglich","PKV rechnet nie mit Ärzten ab","In der PKV besteht das Vertragsverhältnis mit dem Versicherer, die Arztrechnung ist eine Rechnung an den VN.");
+Q("B","Wer trägt die Beiträge zur gesetzlichen Unfallversicherung (Berufsgenossenschaft)?","Allein der Arbeitgeber","Arbeitgeber und Arbeitnehmer je zur Hälfte","Allein der Arbeitnehmer","Das Finanzamt","Die gesetzliche Unfallversicherung ist eine reine Arbeitgeberversicherung.");
+Q("D","Versicherungssumme 60.000 €, Versicherungswert 80.000 €, Schaden 20.000 €. Wie hoch ist bei Unterversicherung die Entschädigung (ohne SB)?","15.000 €","20.000 €","10.000 €","12.000 €","Formel: Versicherungssumme ÷ Versicherungswert × Schaden = 60.000 ÷ 80.000 × 20.000 = 15.000 €.");
+Q("D","Wird eine fest montierte Solaranlage auf dem Dach üblicherweise dem Gebäude zugerechnet?","Ja, als Gebäudebestandteil","Nein, immer als Hausrat","Nein, sie ist gar nicht versicherbar","Nur bei Mietern","Sie sollte im Vertrag berücksichtigt werden, damit die Versicherungssumme ausreicht.");
+Q("D","Was ist ein Blitzschlag im Sinne der Sachversicherung?","Der unmittelbare Übergang eines Blitzes auf Sachen","Jede Überspannung im Stromnetz","Ein Brand aus anderer Ursache","Jeder Stromausfall","Reine Überspannungsschäden ohne direkten Einschlag brauchen meist einen Zusatzbaustein.");
+Q("D","Was ist eine Explosion im Sinne der Sachversicherung?","Eine plötzlich verlaufende Kraftäußerung auf Grund des Ausdehnungsbestrebens von Gasen oder Dämpfen","Ein langsames Verbrennen","Ein Leitungswasserschaden","Ein Sturmschaden","Kennzeichen sind Plötzlichkeit und Druckwirkung durch Gase oder Dämpfe.");
+Q("D","Was bewirkt der Verzicht auf die Kürzung bei grober Fahrlässigkeit?","Der Versicherer kürzt bei grober Fahrlässigkeit nicht oder nur oberhalb einer vereinbarten Grenze","Der VN haftet immer voll","Der Vertrag endet","Die Selbstbeteiligung entfällt bei Vorsatz","Die Klausel schützt vor der Quotelung nach § 81 VVG, gilt aber nicht bei Vorsatz.");
+Q("D","Was gilt beim Umzug für den Hausratschutz?","Meist besteht für begrenzte Zeit Schutz in alter und neuer Wohnung","Es besteht sofort kein Schutz mehr","Nur die neue Wohnung ist geschützt","Umzüge sind ausgeschlossen","Die Frist (häufig zwei Monate) gilt für die Doppelversicherung, danach nur noch die neue Wohnung.");
+Q("D","Was gilt als Sicherheitsvorschrift in der Leitungswasserversicherung?","Wasserführende Anlagen frostfrei halten und bei längerer Abwesenheit ggf. Wasser abstellen","Rohre jährlich erneuern","Hausrat nur in Kellern lagern","Einen Wasserhahn dauerhaft offen lassen","Ein Verstoß kann als Obliegenheitsverletzung zu Leistungskürzung führen.");
+Q("D","Wozu dient die Bauleistungsversicherung?","Sie deckt unvorhergesehene Schäden am Bauwerk während der Bauzeit","Sie deckt Schäden Dritter","Sie ersetzt die Wohngebäudeversicherung dauerhaft","Sie deckt nur Diebstahl","Typisch sind Schäden durch Konstruktionsfehler, Witterung oder Vandalismus am entstehenden Bau.");
+Q("D","Wer versichert eine vom Vermieter eingebaute Einbauküche, wer eine vom Mieter eingebrachte?","Vermieter: Gebäude; vom Mieter eingebrachte Küche: meist Hausrat des Mieters","Immer der Mieter","Immer der Vermieter","Keine Versicherung","Entscheidend ist, wer Eigentümer ist und wer sie eingebracht hat.");
+Q("D","Wer kann nach einem Leistungsfall in der Sachversicherung kündigen?","Beide Vertragsparteien, meist mit einer Frist von einem Monat","Nur der VN","Nur der Versicherer","Niemand","Das außerordentliche Kündigungsrecht nach dem Versicherungsfall ist in § 111 VVG geregelt.");
+Q("E","Was bedeutet Neuwertentschädigung in der Kasko oft?","Sie gilt oft nur befristet, z.B. in den ersten Monaten nach Erstzulassung","Sie gilt unbegrenzt","Sie gilt nur für Gebrauchtwagen","Sie ersetzt die Haftpflicht","Danach wird meist der Wiederbeschaffungswert ersetzt.");
+Q("E","Wie wird die Entschädigung bei einem Kfz-Totalschaden grundsätzlich berechnet?","Wiederbeschaffungswert abzüglich Restwert","Neupreis des Fahrzeugs","Kaufpreis von vor zehn Jahren","Nur der Restwert","Der Wiederbeschaffungswert ist der Preis, den man für ein gleichwertiges Fahrzeug zahlen müsste.");
+Q("E","Was bewirkt ein Rabattschutz (Rabattretter)?","Ein Schaden führt (meist einmalig) nicht zur Rückstufung der SF-Klasse","Er verdoppelt den Rabatt","Er gilt nur für Neufahrzeuge","Er schließt Schäden aus","Der Beitrag steigt oft trotzdem, aber die Einstufung bleibt erhalten.");
+Q("E","Wer ist in der Kfz-Haftpflicht typischerweise mitversichert?","Halter, Eigentümer und Fahrer des Fahrzeugs","Nur der Eigentümer","Nur der Fahrer","Nur der Vermittler","Die Mitversicherung erstreckt sich auf die Personen, die für den Gebrauch des Fahrzeugs verantwortlich sind.");
+Q("E","Was ist das Schadenereignisprinzip in der Haftpflichtversicherung?","Maßgeblich ist der Zeitpunkt des Schadenereignisses","Maßgeblich ist der Zeitpunkt der Antragstellung","Maßgeblich ist der Zeitpunkt der Meldung","Maßgeblich ist das Vertragsende","Bei Kfz und PHV entscheidet der Eintritt des Schadens, nicht die Anspruchserhebung.");
+Q("E","Sind vorsätzlich herbeigeführte Schäden in der Haftpflicht versichert?","Nein, Vorsatz ist ausgeschlossen (§ 103 VVG)","Ja, immer","Nur bei Kindern","Nur bis 1.000 €","Der Versicherer ist bei vorsätzlicher Herbeiführung des Versicherungsfalls leistungsfrei.");
+Q("E","Was sind Erfüllungsschäden bzw. Erfüllungsansprüche, die in der Haftpflicht ausgeschlossen sind?","Ansprüche aus der Nichterfüllung eigener vertraglicher Leistungspflichten","Schäden Dritter","Schäden am Eigentum Dritter","Sämtliche Sachschäden","Die Haftpflicht ersetzt nicht das Unternehmerrisiko einer mangelhaften Leistung selbst.");
+Q("E","Wann tritt der Rechtsschutzfall meist ein?","Mit dem tatsächlichen oder behaupteten Verstoß gegen Rechtspflichten","Mit Vertragsabschluss","Mit dem Urteil","Mit der Klageeinreichung","Ereignisse vor Vertragsbeginn und in der Wartezeit sind typischerweise nicht gedeckt.");
+Q("E","Welche Merkmale bestimmen den Kfz-Beitrag maßgeblich?","Typklasse, Regionalklasse und SF-Klasse","Nur die Farbe des Autos","Nur das Alter des Fahrers","Nur der Kaufpreis","Weitere Faktoren sind Fahrleistung, Nutzung und Alter des Fahrers.");
+Q("E","Zu welchem Termin kündigt man üblicherweise einen Kfz-Vertrag mit Kalenderjahr als Versicherungsperiode?","Bis 30.11. zum 31.12.","Bis 31.12. zum 31.12.","Jederzeit ohne Frist","Nur zum 30.06.","Die Kündigung muss dem Versicherer meist mindestens einen Monat vor Ablauf zugehen.");
+Q("C","Was ist eine vorläufige Deckungszusage?","Versicherungsschutz vor Vertragsschluss, z.B. bis zur Policierung","Endgültiger Vertragsabschluss","Ein Rabatt","Ein Kündigungsrecht","Sie überbrückt die Zeit zwischen Antrag und Annahme durch den Versicherer.");
+Q("C","Wann beginnt die Widerrufsfrist im Antragsmodell?","Wenn der VN Police, Vertragsinformationen und Widerrufsbelehrung in Textform erhalten hat","Mit dem Antrag","Mit der ersten Zahlung","Mit dem Vertragsende","Ohne ordnungsgemäße Belehrung kann die Frist noch nicht laufen.");
+Q("C","Wann kann der Versicherer wegen einer Anzeigepflichtverletzung vom Vertrag zurücktreten?","Bei Vorsatz oder grober Fahrlässigkeit","Bei jeder unbedeutenden Ungenauigkeit","Nie","Nur bei Kindern","Bei einfacher Fahrlässigkeit kommen nur Vertragsanpassung bzw. Kündigung in Betracht.");
+Q("C","Wie lange muss der Versicherer bei Zahlungsverzug der Folgeprämie mindestens Zahlungsfrist setzen?","Mindestens zwei Wochen","Eine Woche","Drei Monate","Keine Frist nötig","Nach erfolgloser Fristsetzung kann Leistungsfreiheit und Kündigung eintreten (§ 38 VVG).");
+Q("C","Wie lange kann der Versicherer nach Rücktritt wegen Anzeigepflichtverletzung maximal zurücktreten?","Fünf Jahre, bei Vorsatz oder Arglist zehn Jahre","Ein Jahr","Unbegrenzt","Sechs Monate","Nach Ablauf der Frist erlischt das Rücktrittsrecht (§ 21 VVG).");
+Q("C","Was regelt das Widerspruchsrecht gegen abweichenden Versicherungsschein (§ 5 VVG)?","Der VN kann Abweichungen von seinem Antrag binnen eines Monats widersprechen","Der Vertrag ist automatisch nichtig","Nur der Versicherer kann widersprechen","Es gibt kein Widerspruchsrecht","Der Versicherer muss auf die Abweichung und die Frist hinweisen.");
+Q("C","Was ermöglicht die Maklervollmacht?","Der Makler darf für den Kunden Verträge verwalten und mit Versicherern kommunizieren","Der Makler darf Verträge ohne Kunden kündigen","Der Kunde haftet nicht mehr","Der Versicherer zahlt keine Provision","Sie ist eine Beauftragung durch den Kunden und regelt Betreuung und Verwaltung.");
+Q("C","Wer ist von der Sachkundeprüfung nach § 34d GewO typischerweise befreit?","Wer eine einschlägige Ausbildung nachweist, z.B. Kaufmann/-frau für Versicherungen und Finanzen","Jeder mit Führerschein","Jeder ab 30 Jahren","Niemand","Die Sachkunde kann auch durch bestimmte Abschlüsse nachgewiesen werden.");
+
+// --- Rechenaufgaben (vereinfachte Annahmen, Rechenweg in der Erklärung) ---
+Q("D","Versicherungssumme 50.000 €, Versicherungswert 100.000 €, Schaden 30.000 €, Selbstbeteiligung 500 €. Wie hoch ist die Entschädigung?","14.500 €","15.000 €","29.500 €","15.500 €","Erst Unterversicherung: 50.000 ÷ 100.000 × 30.000 = 15.000 €, dann SB abziehen = 14.500 € (übliche Reihenfolge).");
+Q("D","Versicherungssumme 90.000 €, Versicherungswert 120.000 €, Schaden 8.000 €. Wie hoch ist die Entschädigung (ohne SB)?","6.000 €","8.000 €","2.000 €","7.500 €","90.000 ÷ 120.000 = 0,75; 0,75 × 8.000 = 6.000 €.");
+Q("D","Versicherungssumme 100.000 €, tatsächlicher Wert 70.000 €, Schaden 10.000 €. Wie hoch ist die Entschädigung?","10.000 €","14.286 €","7.000 €","100.000 €","Bei Überversicherung wird nur der tatsächliche Schaden ersetzt, nie mehr.");
+Q("D","Versicherungssumme = Versicherungswert = 40.000 €, Schaden 5.000 €. Wie hoch ist die Entschädigung (ohne SB)?","5.000 €","4.000 €","2.500 €","40.000 €","Keine Unterversicherung, also wird der volle Schaden ersetzt.");
+Q("D","Versicherungssumme 50.000 €, Wert 100.000 €, Schaden 30.000 €. Der Unterversicherungsverzicht greift. Entschädigung?","30.000 €","15.000 €","50.000 €","0 €","Innerhalb der vereinbarten Grenze verzichtet der Versicherer auf die Kürzung.");
+Q("D","Neuwert einer Sache 1.200 €, Wertminderung durch Alter und Abnutzung 25 %. Wie hoch ist der Zeitwert?","900 €","300 €","1.500 €","1.200 €","Zeitwert = Neuwert abzüglich Wertminderung: 1.200 − 300 = 900 €.");
+Q("E","Vollkasko: Schaden 2.400 €, Selbstbeteiligung 300 €. Wie viel zahlt der Versicherer?","2.100 €","2.700 €","2.400 €","300 €","Schaden minus Selbstbeteiligung: 2.400 − 300 = 2.100 €.");
+Q("E","Deckungssumme 1.000.000 €, Schaden 1.300.000 €. Wie viel muss der VN selbst tragen?","300.000 €","1.300.000 €","0 €","650.000 €","Der Versicherer zahlt höchstens bis zur Deckungssumme.");
+Q("E","Rechtsschutz: Kosten 2.500 €, Selbstbeteiligung 250 €. Wie viel übernimmt der Versicherer?","2.250 €","2.750 €","250 €","2.500 €","Kosten minus Selbstbeteiligung: 2.500 − 250 = 2.250 €.");
+Q("E","Grundbeitrag 1.000 €, SF-Klasse mit Beitragssatz 40 %. Wie hoch ist der Beitrag?","400 €","600 €","40 €","1.400 €","40 % von 1.000 € = 400 €.");
+Q("E","Jahresbeitrag 480 €, vierteljährliche Zahlung mit 3 % Zuschlag. Was zahlt der VN pro Jahr insgesamt?","494,40 €","483,00 €","480,00 €","514,40 €","480 × 1,03 = 494,40 €, pro Quartal 123,60 €.");
+Q("B","Unfallversicherung: Grundsumme 100.000 €, Progression 350 %, Invaliditätsgrad 100 %. Wie hoch ist die Leistung?","350.000 €","100.000 €","225.000 €","250.000 €","Bei einer 350-%-Progression werden bei 100 % Invalidität 350 % der Grundsumme gezahlt.");
+Q("B","Grundsumme 80.000 €, Invaliditätsgrad 25 %, keine Progression. Leistung?","20.000 €","25.000 €","80.000 €","32.000 €","25 % von 80.000 € = 20.000 €.");
+Q("B","Krankentagegeld 60 € pro Tag, 30 Krankentage. Wie viel zahlt der Versicherer?","1.800 €","1.200 €","2.400 €","600 €","60 × 30 = 1.800 €.");
+Q("B","Brutto 3.000 €, GKV-Beitragssatz 14,6 % + Zusatzbeitrag 2,9 %. Wie hoch ist der Arbeitnehmeranteil?","262,50 €","525,00 €","438,00 €","219,00 €","Insgesamt 17,5 % = 525 €, hälftig geteilt = 262,50 € (Beitragsbemessungsgrenze nicht überschritten).");
+Q("B","Brutto 3.000 €, Pflegeversicherung 3,6 % (vereinfacht ohne Sonderfälle). Wie hoch ist der Arbeitnehmeranteil?","54,00 €","108,00 €","90,00 €","36,00 €","Der Arbeitnehmeranteil beträgt vereinfacht die Hälfte, also 1,8 %: 3.000 × 0,018 = 54 €.");
+Q("A","Rentenfaktor 30 € monatliche Rente je 10.000 € Kapital, Kapital 150.000 €. Wie hoch ist die Monatsrente?","450 €","300 €","500 €","45 €","150.000 ÷ 10.000 = 15; 15 × 30 € = 450 €.");
+Q("A","Auszahlung 70.000 €, eingezahlte Beiträge 50.000 €, Voraussetzungen für die hälftige Besteuerung erfüllt. Wie viel ist steuerpflichtig?","10.000 €","20.000 €","70.000 €","35.000 €","Ertrag = 20.000 €, davon zur Hälfte steuerpflichtig = 10.000 €.");
+Q("A","Brutto 3.000 €, Rentenversicherungsbeitrag insgesamt 18,6 %. Wie hoch ist der Arbeitnehmeranteil?","279,00 €","558,00 €","438,00 €","186,00 €","Der Arbeitnehmer zahlt 9,3 %: 3.000 × 0,093 = 279 €.");
+Q("C","Ein Anspruch entsteht und der Gläubiger erfährt davon am 15.06.2026. Wann verjährt er nach regelmäßiger Frist?","Am 31.12.2029","Am 15.06.2029","Am 31.12.2028","Am 31.12.2036","Die dreijährige Frist beginnt mit dem Jahresende 2026 und endet am 31.12.2029.");
+Q("C","Für welche Versicherungen fällt regelmäßig keine Versicherungssteuer an?","Lebens- und Krankenversicherung","Hausratversicherung","Kfz-Haftpflicht","Privathaftpflicht","Bei den meisten Sachversicherungen fällt Versicherungssteuer an, Personenversicherungen wie Leben und Kranken sind regelmäßig befreit.");
+
+questions.forEach((q,i)=>q.id=i);
+
+// --- Hintergrundszenen (SVG, offline, kein Bilddownload) ---
+function scene(sky1,sky2,sun,layers){
+  const hills = layers.map(([c,y,a])=>`<path d="M0 ${y} Q100 ${y-a} 200 ${y} T400 ${y} V800 H0Z" fill="${c}"/>`).join('');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky1}"/><stop offset="1" stop-color="${sky2}"/></linearGradient></defs><rect width="400" height="800" fill="url(#g)"/><circle cx="300" cy="190" r="48" fill="${sun}" opacity=".9"/>${hills}</svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+const SCENES = [
+  {n:"🏔️ Berge", bg:scene("#9fd3f0","#e9f6ee","#fff3b0",[["#8fc7a5",520,50],["#5fa88a",600,60],["#3d8570",690,40]])},
+  {n:"🌊 Meer", bg:scene("#86cfe8","#f6ecd0","#ffe7a0",[["#4fb3d1",560,25],["#2f93b8",640,30],["#1f6f96",720,20]])},
+  {n:"🌅 Abend", bg:scene("#f7b28b","#f9e2b8","#fff0c2",[["#c9788f",540,45],["#8d5a94",620,55],["#54407a",700,35]])},
+  {n:"🌲 Wald", bg:scene("#bfe3c8","#eef7df","#fffbd0",[["#7fbf8c",530,50],["#3f9a6b",610,60],["#20734f",700,40]])}
+];
+let sceneIdx = 0;
+try{ sceneIdx = parseInt(localStorage.getItem("quiz34d_scene")||"0")||0; }catch(e){}
+function applyScene(){
+  const s = SCENES[sceneIdx % SCENES.length];
+  document.body.style.backgroundImage = s.bg;
+  document.getElementById('themeBtn').textContent = "🎨 " + s.n;
+  try{ localStorage.setItem("quiz34d_scene", String(sceneIdx)); }catch(e){}
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// --- Persistenz (pro Gerät/Browser, nicht geteilt) ---
+const STORE_KEY = "quiz34d_progress_v1";
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {streak:0, lastDate:null, examDate:null, stats:{}, totalAnswered:0, totalCorrect:0};
+}
+function saveProgress(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }catch(e){}
+}
+let progress = loadProgress();
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+
+function registerPractice(){
+  const t = todayStr();
+  if(progress.lastDate === t) return; // schon heute gezählt
+  if(progress.lastDate && daysBetween(progress.lastDate, t)===1){ progress.streak++; }
+  else { progress.streak = 1; }
+  progress.lastDate = t;
+  saveProgress();
+}
+
+function recordAnswer(qId, correct){
+  const s = progress.stats[qId] || {seen:0, correct:0};
+  s.seen++; if(correct) s.correct++;
+  progress.stats[qId] = s;
+  progress.totalAnswered++;
+  if(correct) progress.totalCorrect++;
+  saveProgress();
+}
+
+let activeCat = "Alle";
+let session = [];
+let idx = 0;
+let answers = {};
+let view = "home";
+
+function buildSession(pool){
+  return shuffle(pool.slice()).map(item=>{
+    const withFlag = item.opts.map((o,oi)=>({text:o, correct:oi===item.c}));
+    shuffle(withFlag);
+    const correctIndex = withFlag.findIndex(o=>o.correct);
+    return {id:item.id, cat:item.cat, q:item.q, e:item.e, opts:withFlag.map(o=>o.text), c:correctIndex};
+  });
+}
+
+function startQuiz(cat){
+  view = "quiz";
+  activeCat = cat;
+  examMode = false; clearInterval(examTimer);
+  session = buildSession(questions.filter(q=> cat==="Alle" || q.cat===cat));
+  idx = 0; answers = {};
+  document.getElementById('catbar').style.display='flex';
+  renderCatbar();
+  renderQuestion();
+}
+
+// Tagesrunde: gewichtete Auswahl - nie gesehene und zuvor falsch beantwortete Fragen werden bevorzugt
+function startDailyRound(){
+  view = "quiz";
+  activeCat = "Tagesrunde";
+  examMode = false; clearInterval(examTimer);
+  const weighted = questions.map(q=>{
+    const s = progress.stats[q.id];
+    let w = 5; // nie gesehen
+    if(s){ w = s.correct/s.seen >= 0.8 ? 1 : (s.correct/s.seen >= 0.5 ? 3 : 6); }
+    return {q, w};
+  });
+  const pool=[];
+  weighted.forEach(({q,w})=>{ for(let k=0;k<w;k++) pool.push(q); });
+  const chosenIds = new Set();
+  const chosen = [];
+  shuffle(pool);
+  for(const q of pool){
+    if(chosen.length>=15) break;
+    if(chosenIds.has(q.id)) continue;
+    chosenIds.add(q.id); chosen.push(q);
+  }
+  session = buildSession(chosen);
+  idx = 0; answers = {};
+  document.getElementById('catbar').style.display='none';
+  renderQuestion();
+}
+
+function renderCatbar(){
+  const cats = ["Alle","A","B","C","D","E"];
+  const catbar = document.getElementById('catbar');
+  catbar.innerHTML = cats.map(c=>{
+    const color = c==="Alle" ? "#555" : CAT[c].color;
+    return `<div class="chip ${c===activeCat?'active':''}" style="--chipcolor:${color}" data-c="${c}">${c}</div>`;
+  }).join('');
+  catbar.querySelectorAll('.chip').forEach(el=>el.onclick=()=>startQuiz(el.dataset.c));
+}
+
+function examDaysLeft(){
+  if(!progress.examDate) return null;
+  return daysBetween(todayStr(), progress.examDate);
+}
+
+function renderHome(){
+  view = "home";
+  examMode = false; clearInterval(examTimer);
+  document.getElementById('catbar').style.display='none';
+  const dl = examDaysLeft();
+  const acc = progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100) : null;
+
+  document.getElementById('app').innerHTML = `
+    <div class="homegrid">
+      <div class="mini"><div class="big">🔥 ${progress.streak}</div><div class="lbl">Tage in Folge geübt</div></div>
+      <div class="mini"><div class="big">${acc!==null? acc+"%":"–"}</div><div class="lbl">Trefferquote gesamt</div></div>
+    </div>
+    <div class="examcard">
+      ${progress.examDate
+        ? `<div><b>${dl>=0? dl : 0}</b> Tage bis zur Prüfung<br><span style="color:var(--sub); font-size:.78rem;">${progress.examDate}</span></div><button class="linkbtn" id="editExam">ändern</button>`
+        : `<div style="font-size:.85rem;">Prüfungstermin (Januar) eintragen:</div><input type="date" id="examInput"><button class="linkbtn" id="saveExam">speichern</button>`
+      }
+    </div>
+    <button class="dailybtn" id="dailyBtn">
+      <div class="t1">🎯 Tagesrunde starten</div>
+      <div class="t2">15 Fragen, mit Fokus auf das, was noch schwerfällt</div>
+    </button>
+    <button class="btn" id="examBtn" style="width:100%; margin:0 0 14px; background:linear-gradient(135deg,#c9622a,#a13d7c);">📝 Prüfungssimulation (Teil I + II, mit Zeitlimit)</button>
+    <div class="sectionlbl">Gezielt üben</div>
+    <div class="catgrid">
+      ${Object.entries(CAT).map(([c,v])=>`<div class="catcard" style="--catcolor:${v.color}" data-c="${c}"><div class="cn">${c}</div><div class="cs">${v.name}</div></div>`).join('')}
+    </div>
+    <button class="btn" id="allBtn" style="width:100%;">Alle Fragen (${questions.length}) am Stück</button>
+    <button class="linkbtn" id="statsBtn" style="margin-top:12px;">📊 Statistik ansehen</button>
+  `;
+  document.getElementById('dailyBtn').onclick = startDailyRound;
+  document.getElementById('examBtn').onclick = startExam;
+  document.getElementById('allBtn').onclick = ()=>startQuiz("Alle");
+  document.getElementById('statsBtn').onclick = renderStats;
+  document.querySelectorAll('.catcard').forEach(el=>el.onclick=()=>startQuiz(el.dataset.c));
+  const saveExam = document.getElementById('saveExam');
+  if(saveExam) saveExam.onclick = ()=>{
+    const v = document.getElementById('examInput').value;
+    if(v){ progress.examDate = v; saveProgress(); renderHome(); }
+  };
+  const editExam = document.getElementById('editExam');
+  if(editExam) editExam.onclick = ()=>{ progress.examDate = null; saveProgress(); renderHome(); };
+}
+
+function renderStats(){
+  view = "stats";
+  document.getElementById('catbar').style.display='none';
+  const byCat = {};
+  Object.entries(progress.stats).forEach(([id,s])=>{
+    const q = questions[id]; if(!q) return;
+    byCat[q.cat] = byCat[q.cat] || {seen:0, correct:0};
+    byCat[q.cat].seen += s.seen; byCat[q.cat].correct += s.correct;
+  });
+  document.getElementById('app').innerHTML = `
+    <div class="topnav"><button class="linkbtn" id="backHome">← Zur Startseite</button></div>
+    <div class="card">
+      <div class="sectionlbl" style="margin-top:0;">Gesamt</div>
+      <div class="statbar-row">
+        <div class="lbl"><span>${progress.totalAnswered} Fragen beantwortet</span><span>${progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100):0}%</span></div>
+        <div class="statbar-track"><div class="statbar-fill" style="width:${progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100):0}%; background:#2f9e7d;"></div></div>
+      </div>
+      <div class="sectionlbl">Pro Sachgebiet</div>
+      ${Object.entries(CAT).map(([c,v])=>{
+        const s = byCat[c] || {seen:0, correct:0};
+        const p = s.seen? Math.round(s.correct/s.seen*100) : 0;
+        return `<div class="statbar-row">
+          <div class="lbl"><span>${c} – ${v.name}</span><span>${s.seen? p+"% ("+s.seen+")" : "noch nicht geübt"}</span></div>
+          <div class="statbar-track"><div class="statbar-fill" style="width:${p}%; background:${v.color};"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  document.getElementById('backHome').onclick = renderHome;
+}
+
+function renderQuestion(){
+  const app = document.getElementById('app');
+  if(examMode){ if(idx>=session.length){ renderExamResult(); return; } renderExamQuestion(); return; }
+  if(idx >= session.length){ renderResult(); return; }
+  const item = session[idx];
+  const color = CAT[item.cat].color;
+  const pct = Math.round((idx/session.length)*100);
+  app.innerHTML = `
+    <div class="bar"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
+    <div class="progress">Frage ${idx+1} von ${session.length}</div>
+    <div class="card" style="--catcolor:${color}">
+      <div class="tag" style="--catcolor:${color}">${item.cat} · ${CAT[item.cat].name}</div>
+      <div class="q">${item.q}</div>
+      ${item.opts.map((o,oi)=>`<button class="opt" data-oi="${oi}">${o}</button>`).join('')}
+      <div class="expl" id="expl" style="display:none;"></div>
+    </div>`;
+  app.querySelectorAll('.opt').forEach(btn=>{
+    btn.onclick=()=>{
+      if(answers[idx]!==undefined) return;
+      const oi = parseInt(btn.dataset.oi);
+      answers[idx]=oi;
+      app.querySelectorAll('.opt').forEach(b=>{
+        const bo=parseInt(b.dataset.oi);
+        if(bo===item.c) b.classList.add('correct');
+        else if(bo===oi && oi!==item.c) b.classList.add('wrong');
+        b.disabled=true;
+      });
+      const richtig = oi===item.c;
+      recordAnswer(item.id, richtig);
+      const expl = document.getElementById('expl');
+      expl.style.display='block';
+      expl.innerHTML = `<b>${richtig? "✅ Richtig!" : "❌ Nicht ganz – richtig wäre: " + item.opts[item.c]}</b>${item.e}
+        <button class="nextbtn" id="nextBtn">${idx+1 < session.length ? "Weiter →" : "Ergebnis anzeigen →"}</button>`;
+      document.getElementById('nextBtn').onclick = ()=>{ idx++; renderQuestion(); };
+    };
+  });
+}
+
+// --- Prüfungssimulation (angelehnt an den IHK-Ablauf; Fragenzahl und Zeit sind verkürzt) ---
+let examMode=false, examPart=0, examEnd=0, examTimer=null;
+const EXAM_PARTS=[
+  {name:"Teil I (A–C)", cats:["A","B","C"], minutes:50},
+  {name:"Teil II (D–E)", cats:["D","E"], minutes:35}
+];
+
+function startExam(){
+  view="quiz"; examMode=true; activeCat="Prüfung";
+  document.getElementById('catbar').style.display='none';
+  const all=[];
+  EXAM_PARTS.forEach((p,pi)=>{
+    const part=[];
+    p.cats.forEach(c=>{
+      const pool=shuffle(questions.filter(q=>q.cat===c).slice()).slice(0,12);
+      buildSession(pool).forEach(s=>{ s.part=pi; part.push(s); });
+    });
+    shuffle(part).forEach(s=>all.push(s));
+  });
+  session=all; idx=0; answers={}; examPart=0;
+  startPartTimer();
+  renderQuestion();
+}
+
+function startPartTimer(){
+  clearInterval(examTimer);
+  examEnd=Date.now()+EXAM_PARTS[examPart].minutes*60000;
+  examTimer=setInterval(tick,1000);
+}
+
+function tick(){
+  const left=examEnd-Date.now();
+  if(left<=0){ nextPart(); return; }
+  const el=document.getElementById('timer');
+  if(el){
+    const m=Math.floor(left/60000), s=Math.floor((left%60000)/1000);
+    el.textContent="⏱ "+m+":"+String(s).padStart(2,'0');
+  }
+}
+
+function nextPart(){
+  clearInterval(examTimer);
+  const nextIdx=session.findIndex(s=>s.part>examPart);
+  if(nextIdx===-1){ idx=session.length; renderExamResult(); return; }
+  idx=nextIdx; examPart++;
+  document.getElementById('app').innerHTML=`
+    <div class="card result">
+      <div class="progress">${EXAM_PARTS[examPart-1].name} beendet</div>
+      <div class="grade">Weiter mit ${EXAM_PARTS[examPart].name}</div>
+      <div class="verdict">${EXAM_PARTS[examPart].minutes} Minuten – eine Rückkehr zu Teil I ist nicht möglich.</div>
+      <button class="btn" id="goPart">Teil starten</button>
+    </div>`;
+  document.getElementById('goPart').onclick=()=>{ startPartTimer(); renderQuestion(); };
+}
+
+function renderExamQuestion(){
+  const item=session[idx];
+  const inPart=session.filter(s=>s.part===examPart);
+  const pos=inPart.indexOf(item)+1;
+  const sel=answers[idx];
+  document.getElementById('app').innerHTML=`
+    <div class="topnav"><span class="progress">${EXAM_PARTS[examPart].name} · Frage ${pos}/${inPart.length}</span><span class="progress" id="timer"></span></div>
+    <div class="card" style="--catcolor:#555">
+      <div class="q">${item.q}</div>
+      ${item.opts.map((o,oi)=>`<button class="opt" data-oi="${oi}" ${sel===oi?'style="border-color:#3b6ea5;background:rgba(59,110,165,.14);font-weight:700;"':''}>${o}</button>`).join('')}
+      <button class="nextbtn" id="nextBtn">Weiter →</button>
+    </div>`;
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{ answers[idx]=parseInt(b.dataset.oi); renderExamQuestion(); });
+  document.getElementById('nextBtn').onclick=()=>{
+    if(answers[idx]!==undefined) recordAnswer(item.id, answers[idx]===item.c);
+    idx++;
+    if(idx>=session.length || session[idx].part!==examPart) nextPart(); else renderExamQuestion();
+  };
+  tick();
+}
+
+function renderExamResult(){
+  clearInterval(examTimer); registerPractice();
+  const byCat={};
+  session.forEach((s,i)=>{ const c=byCat[s.cat]=byCat[s.cat]||{tot:0,ok:0}; c.tot++; if(answers[i]===s.c) c.ok++; });
+  const rows=Object.entries(byCat).map(([c,v])=>({c,v,p:Math.round(v.ok/v.tot*100)}));
+  const n50=rows.filter(r=>r.p>=50).length;
+  const rest=rows.filter(r=>r.p<50);
+  const passed = n50===rows.length || (n50===rows.length-1 && rest[0].p>=30);
+  const total=session.length, ok=session.filter((s,i)=>answers[i]===s.c).length;
+  const pct=Math.round(ok/total*100);
+  const wrong=session.map((s,i)=>({s,i})).filter(({s,i})=>answers[i]!==s.c);
+  document.getElementById('app').innerHTML=`
+    <div class="card result" style="--catcolor:${passed?'#2f9e7d':'#c0392b'}">
+      <div class="progress">Prüfungssimulation · Ergebnis</div>
+      <div class="pct">${pct}%</div>
+      <div class="grade" style="color:${passed?'#2f9e7d':'#c0392b'}">${passed?'Bestanden':'Nicht bestanden'}</div>
+      <div class="verdict">${ok} von ${total} richtig. Kriterium: in vier von fünf Sachgebieten mind. 50 %, im übrigen mind. 30 %.</div>
+      <button class="btn" id="again">Neue Simulation</button>
+      <button class="linkbtn" id="home3" style="display:block; margin:10px auto 0;">← Zur Startseite</button>
+      <div class="byCat">
+        ${rows.map(r=>`<div class="row"><span class="dot" style="background:${CAT[r.c].color}"></span><span class="name">${r.c} – ${CAT[r.c].name}</span><span class="val" style="color:${r.p>=50?'#2f9e7d':(r.p>=30?'#c9622a':'#c0392b')}">${r.p}% (${r.v.ok}/${r.v.tot})</span></div>`).join('')}
+      </div>
+      <details style="text-align:left; margin-top:16px; font-size:.85rem;">
+        <summary style="cursor:pointer; font-weight:700;">Falsche/offene Antworten ansehen (${wrong.length})</summary>
+        ${wrong.map(({s,i})=>`<div style="margin:10px 0; padding-top:8px; border-top:1px dashed var(--border);"><b>${s.q}</b><br>Deine Antwort: ${answers[i]!==undefined?s.opts[answers[i]]:'–'}<br><span style="color:#2f9e7d;">Richtig: ${s.opts[s.c]}</span><br><span style="color:var(--sub);">${s.e}</span></div>`).join('')}
+      </details>
+    </div>`;
+  document.getElementById('again').onclick=startExam;
+  document.getElementById('home3').onclick=renderHome;
+}
+
+function gradeFor(pct){
+  if(pct>=92) return {n:"1", label:"sehr gut", color:"#2f9e7d"};
+  if(pct>=81) return {n:"2", label:"gut", color:"#3b6ea5"};
+  if(pct>=67) return {n:"3", label:"befriedigend", color:"#8a8a2f"};
+  if(pct>=50) return {n:"4", label:"ausreichend (bestanden)", color:"#c9622a"};
+  if(pct>=30) return {n:"5", label:"mangelhaft", color:"#c0392b"};
+  return {n:"6", label:"ungenügend", color:"#8e1c1c"};
+}
+
+function renderResult(){
+  registerPractice();
+  const total = session.length;
+  const correct = session.filter((it,i)=>answers[i]===it.c).length;
+  const pct = total? Math.round((correct/total)*100) : 0;
+  const g = gradeFor(pct);
+  const passed = pct>=50;
+
+  const byCat = {};
+  session.forEach((it,i)=>{
+    byCat[it.cat] = byCat[it.cat] || {tot:0, ok:0};
+    byCat[it.cat].tot++;
+    if(answers[i]===it.c) byCat[it.cat].ok++;
+  });
+
+  document.getElementById('app').innerHTML = `
+    <div class="card result" style="--catcolor:${g.color}">
+      <div class="progress">Ergebnis · 🔥 ${progress.streak} Tage Serie</div>
+      <div class="pct">${pct}%</div>
+      <div class="grade" style="color:${g.color}">Note ${g.n} – ${g.label}</div>
+      <div class="verdict">${correct} von ${total} Fragen richtig ${passed? "· bestanden (Bestehensgrenze i.d.R. 50%)" : "· nicht bestanden (Bestehensgrenze meist 50%)"}</div>
+      <button class="btn" id="again">Nochmal (neu gemischt)</button>
+      <button class="linkbtn" id="home2" style="display:block; margin:10px auto 0;">← Zur Startseite</button>
+      <div class="byCat">
+        ${Object.entries(byCat).map(([c,v])=>`<div class="row"><span class="dot" style="background:${CAT[c].color}"></span><span class="name">${c} – ${CAT[c].name}</span><span class="val">${v.ok}/${v.tot}</span></div>`).join('')}
+      </div>
+    </div>`;
+  document.getElementById('again').onclick=()=> activeCat==="Tagesrunde" ? startDailyRound() : startQuiz(activeCat);
+  document.getElementById('home2').onclick=renderHome;
+}
+
+document.getElementById('themeBtn').onclick=()=>{ sceneIdx=(sceneIdx+1)%SCENES.length; applyScene(); };
+applyScene();
+renderHome();
+</script>
+</body>
+</html>
