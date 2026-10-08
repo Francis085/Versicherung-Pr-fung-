@@ -3,99 +3,329 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eef3f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="§34d Trainer">
+<meta name="description" content="Offline-Übungsquiz für die Sachkundeprüfung §34d GewO – Tagesrunde, Fehlerheft, Prüfungssimulation.">
 <title>§34d Übungsquiz</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233b6ea5'/%3E%3Cstop offset='1' stop-color='%232f9e7d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='26' fill='white' text-anchor='middle'%3E§%3C/text%3E%3C/svg%3E">
 <style>
+/* ===== Design-Tokens ===== */
 :root{
-  --bg:#dfeee9; --card:rgba(255,255,255,.9); --ink:#232323; --sub:#5a6068; --border:rgba(0,0,0,.09);
-  --A:#3b6ea5; --B:#2f9e7d; --C:#c9622a; --D:#a13d7c; --E:#c0392b;
-  --ok:#2f9e7d; --bad:#c0392b;
-  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+  --bg:#eef3f1; --surface:rgba(255,255,255,.86); --surface-solid:#ffffff; --surface-2:rgba(15,30,40,.04);
+  --ink:#1c2126; --sub:#5b6570; --line:rgba(20,32,44,.10); --line-strong:rgba(20,32,44,.16);
+  --A:#3b6ea5; --B:#23926f; --C:#c25a22; --D:#a13d7c; --E:#c0392b;
+  --accent:#3b6ea5; --accent-2:#2f9e7d; --ok:#23926f; --bad:#c0392b; --warn:#c9622a;
+  --ok-bg:rgba(35,146,111,.12); --bad-bg:rgba(192,57,43,.11); --sel-bg:rgba(59,110,165,.12);
+  --grad:linear-gradient(135deg,#3b6ea5 0%,#2f9e7d 100%);
+  --grad-warm:linear-gradient(135deg,#c9622a 0%,#a13d7c 100%);
+  --shadow:0 1px 2px rgba(16,24,32,.05), 0 8px 24px rgba(16,24,32,.07);
+  --shadow-lg:0 20px 60px rgba(16,24,32,.22);
+  --scrim:rgba(238,243,241,.35);
+  --r:16px; --r-sm:12px;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --bg:#15171a; --card:rgba(28,32,38,.88); --ink:#eef0f2; --sub:#a9b1bb; --border:rgba(255,255,255,.12); }
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
+    --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
+    --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d;
+    --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
+    --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    --scrim:rgba(10,12,15,.74);
+  }
 }
-:root[data-theme="dark"]{ --bg:#15171a; --card:rgba(28,32,38,.88); --ink:#eef0f2; --sub:#a9b1bb; --border:rgba(255,255,255,.12); }
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
+  --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
+  --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d;
+  --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
+  --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  --scrim:rgba(10,12,15,.74);
+}
+
+/* ===== Grundlayout ===== */
 *{box-sizing:border-box}
-html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px);}
-.card,.mini,.examcard,.catcard,.chip{backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
-.themebtn{position:fixed; right:12px; bottom:calc(12px + env(safe-area-inset-bottom,0px)); z-index:9; border:none; border-radius:999px; padding:10px 14px; background:var(--card); color:var(--ink); font-size:.82rem; font-weight:700; box-shadow:0 2px 10px rgba(0,0,0,.2); cursor:pointer;}
-body{ min-height:100%; margin:0; background:var(--bg) center/cover fixed no-repeat; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; display:flex; flex-direction:column; align-items:center; padding:0 14px 32px; }
-.wrap{width:100%; max-width:520px;}
-.hero{ background:linear-gradient(135deg,#3b6ea5,#2f9e7d 50%,#c9622a); color:#fff; margin:0 -14px 16px; padding:22px 16px 20px; border-radius:0 0 22px 22px; }
-.hero h1{font-size:1.15rem; margin:0 0 4px; font-weight:700;}
-.hero .sub{color:rgba(255,255,255,.9); font-size:.82rem; margin:0;}
-.catbar{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px;}
-.chip{border:2px solid var(--chipcolor,var(--border)); border-radius:999px; padding:7px 13px; font-size:.78rem; background:var(--card); cursor:pointer; color:var(--chipcolor,var(--sub)); font-weight:600;}
-.chip.active{background:var(--chipcolor,var(--ink)); color:#fff; border-color:var(--chipcolor,var(--ink));}
-.bar{height:8px; background:var(--border); border-radius:99px; overflow:hidden; margin-bottom:10px;}
-.bar-fill{height:100%; border-radius:99px; transition:width .25s;}
-.progress{font-size:.82rem; color:var(--sub); margin-bottom:10px; font-weight:600;}
-.card{background:var(--card); border:1px solid var(--border); border-left:6px solid var(--catcolor,var(--border)); border-radius:14px; padding:18px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.04);}
-.tag{display:inline-block; font-size:.72rem; letter-spacing:.03em; color:#fff; font-weight:700; background:var(--catcolor); padding:3px 10px; border-radius:999px; margin-bottom:10px;}
-.q{font-size:1.02rem; margin:0 0 14px; line-height:1.45; font-weight:600;}
-.opt{display:block; width:100%; text-align:left; padding:11px 13px; margin-bottom:9px; border:2px solid var(--border); border-radius:11px; background:transparent; color:var(--ink); font-size:.94rem; cursor:pointer; transition:.15s;}
-.opt:active{transform:scale(.98);}
-.opt.correct{border-color:var(--ok); background:rgba(47,158,125,.14); font-weight:700;}
-.opt.wrong{border-color:var(--bad); background:rgba(192,57,43,.14);}
-.expl{font-size:.87rem; color:var(--ink); margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);}
-.expl b{display:block; margin-bottom:4px;}
-.nextbtn{display:block; width:100%; margin-top:14px; padding:12px; border-radius:11px; background:linear-gradient(135deg,#3b6ea5,#2f9e7d); color:#fff; border:none; font-size:.94rem; font-weight:700; cursor:pointer;}
-.result{text-align:center; padding:30px 18px;}
-.result .pct{font-size:3rem; font-weight:800; margin:10px 0 0; background:linear-gradient(135deg,#3b6ea5,#2f9e7d); -webkit-background-clip:text; background-clip:text; color:transparent;}
-.result .grade{font-size:1.3rem; font-weight:700; margin-bottom:6px;}
-.result .verdict{font-size:.92rem; color:var(--sub); margin-bottom:20px;}
-.btn{display:inline-block; margin-top:6px; padding:12px 20px; border-radius:12px; background:linear-gradient(135deg,#3b6ea5,#2f9e7d); color:#fff; border:none; font-size:.92rem; font-weight:700; cursor:pointer;}
-.byCat{text-align:left; margin-top:20px; font-size:.86rem;}
-.byCat .row{display:flex; align-items:center; gap:10px; padding:7px 0;}
-.byCat .dot{width:10px; height:10px; border-radius:50%; flex:none;}
-.byCat .name{flex:1; color:var(--sub);}
-.byCat .val{font-weight:700;}
-.hint{font-size:.78rem; color:var(--sub); margin-top:18px; line-height:1.5;}
-.homegrid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;}
-.mini{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; text-align:center;}
-.mini .big{font-size:1.5rem; font-weight:800;}
-.mini .lbl{font-size:.72rem; color:var(--sub); margin-top:2px;}
-.dailybtn{display:block; width:100%; padding:16px; border-radius:16px; border:none; cursor:pointer; margin-bottom:14px;
-  background:linear-gradient(135deg,#3b6ea5,#2f9e7d); color:#fff; text-align:left;}
-.dailybtn .t1{font-size:1.05rem; font-weight:800;}
-.dailybtn .t2{font-size:.8rem; opacity:.9; margin-top:2px;}
-.examcard{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
-.examcard input{border:1px solid var(--border); border-radius:8px; padding:7px 9px; font-size:.85rem; background:transparent; color:var(--ink);}
-.sectionlbl{font-size:.78rem; color:var(--sub); font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin:6px 0 8px;}
-.catgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;}
-.catcard{border:2px solid var(--catcolor,var(--border)); border-radius:12px; padding:12px; background:var(--card); cursor:pointer;}
-.catcard .cn{font-weight:700; font-size:.85rem; color:var(--catcolor);}
-.catcard .cs{font-size:.72rem; color:var(--sub); margin-top:2px;}
-.statbar-row{margin-bottom:10px;}
-.statbar-row .lbl{display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:4px;}
-.statbar-track{height:9px; background:var(--border); border-radius:99px; overflow:hidden;}
-.statbar-fill{height:100%; border-radius:99px;}
-.topnav{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
-.linkbtn{background:none; border:none; color:var(--sub); font-size:.82rem; font-weight:600; cursor:pointer; padding:4px 0;}
-.star{position:absolute; top:14px; right:14px; background:none; border:none; font-size:1.2rem; cursor:pointer; opacity:.5;}
-.star.on{opacity:1;}
-.card{position:relative;}
-.multiopt{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:11px 13px; margin-bottom:9px; border:2px solid var(--border); border-radius:11px; background:transparent; color:var(--ink); font-size:.94rem; cursor:pointer;}
-.multiopt input{width:18px; height:18px; flex:none;}
-.multiopt.correct{border-color:var(--ok); background:rgba(47,158,125,.14); font-weight:700;}
-.multiopt.wrong{border-color:var(--bad); background:rgba(192,57,43,.14);}
-.textinput{width:100%; padding:11px 13px; border:2px solid var(--border); border-radius:11px; background:transparent; color:var(--ink); font-size:.94rem; margin-bottom:10px;}
-.glossitem{padding:10px 0; border-bottom:1px solid var(--border);}
-.glossitem b{color:var(--accent2,#c9622a);}
-.caseintro{background:rgba(59,110,165,.1); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; font-size:.9rem; line-height:1.5;}
+html{-webkit-text-size-adjust:100%; scroll-padding-top:calc(70px + var(--safe-t));}
+body{
+  margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  font-size:16px; line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+/* Hintergrundszene als fixierte Ebene (funktioniert auch auf iOS) */
+body::before,body::after{content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;}
+body::before{background:var(--scene,none) center/cover no-repeat;}
+body::after{z-index:-1; background:var(--scrim);}
+button{font:inherit; color:inherit;}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent); outline-offset:2px;}
+.wrap{width:100%; max-width:560px; margin:0 auto; padding:12px 16px calc(40px + var(--safe-b));}
+.glass{background:var(--surface); backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2);}
+[hidden]{display:none !important;}
+
+/* ===== Kopfleiste ===== */
+.topbar{
+  position:sticky; top:0; z-index:20; padding:calc(8px + var(--safe-t)) 12px 8px;
+  display:flex; align-items:center; gap:8px;
+  background:var(--surface); border-bottom:1px solid var(--line);
+  backdrop-filter:blur(14px) saturate(1.3); -webkit-backdrop-filter:blur(14px) saturate(1.3);
+}
+.topbar-in{width:100%; max-width:560px; margin:0 auto; display:flex; align-items:center; gap:8px;}
+.brand{display:flex; align-items:center; gap:10px; flex:1; min-width:0;}
+.logo{width:34px; height:34px; border-radius:10px; background:var(--grad); color:#fff; display:grid; place-items:center; font-weight:800; font-size:1.05rem; flex:none; box-shadow:0 4px 12px rgba(59,110,165,.35);}
+.brand-t{font-weight:750; font-size:.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.brand-s{font-size:.72rem; color:var(--sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.iconbtn{width:40px; height:40px; border-radius:12px; border:1px solid var(--line); background:var(--surface-solid); display:grid; place-items:center; cursor:pointer; flex:none; font-size:1.05rem;}
+.iconbtn:active{transform:scale(.96);}
+.timer{font-variant-numeric:tabular-nums; font-weight:750; font-size:.9rem; padding:8px 12px; border-radius:999px; background:var(--surface-2); border:1px solid var(--line);}
+.timer.low{color:#fff; background:var(--bad); border-color:var(--bad); animation:pulse 1s ease-in-out infinite alternate;}
+@keyframes pulse{to{opacity:.75}}
+
+/* ===== Karten & Text ===== */
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px; margin-bottom:14px; box-shadow:var(--shadow); backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2);}
+.sectionlbl{font-size:.74rem; color:var(--sub); font-weight:750; text-transform:uppercase; letter-spacing:.06em; margin:22px 4px 10px;}
+.muted{color:var(--sub);}
+.small{font-size:.82rem;}
+.hint{font-size:.76rem; color:var(--sub); margin:26px 4px 0; line-height:1.55;}
+.eyebrow{font-size:.78rem; font-weight:700; color:var(--sub); letter-spacing:.02em;}
+h1,h2,h3{margin:0;}
+
+/* ===== Buttons ===== */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:12px 18px; border-radius:14px; border:1px solid transparent; font-weight:700; font-size:.95rem; cursor:pointer; transition:transform .1s, filter .15s, opacity .15s;}
+.btn:active{transform:scale(.98);}
+.btn:disabled{opacity:.45; cursor:not-allowed; transform:none;}
+.btn.primary{background:var(--grad); color:#fff; box-shadow:0 6px 18px rgba(47,130,140,.28);}
+.btn.warm{background:var(--grad-warm); color:#fff;}
+.btn.ghost{background:var(--surface-solid); border-color:var(--line-strong); color:var(--ink);}
+.btn.danger{background:var(--bad); color:#fff;}
+.btn.wide{width:100%;}
+.btn.sm{min-height:38px; padding:8px 14px; font-size:.85rem; border-radius:11px;}
+.linkbtn{background:none; border:none; color:var(--accent); font-weight:700; font-size:.88rem; cursor:pointer; padding:6px 0;}
+.row-btns{display:flex; gap:10px; margin-top:16px;}
+.row-btns .btn{flex:1;}
+
+/* ===== Startseite ===== */
+.hero{padding:20px; position:relative; overflow:hidden;}
+.hero::before{content:""; position:absolute; inset:0 0 auto 0; height:5px; background:linear-gradient(90deg,var(--A),var(--B),var(--C),var(--D),var(--E));}
+.hero-main{display:flex; align-items:center; gap:14px;}
+.hero-main > div:first-child{flex:1; min-width:0;}
+.hero h1{font-size:1.32rem; font-weight:800; letter-spacing:-.01em; margin:2px 0 6px;}
+.hero .sub{font-size:.86rem; color:var(--sub); margin:0;}
+.hero .sub b{color:var(--ink);}
+.ringwrap{position:relative; width:96px; height:96px; flex:none;}
+.ringwrap svg{display:block;}
+.ringlabel{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.1;}
+.ringlabel b{font-size:1.25rem; font-weight:800;}
+.ringlabel span{font-size:.64rem; color:var(--sub); font-weight:600;}
+.ring circle{transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1);}
+.stats3{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px;}
+.stat{background:var(--surface-2); border-radius:12px; padding:10px 8px; text-align:center;}
+.stat b{display:block; font-size:1.12rem; font-weight:800; font-variant-numeric:tabular-nums;}
+.stat span{font-size:.7rem; color:var(--sub); font-weight:600;}
+.minibar{height:4px; border-radius:99px; background:var(--line); margin:6px 8px 0; overflow:hidden;}
+.minibar i{display:block; height:100%; background:var(--grad); border-radius:99px;}
+
+.cta{width:100%; display:flex; align-items:center; gap:14px; text-align:left; border:none; cursor:pointer; padding:16px 18px; border-radius:18px; margin-bottom:12px; background:var(--grad); color:#fff; box-shadow:0 10px 26px rgba(47,130,140,.32);}
+.cta:active{transform:scale(.985);}
+.cta .ic{width:44px; height:44px; border-radius:13px; background:rgba(255,255,255,.18); display:grid; place-items:center; font-size:1.35rem; flex:none;}
+.cta b{display:block; font-size:1.05rem;}
+.cta small{display:block; font-size:.8rem; opacity:.9; margin-top:1px;}
+.chev{margin-left:auto; font-size:1.5rem; opacity:.7; line-height:1;}
+
+.list{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); margin-bottom:12px;}
+.lrow{width:100%; display:flex; align-items:center; gap:12px; padding:13px 16px; background:none; border:none; border-bottom:1px solid var(--line); text-align:left; cursor:pointer;}
+.lrow:last-child{border-bottom:none;}
+.lrow:hover{background:var(--surface-2);}
+.lrow:disabled{cursor:default; opacity:.55;}
+.lrow:disabled:hover{background:none;}
+.lrow .ic{width:36px; height:36px; border-radius:11px; display:grid; place-items:center; font-size:1.1rem; flex:none; background:var(--surface-2);}
+.lrow .tx{flex:1; min-width:0;}
+.lrow .tx b{display:block; font-size:.95rem;}
+.lrow .tx small{display:block; font-size:.78rem; color:var(--sub); margin-top:1px;}
+.badge{min-width:26px; height:26px; padding:0 8px; border-radius:999px; display:inline-grid; place-items:center; font-size:.78rem; font-weight:800; color:#fff; background:var(--bad);}
+.badge.soft{background:var(--surface-2); color:var(--sub);}
+
+.catrow .letter{width:36px; height:36px; border-radius:11px; display:grid; place-items:center; font-weight:800; color:#fff; background:var(--cc); flex:none;}
+.mbar{display:flex; height:6px; border-radius:99px; overflow:hidden; background:var(--line); margin-top:7px;}
+.mbar i{display:block; height:100%;}
+.mbar .l1{background:color-mix(in srgb,var(--cc,var(--accent)) 35%,transparent);}
+.mbar .l2{background:color-mix(in srgb,var(--cc,var(--accent)) 65%,transparent);}
+.mbar .l3{background:var(--cc,var(--accent));}
+.catrow .pct{font-size:.82rem; font-weight:750; color:var(--sub); font-variant-numeric:tabular-nums; min-width:40px; text-align:right;}
+
+.tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.tile{display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding:14px; border-radius:var(--r); border:1px solid var(--line); background:var(--surface); cursor:pointer; text-align:left; box-shadow:var(--shadow); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);}
+.tile:active{transform:scale(.98);}
+.tile .ic{font-size:1.4rem;}
+.tile b{font-size:.92rem;}
+.tile small{font-size:.75rem; color:var(--sub);}
+
+.resume{display:flex; align-items:center; gap:12px; border-left:4px solid var(--accent);}
+.resume .tx{flex:1; min-width:0;}
+.examset{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.examset input{flex:1; min-width:150px;}
+.plan{font-size:.85rem; display:flex; gap:10px; align-items:flex-start;}
+
+/* ===== Eingaben ===== */
+.input{width:100%; min-height:46px; padding:11px 13px; border:1.5px solid var(--line-strong); border-radius:12px; background:var(--surface-solid); color:var(--ink); font-size:1rem;}
+.input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--sel-bg);}
+textarea.input{min-height:96px; font-family:ui-monospace,Menlo,monospace; font-size:.74rem;}
+
+/* ===== Quiz ===== */
+.chips{display:flex; gap:7px; overflow-x:auto; padding:2px 2px 10px; margin:0 -2px; scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex:none; border:1.5px solid var(--cc,var(--line-strong)); border-radius:999px; padding:7px 14px; font-size:.8rem; background:var(--surface); cursor:pointer; color:var(--cc,var(--sub)); font-weight:700;}
+.chip.active{background:var(--cc,var(--ink)); color:#fff;}
+.qprog{display:flex; align-items:center; gap:12px; margin:2px 2px 12px;}
+.bar{flex:1; height:8px; background:var(--line); border-radius:99px; overflow:hidden;}
+.bar i{display:block; height:100%; border-radius:99px; transition:width .35s ease;}
+.qprog span{font-size:.82rem; font-weight:750; color:var(--sub); font-variant-numeric:tabular-nums;}
+.qcard{border-top:4px solid var(--cc,var(--line)); padding:18px 18px 16px;}
+.qmeta{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+.tag{display:inline-block; font-size:.72rem; letter-spacing:.02em; color:#fff; font-weight:750; background:var(--cc,var(--sub)); padding:4px 10px; border-radius:999px;}
+.tag.soft{background:var(--surface-2); color:var(--sub);}
+.qtype{font-size:.72rem; color:var(--sub); font-weight:700;}
+.star{margin-left:auto; background:none; border:1px solid var(--line); border-radius:10px; width:36px; height:36px; font-size:1.05rem; cursor:pointer; color:var(--sub);}
+.star.on{color:#e0a100; border-color:rgba(224,161,0,.5); background:rgba(224,161,0,.1);}
+.q{font-size:1.06rem; margin:0 0 16px; line-height:1.5; font-weight:650;}
+.opts{display:flex; flex-direction:column; gap:9px;}
+.opt{display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left; padding:12px 14px; border:1.5px solid var(--line-strong); border-radius:13px; background:var(--surface-solid); font-size:.95rem; cursor:pointer; transition:border-color .15s, background .15s, transform .1s; line-height:1.4;}
+.opt:hover:not(:disabled){border-color:var(--accent);}
+.opt:active:not(:disabled){transform:scale(.99);}
+.opt:disabled{cursor:default;}
+.opt .key{flex:none; width:26px; height:26px; border-radius:8px; display:grid; place-items:center; font-size:.76rem; font-weight:800; background:var(--surface-2); color:var(--sub); border:1px solid var(--line); margin-top:-1px;}
+.opt.check .key{border-radius:7px;}
+.opt .ot{flex:1; padding-top:1px;}
+.opt.sel{border-color:var(--accent); background:var(--sel-bg);}
+.opt.sel .key{background:var(--accent); color:#fff; border-color:var(--accent);}
+.opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:650;}
+.opt.correct .key{background:var(--ok); color:#fff; border-color:var(--ok);}
+.opt.wrong{border-color:var(--bad); background:var(--bad-bg);}
+.opt.wrong .key{background:var(--bad); color:#fff; border-color:var(--bad);}
+.opt.dim{opacity:.6;}
+.feedback{margin-top:14px; padding:14px; border-radius:13px; font-size:.9rem; line-height:1.5; animation:rise .25s ease;}
+.feedback.ok{background:var(--ok-bg); border:1px solid color-mix(in srgb,var(--ok) 40%,transparent);}
+.feedback.bad{background:var(--bad-bg); border:1px solid color-mix(in srgb,var(--bad) 40%,transparent);}
+.feedback .ft{font-weight:800; margin-bottom:4px;}
+.feedback.ok .ft{color:var(--ok);} .feedback.bad .ft{color:var(--bad);}
+@keyframes rise{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+.actionbar{position:sticky; bottom:0; z-index:5; padding:10px 0 calc(10px + var(--safe-b)); display:flex; gap:10px;}
+.actionbar .btn{flex:1;}
+.kbd-hint{font-size:.72rem; color:var(--sub); text-align:center; margin-top:4px;}
+@media (hover:none){ .kbd-hint{display:none;} }
+.caseintro{border-left:4px solid #8a8a2f; font-size:.92rem; line-height:1.55;}
+.caseintro b{display:block; margin-bottom:4px;}
+
+/* ===== Prüfung ===== */
+.navgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(38px,1fr)); gap:6px; margin-top:10px;}
+.nav{height:38px; border-radius:10px; border:1.5px solid var(--line-strong); background:var(--surface-solid); font-size:.8rem; font-weight:750; cursor:pointer; position:relative; font-variant-numeric:tabular-nums;}
+.nav.ans{background:var(--sel-bg); border-color:var(--accent); color:var(--accent);}
+.nav.cur{outline:2.5px solid var(--ink); outline-offset:1px;}
+.nav.flag::after{content:""; position:absolute; top:3px; right:3px; width:7px; height:7px; border-radius:50%; background:var(--warn);}
+details.panel > summary{cursor:pointer; font-weight:750; font-size:.9rem; list-style:none; display:flex; justify-content:space-between; align-items:center;}
+details.panel > summary::-webkit-details-marker{display:none;}
+details.panel > summary::after{content:"▾"; color:var(--sub); transition:transform .2s;}
+details.panel[open] > summary::after{transform:rotate(180deg);}
+.flagbtn{margin-left:auto; border:1px solid var(--line); background:none; border-radius:10px; padding:6px 10px; font-size:.78rem; font-weight:700; cursor:pointer; color:var(--sub);}
+.flagbtn.on{color:var(--warn); border-color:var(--warn); background:color-mix(in srgb,var(--warn) 12%,transparent);}
+.rules{margin:10px 0 0; padding-left:20px; font-size:.9rem; line-height:1.6;}
+
+/* ===== Ergebnis ===== */
+.result{text-align:center; padding:26px 18px;}
+.result .ringwrap{width:150px; height:150px; margin:8px auto 4px;}
+.result .ringlabel b{font-size:2rem;}
+.result .grade{font-size:1.25rem; font-weight:800; margin:8px 0 4px;}
+.result .verdict{font-size:.9rem; color:var(--sub); margin-bottom:6px;}
+.catres{text-align:left; margin-top:18px; display:flex; flex-direction:column; gap:12px;}
+.catres .lbl{display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:5px; gap:10px;}
+.catres .lbl span:first-child{color:var(--sub);}
+.catres .lbl span:last-child{font-weight:750; font-variant-numeric:tabular-nums;}
+.track{height:8px; background:var(--line); border-radius:99px; overflow:hidden;}
+.track i{display:block; height:100%; border-radius:99px;}
+.review{margin-top:12px; text-align:left;}
+.review-item{padding:12px 0; border-top:1px solid var(--line); font-size:.88rem; line-height:1.5;}
+.review-item .yours{color:var(--bad);} .review-item .right{color:var(--ok); font-weight:650;}
+.review-item .why{color:var(--sub); font-size:.84rem; margin-top:3px;}
+
+/* ===== Statistik ===== */
+.kpis{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;}
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:14px; box-shadow:var(--shadow); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);}
+.kpi b{display:block; font-size:1.5rem; font-weight:800; font-variant-numeric:tabular-nums;}
+.kpi span{font-size:.76rem; color:var(--sub); font-weight:600;}
+.legend{display:flex; flex-wrap:wrap; gap:12px; font-size:.74rem; color:var(--sub); margin-top:10px;}
+.legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px; background:var(--accent);}
+.heat{display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,1fr); gap:3px; overflow-x:auto; padding-bottom:2px;}
+.heat i{width:13px; height:13px; border-radius:3px; background:var(--line);}
+.heat i.h1{background:color-mix(in srgb,var(--B) 30%,transparent);}
+.heat i.h2{background:color-mix(in srgb,var(--B) 55%,transparent);}
+.heat i.h3{background:color-mix(in srgb,var(--B) 80%,transparent);}
+.heat i.h4{background:var(--B);}
+.heat i.fut{background:transparent;}
+.hard{padding:10px 0; border-top:1px solid var(--line); font-size:.86rem; display:flex; gap:10px;}
+.hard:first-of-type{border-top:none;}
+.hard .p{font-weight:800; color:var(--bad); min-width:42px; font-variant-numeric:tabular-nums;}
+
+/* ===== Glossar ===== */
+.gitem{padding:12px 0; border-bottom:1px solid var(--line); font-size:.9rem; line-height:1.5;}
+.gitem:last-child{border-bottom:none;}
+.gitem b{display:block; color:var(--C); margin-bottom:2px;}
+mark{background:rgba(224,161,0,.3); color:inherit; border-radius:3px; padding:0 1px;}
+
+/* ===== Sheet / Dialog / Toast ===== */
+#modalRoot{position:fixed; inset:0; z-index:50; display:none;}
+#modalRoot.open{display:block;}
+.scrimbg{position:absolute; inset:0; background:rgba(8,12,16,.45); animation:fade .2s ease;}
+.sheet{position:absolute; left:0; right:0; bottom:0; max-width:560px; margin:0 auto; max-height:88vh; overflow:auto; background:var(--surface-solid); border-radius:22px 22px 0 0; padding:8px 18px calc(22px + var(--safe-b)); box-shadow:var(--shadow-lg); animation:up .28s cubic-bezier(.2,.8,.2,1);}
+@media (min-width:640px){ .sheet{bottom:auto; top:50%; transform:translateY(-50%); border-radius:22px; animation:fade .2s ease;} }
+.sheet-grab{width:40px; height:5px; border-radius:99px; background:var(--line-strong); margin:4px auto 10px;}
+.sheet-head{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+.sheet-head h2{flex:1; font-size:1.12rem; font-weight:800;}
+.sheet p{font-size:.92rem; line-height:1.55; color:var(--sub);}
+.set-group{padding:14px 0; border-bottom:1px solid var(--line);}
+.set-group:last-child{border-bottom:none;}
+.set-group h3{font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--sub); margin-bottom:10px;}
+.seg{display:flex; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:3px; gap:3px;}
+.seg button{flex:1; border:none; background:none; padding:9px 6px; border-radius:9px; font-size:.86rem; font-weight:700; cursor:pointer; color:var(--sub);}
+.seg button.on{background:var(--surface-solid); color:var(--ink); box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.swatches{display:flex; gap:10px; flex-wrap:wrap;}
+.swatch{width:56px; height:56px; border-radius:14px; border:2px solid var(--line-strong); cursor:pointer; background:var(--sw) center/cover; position:relative; font-size:.62rem; font-weight:700; color:var(--sub); display:flex; align-items:flex-end; justify-content:center; padding-bottom:3px;}
+.swatch.on{border-color:var(--accent); box-shadow:0 0 0 3px var(--sel-bg);}
+.swatch.plain{background:var(--bg);}
+.kbdlist{font-size:.84rem; color:var(--sub); line-height:1.9;}
+kbd{font-family:ui-monospace,Menlo,monospace; font-size:.76rem; padding:2px 6px; border-radius:6px; border:1px solid var(--line-strong); background:var(--surface-2); color:var(--ink);}
+#toast{position:fixed; left:50%; bottom:calc(24px + var(--safe-b)); transform:translate(-50%,20px); opacity:0; z-index:60; background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:999px; font-size:.88rem; font-weight:650; pointer-events:none; transition:opacity .2s, transform .2s; max-width:calc(100% - 32px); text-align:center;}
+#toast.show{opacity:1; transform:translate(-50%,0);}
+@keyframes up{from{transform:translateY(40px); opacity:0}to{transform:none; opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.view{animation:rise .22s ease;}
+
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none !important; transition:none !important;} }
+@media (max-width:380px){ .hero h1{font-size:1.15rem;} .ringwrap{width:80px; height:80px;} .stat b{font-size:1rem;} }
 </style>
 </head>
 <body>
-<button class="themebtn" id="themeBtn">🎨</button>
-<div class="wrap">
-  <div class="hero">
-    <h1>📋 Übungsquiz Sachkundeprüfung §34d</h1>
-    <div class="sub">Jeden Tag ein bisschen üben – Fortschritt bleibt auf diesem Gerät gespeichert</div>
+<header class="topbar">
+  <div class="topbar-in">
+    <button class="iconbtn" id="backBtn" aria-label="Zurück" hidden>←</button>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">§</div>
+      <div style="min-width:0;"><div class="brand-t" id="brandT">§34d Trainer</div><div class="brand-s" id="brandS">Sachkundeprüfung Versicherungsvermittlung</div></div>
+    </div>
+    <span class="timer" id="timer" hidden></span>
+    <button class="iconbtn" id="settingsBtn" aria-label="Einstellungen">⚙️</button>
   </div>
-  <div class="catbar" id="catbar" style="display:none;"></div>
-  <div id="app"></div>
-  <div class="hint">Fragen bilden nur die allgemeinen fachlichen Grundlagen ab. Die eigentliche Prüfung stützt sich auf das offizielle Bedingungswerk „Proximus 5“ (BWV) – urheberrechtlich geschützt, erhältlich im BWV-Shop oder über den Vorbereitungskurs.</div>
-</div>
+</header>
+<main class="wrap">
+  <div id="app" aria-live="polite"></div>
+  <p class="hint">Die Fragen decken nur die allgemeinen fachlichen Grundlagen ab. Die eigentliche Prüfung stützt sich auf das offizielle Bedingungswerk „Proximus 5“ (BWV). Es ist urheberrechtlich geschützt und im BWV-Shop oder über den Vorbereitungskurs erhältlich. Dein Fortschritt bleibt nur auf diesem Gerät gespeichert.</p>
+</main>
+<div id="modalRoot"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
 const CAT = {
@@ -487,672 +717,1173 @@ const CASES = [
       {q:"Kann Herr Boldt seinen Personenschaden direkt gegenüber Frau Kleins Versicherer geltend machen?", opts:["Ja, über den Direktanspruch nach § 115 VVG","Nein, nur über ein Gericht gegen Frau Klein persönlich","Nein, das ist gesetzlich verboten","Nur wenn er selbst kaskoversichert ist"], c:0, e:"Der Direktanspruch erlaubt dem Geschädigten, sich unmittelbar an den Haftpflichtversicherer zu wenden."}
     ]}
 ];
-// --- Hintergrundszenen (SVG, offline, kein Bilddownload) ---
+
+// ===================================================================
+// Zusatzfragen (Erweiterung). Werden hinten angehängt, damit die IDs
+// der bisherigen Fragen – und damit gespeicherter Fortschritt – gleich bleiben.
+// ===================================================================
+
+// --- A: Vorsorge (Leben/Rente/BU) ---
+Q("A","Wofür eignet sich eine Risikolebensversicherung mit linear oder annuitätisch fallender Versicherungssumme besonders?","Zur Absicherung eines Darlehens, dessen Restschuld mit der Zeit sinkt","Zur Altersvorsorge mit steigender Rente","Zur Absicherung von Pflegekosten","Zur Absicherung des Hausrats","Die Summe sinkt parallel zur Restschuld, deshalb ist der Beitrag niedriger als bei konstanter Summe.");
+Q("A","Was leistet eine Risikolebensversicherung auf verbundene Leben (zwei versicherte Personen)?","Die Summe wird einmal fällig, wenn die zuerst versterbende Person stirbt","Sie zahlt bei jedem Todesfall die volle Summe","Sie zahlt nur, wenn beide gleichzeitig sterben","Sie zahlt nur im Erlebensfall","Nach der ersten Leistung endet der Vertrag; für Paare mit gemeinsamer Finanzierung ist das oft günstiger als zwei Einzelverträge.");
+Q("A","Was ist bei der BU mit 'konkreter Verweisung' gemeint?","Verweis auf einen tatsächlich ausgeübten anderen Beruf, der Ausbildung, Erfahrung und bisheriger Lebensstellung entspricht","Verweis auf irgendeinen theoretisch möglichen Beruf","Verweis an einen anderen Versicherer","Verweis an die gesetzliche Rentenversicherung","Anders als die abstrakte Verweisung greift sie nur, wenn die versicherte Person den neuen Beruf wirklich ausübt.");
+Q("A","Ab welchem Grad der Berufsunfähigkeit leisten die meisten BU-Tarife die volle Rente?","Ab 50 %","Ab 10 %","Erst ab 100 %","Ab 25 % immer anteilig","Üblich ist eine Leistung, wenn die versicherte Person voraussichtlich mindestens 6 Monate zu mindestens 50 % ihren Beruf nicht ausüben kann.");
+Q("A","Welcher Durchführungsweg der bAV gewährt dem Arbeitnehmer formal keinen Rechtsanspruch gegenüber der Versorgungseinrichtung?","Unterstützungskasse","Direktversicherung","Pensionskasse","Pensionsfonds","Die Unterstützungskasse ist nicht versicherungsaufsichtsrechtlich reguliert; der Arbeitgeber haftet für die Zusage.");
+Q("A","Was kennzeichnet die Direktzusage (Pensionszusage) in der bAV?","Der Arbeitgeber zahlt die Versorgung später unmittelbar selbst und bildet dafür Rückstellungen","Ein Versicherer zahlt die Rente aus","Der Staat zahlt die Rente","Der Arbeitnehmer zahlt alle Beiträge allein in einen Fonds","Bei der Direktzusage gibt es keinen externen Versorgungsträger; die Zusage steht in der Bilanz des Arbeitgebers.");
+Q("A","Wer sichert betriebliche Versorgungsansprüche (z. B. aus Direktzusagen) bei Insolvenz des Arbeitgebers ab?","Der Pensions-Sicherungs-Verein (PSVaG)","Die BaFin","Die Deutsche Rentenversicherung","Die Agentur für Arbeit","Der PSVaG ist der gesetzliche Träger der Insolvenzsicherung der bAV und wird durch Beiträge der Arbeitgeber finanziert.");
+Q("A","Ab wann ist eine bAV-Anwartschaft aus reiner Entgeltumwandlung unverfallbar?","Sofort","Nach 3 Jahren","Nach 5 Jahren","Erst bei Rentenbeginn","Weil der Arbeitnehmer die Beiträge aus eigenem Gehalt finanziert, ist die Anwartschaft von Anfang an unverfallbar.");
+Q("A","Welchen Zuschuss muss der Arbeitgeber bei Entgeltumwandlung grundsätzlich leisten, soweit er Sozialversicherungsbeiträge spart?","15 % des umgewandelten Entgelts","50 % des umgewandelten Entgelts","Gar keinen","Einen festen Betrag von 100 € im Jahr","§ 1a Abs. 1a BetrAVG verpflichtet den Arbeitgeber, ersparte SV-Beiträge pauschal mit 15 % weiterzugeben.");
+Q("A","Wer hat grundsätzlich einen Rechtsanspruch auf Entgeltumwandlung (§ 1a BetrAVG)?","Arbeitnehmer, die in der gesetzlichen Rentenversicherung pflichtversichert sind","Nur Beamte","Nur Selbstständige","Nur Geschäftsführer von Aktiengesellschaften","Der Anspruch richtet sich an GRV-pflichtversicherte Arbeitnehmer gegenüber ihrem Arbeitgeber.");
+Q("A","Wer ist typischerweise unmittelbar Riester-förderberechtigt?","Ein in der GRV pflichtversicherter Arbeitnehmer","Ein Selbstständiger ohne Rentenversicherungspflicht","Ein Altersrentner","Ein Student ohne Pflichtversicherung","Unmittelbar förderberechtigt sind vor allem GRV-Pflichtversicherte und Beamte; Ehepartner können mittelbar berechtigt sein.");
+Q("A","Was garantiert die Beitragsgarantie bei einem Riester-Vertrag?","Zu Beginn der Auszahlungsphase stehen mindestens die eingezahlten Beiträge und Zulagen zur Verfügung","Eine Mindestverzinsung von 5 % pro Jahr","Die Auszahlung der gesamten Summe als Einmalbetrag","Eine Rente in Höhe des letzten Bruttogehalts","Die Beitragserhaltungszusage schützt das eingezahlte Kapital, nicht aber eine Rendite.");
+Q("A","Wie werden lebenslange Renten aus einer privaten Rentenversicherung (3. Schicht) besteuert?","Nur mit dem Ertragsanteil, der vom Alter bei Rentenbeginn abhängt","Voll mit 100 %","Gar nicht","Mit der Abgeltungsteuer auf die gesamte Rente","Je älter man bei Rentenbeginn ist, desto niedriger ist der steuerpflichtige Ertragsanteil.");
+Q("A","Zu welcher Schicht des Drei-Schichten-Modells gehört die Basisrente (Rürup)?","Schicht 1 (Basisversorgung)","Schicht 2 (Zusatzversorgung)","Schicht 3 (private Vorsorge)","Sie gehört zu keiner Schicht","Schicht 1: GRV, berufsständische Versorgung, Basisrente; Schicht 2: bAV und Riester; Schicht 3: übrige private Vorsorge.");
+Q("A","Wann liegt in der GRV eine volle Erwerbsminderung vor?","Wenn man auf dem allgemeinen Arbeitsmarkt weniger als 3 Stunden täglich arbeiten kann","Wenn man weniger als 8 Stunden täglich arbeiten kann","Wenn man den zuletzt ausgeübten Beruf nicht mehr ausüben kann","Ab einem Grad der Behinderung von 50","3 bis unter 6 Stunden = teilweise, unter 3 Stunden = volle Erwerbsminderung. Maßstab ist jede Tätigkeit, nicht der eigene Beruf.");
+Q("A","Was leistet eine aufgeschobene Rentenversicherung mit vereinbarter Beitragsrückgewähr bei Tod vor Rentenbeginn?","Die eingezahlten Beiträge werden an die Bezugsberechtigten ausgezahlt","Es gibt keinerlei Leistung","Die volle spätere Rente wird an Erben gezahlt","Der Vertrag geht automatisch auf den Arbeitgeber über","Die Beitragsrückgewähr ist eine typische Todesfallleistung in der Ansparphase.");
+Q("A","Kapital 200.000 €, Rentenfaktor 28 € Monatsrente je 10.000 €. Wie hoch ist die monatliche Rente?","560 €","280 €","5.600 €","2.800 €","200.000 € ÷ 10.000 € = 20; 20 × 28 € = 560 € pro Monat.");
+QM("A","Welche Aussagen zur Berufsunfähigkeitsversicherung treffen zu? (mehrere richtig)",
+  ["Moderne Tarife verzichten oft auf die abstrakte Verweisung","Bei Leistungsbezug kann der Versicherer die Berufsunfähigkeit nachprüfen"], ["Sie leistet nur bei Unfällen, nicht bei Krankheit","Sie zahlt grundsätzlich eine Einmalsumme statt einer Rente"],
+  "Die BU leistet bei Krankheit, Kräfteverfall und Unfall, typischerweise als monatliche Rente. § 174 VVG regelt die Nachprüfung.");
+QT("A","Ab wie viel Prozent Berufsunfähigkeit leisten die meisten BU-Tarife? (nur die Zahl)",["50","50%","50 %","fünfzig"],"Übliche Schwelle ist ein BU-Grad von mindestens 50 %.");
+
+// --- B: Unfall/Kranken/Pflege ---
+Q("B","Welchen räumlichen und zeitlichen Geltungsbereich hat die private Unfallversicherung typischerweise?","Weltweit und rund um die Uhr, auch in der Freizeit","Nur am Arbeitsplatz","Nur auf dem Arbeitsweg","Nur in Deutschland während der Arbeitszeit","Gerade für Freizeitunfälle ist sie wichtig, denn die gesetzliche UV schützt nur bei Arbeit, Schule und den zugehörigen Wegen.");
+Q("B","Sind Schülerinnen und Schüler gesetzlich unfallversichert?","Ja, während des Schulbesuchs und auf dem Schulweg","Nein, nie","Nur auf Klassenfahrten im Ausland","Nur, wenn die Eltern Beiträge zahlen","Schüler, Studierende und Kinder in Tageseinrichtungen sind kraft Gesetzes in der gesetzlichen UV versichert.");
+Q("B","Was ist ein Wegeunfall in der gesetzlichen Unfallversicherung?","Ein Unfall auf dem unmittelbaren Weg zwischen Wohnung und Arbeitsstätte","Jeder Unfall im Straßenverkehr","Ein Unfall auf dem Weg in den Urlaub","Ein Unfall beim privaten Einkauf","Der direkte Weg zur und von der Arbeit ist versichert; private Umwege unterbrechen den Schutz meist.");
+Q("B","Was passiert in der privaten UV typischerweise, wenn Krankheiten oder Gebrechen an den Unfallfolgen mitgewirkt haben?","Die Leistung wird entsprechend dem Mitwirkungsanteil gekürzt, oft ab einem Anteil von 25 %","Die Leistung entfällt immer vollständig","Die Leistung wird verdoppelt","Mitwirkung spielt keine Rolle","Nach den Musterbedingungen wird bei einem Mitwirkungsanteil ab 25 % anteilig gekürzt.");
+Q("B","Gilt nach typischen Unfallbedingungen auch eine Zerrung durch erhöhte Kraftanstrengung als Unfall?","Ja, wenn dadurch an Gliedmaßen oder Wirbelsäule ein Gelenk verrenkt oder Muskeln, Sehnen, Bänder oder Kapseln gezerrt oder zerrissen werden","Nein, nur Stürze zählen","Nur bei Berufssportlern","Nur, wenn ein Dritter beteiligt war","Diese Erweiterung des Unfallbegriffs ist Standard in den Bedingungen der privaten UV.");
+Q("B","Ab welchem Tag ist ein Krankentagegeld für Arbeitnehmer typischerweise sinnvoll vereinbart?","Ab dem 43. Tag der Arbeitsunfähigkeit","Ab dem 1. Tag","Ab dem 8. Tag","Erst nach einem Jahr","Die ersten 6 Wochen zahlt der Arbeitgeber das Entgelt weiter, danach entsteht die Lücke zum Krankengeld.");
+Q("B","Wie hoch ist das Krankengeld der GKV grundsätzlich?","70 % des Bruttoentgelts, höchstens 90 % des Nettoentgelts","100 % des Nettoentgelts","50 % des Bruttoentgelts","Ein fester Pauschalbetrag","§ 47 SGB V; zusätzlich gilt eine Obergrenze durch die Beitragsbemessungsgrenze.");
+Q("B","Wie lange zahlt die GKV Krankengeld wegen derselben Krankheit höchstens?","78 Wochen innerhalb von drei Jahren","6 Wochen","1 Jahr ohne Unterbrechung","Unbegrenzt","Danach endet der Anspruch (Aussteuerung); für dieselbe Krankheit beginnt erst in einer neuen Blockfrist ein neuer Anspruch.");
+Q("B","Kann ein PKV-Versicherer eine substitutive Krankheitskostenvollversicherung ordentlich kündigen?","Nein, das ordentliche Kündigungsrecht des Versicherers ist ausgeschlossen","Ja, jederzeit mit einem Monat Frist","Ja, nach jedem Leistungsfall","Ja, ab dem 65. Lebensjahr","§ 206 VVG schützt Versicherte, weil sie sonst ohne bezahlbaren Schutz dastehen könnten.");
+Q("B","Unter welcher Voraussetzung darf ein PKV-Versicherer die Beiträge anpassen?","Wenn ein auslösender Faktor überschritten ist und ein unabhängiger Treuhänder zustimmt","Jederzeit nach Belieben","Nur, wenn der VN zustimmt","Nur alle zehn Jahre","§ 203 VVG: Auslöser sind Abweichungen bei Leistungsausgaben oder Sterbewahrscheinlichkeiten.");
+Q("B","Wozu dient der gesetzliche Beitragszuschlag von 10 % in der PKV?","Zur Dämpfung der Beiträge im Alter","Zur Finanzierung der GKV","Als Gewinnzuschlag des Versicherers","Als Strafzuschlag für Raucher","Der Zuschlag wird typischerweise vom 21. bis zum 60. Lebensjahr erhoben und der Alterungsrückstellung zugeführt.");
+Q("B","Was regelt das Tarifwechselrecht nach § 204 VVG?","Den Wechsel in einen gleichartigen Tarif desselben Versicherers unter Anrechnung erworbener Rechte und der Alterungsrückstellung","Den Wechsel in die GKV","Den Wechsel zu einem anderen Versicherer mit voller Alterungsrückstellung","Das Recht des Versicherers, Tarife einseitig zu tauschen","So können Versicherte z. B. in einen günstigeren Tarif mit höherer Selbstbeteiligung wechseln.");
+Q("B","Wer begutachtet die Pflegebedürftigkeit bei gesetzlich Versicherten?","Der Medizinische Dienst (MD)","Der Hausarzt allein","Die BaFin","Das Sozialgericht","Bei Privatversicherten übernimmt diese Aufgabe Medicproof.");
+Q("B","Welcher Grundsatz gilt in der Pflegeversicherung für die Art der Versorgung?","Ambulant vor stationär","Stationär vor ambulant","Nur stationäre Pflege wird bezahlt","Pflege durch Angehörige ist ausgeschlossen","Pflegebedürftige sollen möglichst lange in ihrer häuslichen Umgebung bleiben können.");
+Q("B","Was kennzeichnet eine Pflegerentenversicherung?","Eine lebenslange Rente bei Pflegebedürftigkeit, kalkuliert nach Art der Lebensversicherung, oft mit Beitragsbefreiung im Leistungsfall","Eine Erstattung nur nachgewiesener Pflegekosten","Eine gesetzliche Pflichtversicherung","Eine Leistung nur bei Unfällen","Sie unterscheidet sich von der Pflegekosten- und der Pflegetagegeldversicherung, die nach Art der Krankenversicherung kalkuliert sind.");
+Q("B","Wie sind hauptberuflich Selbstständige in der Krankenversicherung gestellt?","Sie sind nicht versicherungspflichtig und können sich freiwillig gesetzlich oder privat versichern","Sie sind immer pflichtversichert in der GKV","Sie dürfen sich nur privat versichern","Sie brauchen keine Krankenversicherung","Wegen der allgemeinen Versicherungspflicht (§ 193 VVG) müssen sie aber in jedem Fall versichert sein. Eine Ausnahme bilden z. B. Künstler über die KSK.");
+Q("B","Wann liegt Arbeitsunfähigkeit im Sinne der Krankentagegeldversicherung (MB/KT) vor?","Wenn die versicherte Person ihre berufliche Tätigkeit nach medizinischem Befund vorübergehend in keiner Weise ausüben kann","Wenn sie nur teilweise eingeschränkt ist","Wenn sie sich unwohl fühlt","Wenn sie in Urlaub ist","Teilweise Arbeitsfähigkeit schließt die Leistung in der Regel aus.");
+Q("B","Krankentagegeld 80 € pro Tag, Leistung ab dem 43. Tag, Arbeitsunfähigkeit insgesamt 60 Tage. Wie hoch ist die Leistung?","1.440 €","4.800 €","1.360 €","3.360 €","Leistungstage 43 bis 60 = 18 Tage × 80 € = 1.440 €.");
+QM("B","Welche Personengruppen sind kraft Gesetzes in der gesetzlichen Unfallversicherung versichert? (mehrere richtig)",
+  ["Arbeitnehmer","Schüler und Studierende","Kinder in Tageseinrichtungen"], ["Hauptberuflich Selbstständige ohne freiwillige Versicherung","Beamte im Ruhestand"],
+  "Selbstständige sind nur in bestimmten Branchen oder freiwillig versichert; Beamte haben die beamtenrechtliche Unfallfürsorge.");
+QT("B","Ab dem wievielten Tag der Arbeitsunfähigkeit beginnt bei Arbeitnehmern typischerweise das Krankentagegeld? (nur die Zahl)",["43","43.","dreiundvierzig"],"Nach 6 Wochen (42 Tagen) Entgeltfortzahlung startet die Leistung am 43. Tag.");
+
+// --- C: Rechtliche Grundlagen ---
+Q("C","Welche Hauptpflichten begründet der Versicherungsvertrag nach § 1 VVG?","Der Versicherer trägt ein Risiko und leistet im Versicherungsfall, der VN zahlt die Prämie","Der VN muss jeden Schaden selbst tragen","Der Versicherer zahlt dem VN monatlich Zinsen","Beide Parteien teilen sich jeden Schaden hälftig","Risikoübernahme gegen Prämie ist der Kern jedes Versicherungsvertrags.");
+Q("C","Was regelt § 37 VVG, wenn die Erstprämie nicht rechtzeitig gezahlt wird?","Der Versicherer kann zurücktreten und ist leistungsfrei, wenn der VN die Nichtzahlung zu vertreten hat und belehrt wurde","Der Vertrag gilt trotzdem ab Antrag als voll wirksam","Der Versicherer muss eine Mahnung mit 6 Monaten Frist setzen","Der VN erhält eine Vertragsstrafe","Man spricht vom Einlösungsprinzip: Der Schutz beginnt grundsätzlich erst mit Zahlung der Erstprämie.");
+Q("C","Was versteht man unter dem materiellen Versicherungsbeginn?","Den Zeitpunkt, ab dem tatsächlich Versicherungsschutz besteht","Den Tag des Vertragsabschlusses","Den Beginn der Beitragsberechnung","Den Tag der Beratung","Formeller (Vertragsschluss), materieller (Haftungsbeginn) und technischer Beginn (Beitragsberechnung) können auseinanderfallen.");
+Q("C","Was kennzeichnet das Invitatiomodell beim Vertragsschluss?","Der Kunde fordert ein Angebot an, der Versicherer macht das Angebot und der Kunde nimmt es an","Der Kunde stellt einen Antrag und der Versicherer nimmt ihn mit der Police an","Der Vertrag kommt ohne Willenserklärungen zustande","Der Vermittler schließt den Vertrag allein ab","Beim heute üblichen Antragsmodell ist es umgekehrt: Der Antrag kommt vom VN.");
+Q("C","Innerhalb welcher Frist muss der Versicherer sein Rücktrittsrecht wegen einer Anzeigepflichtverletzung geltend machen?","Innerhalb eines Monats, nachdem er von der Verletzung Kenntnis erlangt hat","Innerhalb eines Jahres ab Vertragsschluss","Innerhalb von 14 Tagen nach Antragstellung","Es gibt keine Frist","§ 21 Abs. 1 VVG; daneben gelten die absoluten Ausschlussfristen von 5 bzw. 10 Jahren.");
+Q("C","Wann kann der VN einen Vertrag mit einer Laufzeit von mehr als drei Jahren frühestens kündigen?","Zum Ende des dritten Jahres mit einer Frist von drei Monaten","Erst am Ende der vereinbarten Laufzeit","Jederzeit ohne Frist","Nach einem Jahr","§ 11 Abs. 4 VVG verhindert, dass VN zu lange gebunden werden.");
+Q("C","Welche Stelle erteilt die Erlaubnis nach § 34d GewO?","Die zuständige Industrie- und Handelskammer (IHK)","Die BaFin","Das Finanzamt","Der Versicherungsombudsmann","Die IHK prüft u. a. Zuverlässigkeit, geordnete Vermögensverhältnisse, Berufshaftpflicht und Sachkunde.");
+Q("C","Wie viele Stunden Weiterbildung müssen Versicherungsvermittler jährlich nachweisen?","15 Stunden pro Kalenderjahr","5 Stunden pro Jahr","40 Stunden pro Jahr","Keine, nur alle fünf Jahre","§ 34d Abs. 9 GewO; die Pflicht gilt auch für die unmittelbar mitwirkenden Beschäftigten.");
+Q("C","Wann fehlt typischerweise die erforderliche Zuverlässigkeit für die Erlaubnis nach § 34d GewO?","Bei rechtskräftiger Verurteilung z. B. wegen Betrugs, Diebstahls oder Untreue in den letzten fünf Jahren","Bei einem Bußgeld wegen Falschparkens","Bei fehlender Berufserfahrung","Bei Wohnsitz im Ausland","Bestimmte Vermögens- und Eigentumsdelikte schließen die Zuverlässigkeit in der Regel aus.");
+Q("C","Wann liegen in der Regel keine geordneten Vermögensverhältnisse vor?","Wenn ein Insolvenzverfahren eröffnet wurde oder ein Eintrag im Schuldnerverzeichnis besteht","Wenn der Antragsteller einen Kredit hat","Wenn er kein Eigenheim besitzt","Wenn er weniger als 50.000 € Vermögen hat","Ein laufender Kredit allein ist unproblematisch; entscheidend sind Insolvenz und Schuldnerverzeichnis.");
+Q("C","Was verbietet das Provisionsabgabeverbot (§ 48b VAG) grundsätzlich?","Dass Vermittler Kunden Sondervergütungen wie Teile ihrer Provision gewähren","Dass Vermittler überhaupt Provision erhalten","Dass Versicherer Werbung machen","Dass Kunden mehrere Verträge abschließen","Geringfügige Zuwendungen sind ausgenommen; zulässig ist auch eine Verwendung zur Prämienreduzierung oder Leistungserhöhung im Vertrag selbst.");
+Q("C","Welche Vollmacht hat ein Versicherungsvertreter nach § 69 VVG kraft Gesetzes?","Er gilt als bevollmächtigt, Anträge, Widerrufe und Anzeigen des VN entgegenzunehmen","Er darf Verträge im Namen des Versicherers beliebig ändern","Er darf Schäden ohne Rücksprache auszahlen","Er hat keinerlei Vollmacht","Was dem Vertreter mitgeteilt wird, gilt als dem Versicherer mitgeteilt ('Auge und Ohr' des Versicherers).");
+Q("C","Auf welcher Grundlage muss ein Versicherungsmakler nach § 60 VVG seinen Rat erteilen?","Auf Grundlage einer hinreichenden Zahl von auf dem Markt angebotenen Verträgen und Versicherern","Nur auf Grundlage eines einzigen Versicherers","Nach freiem Belieben","Auf Grundlage der höchsten Courtage","Schränkt der Makler seine Marktauswahl ein, muss er den Kunden ausdrücklich darauf hinweisen.");
+Q("C","Wie ist ein Vertrag, den eine 16-jährige Person ohne Zustimmung der Eltern abschließt, rechtlich zu beurteilen?","Er ist schwebend unwirksam bis zur Genehmigung der gesetzlichen Vertreter","Er ist sofort voll wirksam","Er ist nichtig und kann nie wirksam werden","Er ist nur für den Versicherer bindend","Minderjährige ab 7 Jahren sind beschränkt geschäftsfähig (§§ 106, 108 BGB).");
+Q("C","Wann wird eine empfangsbedürftige Willenserklärung unter Abwesenden wirksam?","Mit Zugang beim Empfänger","Mit dem Absenden","Mit dem Schreiben","Erst mit schriftlicher Bestätigung des Empfängers","§ 130 BGB: Zugang heißt, dass sie so in den Machtbereich des Empfängers gelangt, dass er unter normalen Umständen Kenntnis nehmen kann.");
+Q("C","Was unterscheidet die Schriftform von der Textform?","Schriftform verlangt eine eigenhändige Unterschrift, Textform nur eine lesbare Erklärung auf einem dauerhaften Datenträger","Es gibt keinen Unterschied","Textform verlangt einen Notar","Schriftform ist auch per SMS erfüllt","Viele Informationen im Versicherungsrecht genügen der Textform, z. B. per E-Mail.");
+Q("C","Was muss der Versicherer nach § 28 VVG für die Leistungsfreiheit bei einer grob fahrlässigen Obliegenheitsverletzung beachten?","Er darf die Leistung nur im Verhältnis zur Schwere des Verschuldens kürzen","Er ist immer vollständig leistungsfrei","Er muss immer voll leisten","Er darf den Vertrag rückwirkend aufheben","Das frühere Alles-oder-nichts-Prinzip wurde 2008 durch das Quotelungsprinzip ersetzt. Bei Vorsatz ist der Versicherer leistungsfrei.");
+QM("C","Welche Voraussetzungen gehören zur Erlaubnis nach § 34d GewO? (mehrere richtig)",
+  ["Zuverlässigkeit","Geordnete Vermögensverhältnisse","Berufshaftpflichtversicherung","Sachkundenachweis"], ["Hochschulabschluss","Mindestkapital von 100.000 €"],
+  "Ein Studium oder ein bestimmtes Kapital wird nicht verlangt; die Sachkunde wird über die IHK-Prüfung oder gleichgestellte Abschlüsse nachgewiesen.");
+QT("C","Wie viele Stunden Weiterbildung pro Kalenderjahr verlangt § 34d Abs. 9 GewO? (nur die Zahl)",["15","15 stunden","fünfzehn"],"Die Weiterbildungspflicht beträgt 15 Stunden pro Kalenderjahr.");
+
+// --- D: Gebäude/Hausrat ---
+Q("D","Wie hoch ist die Entschädigungsgrenze für Wertsachen in der Hausratversicherung häufig insgesamt?","20 % der Versicherungssumme","100 % der Versicherungssumme","1 % der Versicherungssumme","Es gibt nie eine Grenze","Für Bargeld und einzelne Wertsachenarten gelten oft zusätzliche, niedrigere Grenzen, sofern sie nicht in einem Tresor liegen.");
+Q("D","Was ist Raub im Sinne der Hausratversicherung?","Die Wegnahme von Sachen unter Anwendung oder Androhung von Gewalt gegen den VN oder seine Angehörigen","Jeder Diebstahl aus dem Auto","Der Verlust einer Sache","Ein Diebstahl ohne Gewalt aus einem unverschlossenen Keller","Raub ist in der Hausratversicherung – anders als einfacher Diebstahl – grundsätzlich versichert.");
+Q("D","Ist ein einfacher Diebstahl (z. B. eines unverschlossen auf dem Balkon stehenden Grills) in der Hausrat versichert?","In der Regel nein, versichert ist Einbruchdiebstahl, nicht einfacher Diebstahl","Ja, immer","Ja, aber nur nachts","Nur, wenn der Grill neu war","Für Einbruchdiebstahl muss der Täter z. B. einbrechen, einsteigen oder mit falschen Schlüsseln eindringen.");
+Q("D","Welche Kosten ersetzt die Hausratversicherung typischerweise, wenn die Wohnung nach einem Brand unbewohnbar ist?","Hotelkosten für eine begrenzte Zeit","Die Miete für eine neue Wohnung auf Dauer","Den Verdienstausfall","Nichts, da kein Sachschaden","Hotelkosten sind meist zeitlich und betragsmäßig begrenzt, je nach Bedingungen.");
+Q("D","Was leistet die Wohngebäudeversicherung, wenn vermietete Wohnräume nach einem versicherten Schaden unbewohnbar sind?","Sie ersetzt den Mietausfall für eine begrenzte Zeit","Sie zahlt dem Mieter eine neue Wohnung","Sie zahlt dem Vermieter Schmerzensgeld","Sie übernimmt die Grundsteuer dauerhaft","Der Mietausfall ist häufig bis zu 12 Monate mitversichert.");
+Q("D","Sind sogenannte Nutzwärmeschäden in der Feuerversicherung versichert?","Nein, Schäden an Sachen, die bestimmungsgemäß einem Nutzfeuer oder der Wärme ausgesetzt werden, sind ausgeschlossen","Ja, immer","Nur bei Gebäuden","Nur bei Gewerbebetrieben","Beispiel: Ein Topf verbrennt auf dem Herd. Es fehlt am Brand als Feuer, das sich aus eigener Kraft ausbreiten kann.");
+Q("D","Ist eindringendes Grundwasser oder eine Überschwemmung ein Leitungswasserschaden?","Nein, das sind Elementargefahren, die gesondert versichert werden müssen","Ja, immer","Nur im Keller","Nur bei Neubauten","Leitungswasser ist Wasser, das bestimmungswidrig aus Rohren oder angeschlossenen Einrichtungen austritt.");
+Q("D","Was ist eine Überschwemmung im Sinne der Elementarschadenversicherung?","Die Überflutung des Grund und Bodens des Versicherungsgrundstücks mit erheblichen Mengen an Oberflächenwasser","Ein geplatztes Wasserrohr","Ein undichtes Aquarium","Kondenswasser an den Fenstern","Ursache können Ausuferung von Gewässern oder Witterungsniederschläge sein.");
+Q("D","Warum kann ein länger leerstehendes Gebäude versicherungsrechtlich relevant sein?","Es kann eine anzeigepflichtige Gefahrerhöhung darstellen","Es senkt automatisch den Beitrag","Es beendet den Vertrag sofort","Es ist rechtlich unerheblich","Leerstand erhöht z. B. das Risiko von unbemerkten Leitungswasserschäden, Vandalismus oder Brandstiftung.");
+Q("D","Was kann der VN verlangen, wenn er mit dem Versicherer über die Höhe des Schadens streitet?","Ein Sachverständigenverfahren","Eine Volksabstimmung","Die sofortige Kündigung mit Schadenersatz","Ein Schiedsverfahren bei der BaFin","Die Sachverständigen beider Seiten und ggf. ein Obmann stellen die Schadenhöhe verbindlich fest.");
+Q("D","Was kennzeichnet eine Allgefahrenversicherung (All-Risk) in der Sachversicherung?","Versichert sind alle Gefahren, die nicht ausdrücklich ausgeschlossen sind","Versichert sind nur Feuer, Sturm und Leitungswasser","Sie gilt nur für Kfz","Sie deckt nur Personenschäden","Sie dreht das Prinzip der benannten Gefahren um: Der Ausschlusskatalog entscheidet.");
+Q("D","Was deckt eine Elektronikversicherung im Gewerbe typischerweise?","Sachschäden an elektronischen Anlagen nahezu aller Art, z. B. auch durch Bedienungsfehler oder Überspannung","Nur Diebstahl von Bargeld","Nur Personenschäden von Mitarbeitern","Nur Schäden an Gebäuden","Als Allgefahrendeckung geht sie über die Feuer- und Inhaltsversicherung hinaus.");
+Q("D","Welches Grundprinzip gilt in der Schadenversicherung für die Höhe der Entschädigung?","Bereicherungsverbot: Der VN soll durch den Schaden nicht besser gestellt werden","Der VN erhält immer das Doppelte des Schadens","Die Entschädigung richtet sich nach dem Beitrag","Der Versicherer zahlt immer pauschal","Ausnahmen sind ausdrücklich vereinbarte Neuwertentschädigungen.");
+Q("D","Was passiert bei einer Überversicherung (Versicherungssumme deutlich höher als der Versicherungswert)?","Der Versicherer zahlt höchstens den tatsächlichen Schaden; beide Seiten können die Herabsetzung der Summe verlangen","Der VN erhält die volle Versicherungssumme","Der Vertrag ist automatisch nichtig","Der Versicherer zahlt einen Bonus","§ 74 VVG; bei betrügerischer Überversicherung ist der Vertrag nichtig.");
+Q("D","Hausrat-Versicherungssumme 52.000 €, Wertsachengrenze 20 % der VS. Gestohlen wird Schmuck im Wert von 15.000 € (nicht im Tresor). Wie hoch ist die Entschädigung höchstens?","10.400 €","15.000 €","52.000 €","3.000 €","20 % von 52.000 € = 10.400 €; mehr gibt es für Wertsachen außerhalb eines Tresors nicht.");
+QM("D","Welche Gefahren gehören typischerweise zu den Elementargefahren? (mehrere richtig)",
+  ["Überschwemmung","Erdbeben","Schneedruck","Rückstau"], ["Leitungswasser","Einbruchdiebstahl"],
+  "Leitungswasser und Einbruchdiebstahl sind eigene Grundgefahren, keine Elementargefahren.");
+QT("D","Wie viel Prozent der Versicherungssumme beträgt die Entschädigungsgrenze für Wertsachen in der Hausrat häufig? (nur die Zahl)",["20","20%","20 %","zwanzig"],"Üblich sind 20 % der Versicherungssumme insgesamt.");
+
+// --- E: Haftpflicht/Kfz/Rechtsschutz ---
+Q("E","Ab welchem Alter haften Kinder für Schäden im fließenden Straßenverkehr frühestens (ohne Vorsatz)?","Ab 10 Jahren","Ab 7 Jahren","Ab 14 Jahren","Ab 18 Jahren","§ 828 Abs. 2 BGB: Kinder unter 10 Jahren haften bei Unfällen mit Kfz, Bahn oder Schwebebahn nicht, außer bei Vorsatz.");
+Q("E","Wann haften Eltern für Schäden, die ihr deliktsunfähiges Kind verursacht?","Wenn sie ihre Aufsichtspflicht verletzt haben","Immer, ohne Ausnahme","Nie","Nur, wenn das Kind älter als 12 ist","§ 832 BGB; ohne Aufsichtspflichtverletzung bleibt der Geschädigte oft auf seinem Schaden sitzen. Manche PHV-Tarife zahlen hier freiwillig.");
+Q("E","Was leistet die Forderungsausfalldeckung in der Privathaftpflicht?","Sie zahlt dem VN seinen eigenen Schaden, wenn der Schädiger zahlungsunfähig und nicht versichert ist","Sie zahlt Schulden des VN bei der Bank","Sie deckt Mietrückstände","Sie zahlt Bußgelder","Voraussetzung ist meist ein rechtskräftiger Titel gegen den Schädiger und eine erfolglose Vollstreckung.");
+Q("E","Was deckt der Baustein Schlüsselverlust in der Privathaftpflicht typischerweise?","Kosten für den Austausch von Schlössern oder einer Schließanlage nach Verlust fremder Schlüssel","Den Wert eines verlorenen Autos","Den Ersatz eigener Haustürschlüssel ohne Folgekosten","Einbruchschäden in der eigenen Wohnung","Besonders relevant bei Mietwohnungen mit Zentralschließanlage oder bei Dienstschlüsseln.");
+Q("E","Wer braucht neben der Privathaftpflicht typischerweise eine Gewässerschadenhaftpflicht?","Ein Hausbesitzer mit einem größeren oberirdischen Heizöltank","Jeder Mieter","Ein Radfahrer","Ein Hundehalter","Die PHV deckt meist nur kleine Gebinde. Für Öltanks haftet der Betreiber nach dem Wasserhaushaltsgesetz verschuldensunabhängig.");
+Q("E","Brauchen private Drohnenpiloten in Deutschland eine Haftpflichtversicherung?","Ja, für Drohnen besteht eine Versicherungspflicht","Nein, nie","Nur für Drohnen über 25 kg","Nur bei gewerblicher Nutzung","Nach dem Luftverkehrsgesetz muss jeder Halter eines unbemannten Luftfahrzeugs haftpflichtversichert sein; manche PHV-Tarife schließen kleine Drohnen ein.");
+Q("E","Wie haftet ein Hersteller nach dem Produkthaftungsgesetz für Personenschäden durch ein fehlerhaftes Produkt?","Verschuldensunabhängig","Nur bei Vorsatz","Gar nicht","Nur bei grober Fahrlässigkeit","Deshalb ist für Hersteller und Händler eine Produkthaftpflicht wichtig.");
+Q("E","Innerhalb welcher Frist muss ein Kfz-Schadenereignis dem Versicherer typischerweise gemeldet werden?","Innerhalb einer Woche","Innerhalb eines Jahres","Innerhalb von drei Monaten","Eine Meldung ist nicht nötig","Nach den AKB ist jedes Schadenereignis innerhalb einer Woche anzuzeigen.");
+Q("E","Welche Folge hat eine Unfallflucht des Fahrers für die Kfz-Haftpflicht?","Der Versicherer reguliert gegenüber dem Geschädigten, kann aber beim VN in begrenzter Höhe Regress nehmen","Der Geschädigte erhält gar nichts","Der Versicherer ist gegenüber dem Geschädigten leistungsfrei","Es hat keinerlei Folgen","Im Außenverhältnis schützt die Pflichtversicherung den Geschädigten; im Innenverhältnis ist der Regress gesetzlich begrenzt.");
+Q("E","Was gilt in der Kaskoversicherung typischerweise bei einer Fahrt unter absoluter Fahruntüchtigkeit (Alkohol)?","Der Versicherer kann die Leistung wegen grober Fahrlässigkeit kürzen, im Einzelfall bis auf null","Der Versicherer muss immer voll zahlen","Die Kasko wird automatisch zur Haftpflicht","Der Schutz verdoppelt sich","Viele Verzichtsklauseln auf den Einwand grober Fahrlässigkeit nehmen Alkohol und Drogen ausdrücklich aus.");
+Q("E","Was leistet eine GAP-Deckung bei geleasten Fahrzeugen?","Sie schließt die Lücke zwischen Wiederbeschaffungswert und Ablösewert des Leasingvertrags bei Totalschaden oder Diebstahl","Sie zahlt die Leasingraten bei Arbeitslosigkeit","Sie ersetzt Parkschäden","Sie übernimmt die Kfz-Steuer","Ohne GAP-Deckung bliebe der Leasingnehmer auf der Differenz sitzen.");
+Q("E","Was deckt eine Fahrerschutzversicherung?","Personenschäden des Fahrers bei einem selbst verschuldeten Unfall","Schäden am gegnerischen Fahrzeug","Den Diebstahl des Fahrzeugs","Bußgelder","Die Kfz-Haftpflicht zahlt für Schäden anderer, nicht für den Fahrer des eigenen Fahrzeugs; die Fahrerschutzversicherung schließt diese Lücke.");
+Q("E","Sind die Mitfahrer im Fahrzeug des Unfallverursachers über dessen Kfz-Haftpflicht geschützt?","Ja, ihre Personenschäden ersetzt die Kfz-Haftpflicht des Fahrzeugs","Nein, nie","Nur, wenn sie Familienangehörige sind","Nur bei Vollkasko","Ausgeschlossen ist nur der Fahrer selbst; Insassen sind Dritte im Sinne der Haftpflicht.");
+Q("E","Welches Sonderkündigungsrecht hat der VN in der Kfz-Versicherung bei einer Beitragserhöhung ohne Leistungsänderung?","Er kann innerhalb eines Monats nach Zugang der Mitteilung kündigen","Er hat kein Kündigungsrecht","Er kann nur zum Jahresende mit drei Monaten Frist kündigen","Er kann nur nach einem Schaden kündigen","§ 40 VVG; die Kündigung wird frühestens zum Zeitpunkt des Wirksamwerdens der Erhöhung wirksam.");
+Q("E","Welche Leistung gibt es im Rechtsschutz typischerweise im Familien- und Erbrecht?","Nur einen Beratungsrechtsschutz für eine anwaltliche Beratung","Vollen Prozessrechtsschutz ohne Grenzen","Gar keine Leistung, auch keine Beratung","Nur Rechtsschutz bei Scheidungen im Ausland","Ein Gerichtsverfahren um Scheidung oder Erbe ist in der Regel nicht gedeckt.");
+Q("E","Was kann der VN tun, wenn der Rechtsschutzversicherer die Deckung wegen fehlender Erfolgsaussichten ablehnt?","Er kann ein Gutachterverfahren oder einen Stichentscheid seines Anwalts verlangen","Er muss den Fall automatisch aufgeben","Er kann den Versicherer bei der Polizei anzeigen","Er erhält automatisch die doppelte Deckung","§ 128 VVG verpflichtet den Versicherer, ein solches Verfahren vorzusehen.");
+Q("E","Führt ein Teilkaskoschaden zu einer Rückstufung im Schadenfreiheitsrabatt?","Nein, die Teilkasko kennt keinen Schadenfreiheitsrabatt","Ja, immer um drei Klassen","Ja, in SF 0","Nur bei Wildschäden","Rückstufungen betreffen nur Kfz-Haftpflicht und Vollkasko.");
+Q("E","Vollkasko-Totalschaden: Wiederbeschaffungswert 12.000 €, Restwert 2.000 €, Selbstbeteiligung 300 €. Wie viel zahlt der Versicherer?","9.700 €","12.000 €","10.000 €","11.700 €","12.000 € − 2.000 € Restwert − 300 € SB = 9.700 €.");
+QM("E","Welche Aussagen zur Haftung von Kindern sind richtig? (mehrere richtig)",
+  ["Kinder unter 7 Jahren sind nicht deliktsfähig","Kinder unter 10 Jahren haften im fließenden Straßenverkehr in der Regel nicht"], ["Eltern haften immer für ihre Kinder","Kinder ab 7 haften nie"],
+  "Ab 7 Jahren kommt es auf die Einsichtsfähigkeit an (§ 828 Abs. 3 BGB). Eltern haften nur bei Verletzung der Aufsichtspflicht.");
+QT("E","Ab welchem Alter können Kinder im fließenden Straßenverkehr frühestens haften (ohne Vorsatz)? (nur die Zahl)",["10","zehn","10 jahren"],"§ 828 Abs. 2 BGB setzt die Grenze bei 10 Jahren.");
+
+questions.forEach((q,i)=>q.id=i);
+
+// ===================================================================
+// Ergänzungen zum Inhalt
+// ===================================================================
+GLOSSARY.push(
+  {t:"Versicherungsnehmer (VN)", d:"Vertragspartner des Versicherers. Er schuldet den Beitrag und hat die vertraglichen Rechte und Obliegenheiten."},
+  {t:"Versicherte Person", d:"Person, auf deren Leben oder Gesundheit sich der Versicherungsschutz bezieht. Sie muss nicht mit dem VN identisch sein."},
+  {t:"Bezugsrecht", d:"Bestimmt, wer im Leistungsfall die Versicherungsleistung erhält. Ein widerrufliches Bezugsrecht kann der VN jederzeit ändern, ein unwiderrufliches nur mit Zustimmung des Begünstigten."},
+  {t:"Selbstbeteiligung", d:"Teil des Schadens, den der VN selbst trägt. Senkt in der Regel den Beitrag."},
+  {t:"Neuwert / Zeitwert", d:"Der Neuwert ist der Wiederbeschaffungspreis für eine neue Sache gleicher Art und Güte, der Zeitwert berücksichtigt zusätzlich die Abnutzung."},
+  {t:"Regress", d:"Rückgriff eines Versicherers, der geleistet hat, auf den eigentlich Verantwortlichen (z. B. nach § 86 VVG)."},
+  {t:"Beratungsdokumentation", d:"Pflicht des Vermittlers, Wünsche und Bedürfnisse des Kunden, den erteilten Rat und die Gründe dafür zu dokumentieren (§ 61 VVG)."},
+  {t:"Erstinformation", d:"Statusinformation, die ein Vermittler beim ersten Geschäftskontakt in Textform übergeben muss: Name, Anschrift, Status, Registernummer u. a. (§ 15 VersVermV)."},
+  {t:"Vermittlerregister", d:"Öffentliches Register bei der DIHK, in das sich erlaubte Versicherungsvermittler eintragen lassen müssen."},
+  {t:"Gefährdungshaftung", d:"Haftung ohne Verschulden für Gefahren, die von einer erlaubten Tätigkeit oder Sache ausgehen, z. B. Kfz-Halter (§ 7 StVG) oder Tierhalter (§ 833 BGB)."},
+  {t:"Verschuldenshaftung", d:"Haftung setzt Vorsatz oder Fahrlässigkeit voraus. Die zentrale Norm ist § 823 BGB."},
+  {t:"Wartezeit", d:"Zeitraum nach Vertragsbeginn, in dem für bestimmte Leistungen noch kein oder nur eingeschränkter Versicherungsschutz besteht."}
+);
+
+CASES.push(
+  {title:"Fall: Der Hund und der Jogger", intro:"Herr Brandt geht mit seinem Hund spazieren. Der Hund reißt sich los und beißt einen vorbeilaufenden Jogger ins Bein. Der Jogger muss ärztlich behandelt werden und kann eine Woche nicht arbeiten. Herr Brandt hat eine Privathaftpflichtversicherung.",
+    qs:[
+      {q:"Auf welcher Grundlage haftet Herr Brandt als Halter eines privat gehaltenen Hundes?", opts:["Tierhalterhaftung nach § 833 BGB, auch ohne eigenes Verschulden","Nur bei nachgewiesenem Vorsatz","Gar nicht, Tiere haften selbst","Nur nach § 7 StVG"], c:0, e:"Für sogenannte Luxustiere wie private Hunde gilt eine verschuldensunabhängige Gefährdungshaftung nach § 833 Satz 1 BGB."},
+      {q:"Welche Versicherung ist für diesen Schaden typischerweise zuständig?", opts:["Eine Tierhalter- bzw. Hundehalterhaftpflichtversicherung","Die normale Privathaftpflicht deckt Hunde immer mit ab","Die Hausratversicherung","Die Unfallversicherung von Herrn Brandt"], c:0, e:"Die Privathaftpflicht schließt das Halten von Hunden in der Regel aus. Dafür braucht es eine eigene Tierhalterhaftpflicht, die in manchen Bundesländern sogar Pflicht ist."},
+      {q:"Die Krankenkasse des Joggers zahlt die Behandlung. Was kann sie anschließend tun?", opts:["Bei Herrn Brandt bzw. dessen Haftpflichtversicherer Regress nehmen","Nichts, die Kosten bleiben endgültig bei ihr","Den Jogger zur Rückzahlung auffordern","Die Leistung nachträglich verweigern"], c:0, e:"Schadenersatzansprüche des Versicherten gehen auf den Sozialversicherungsträger über (§ 116 SGB X), der dann beim Schädiger Rückgriff nimmt."}
+    ]},
+  {title:"Fall: Beratung zur Berufsunfähigkeit", intro:"Frau Yilmaz, 28, angestellte Grafikdesignerin, wendet sich an einen Versicherungsmakler. Sie möchte ihre Arbeitskraft absichern. Es ist ihr erster Kontakt mit diesem Makler.",
+    qs:[
+      {q:"Was muss der Makler Frau Yilmaz beim ersten Geschäftskontakt aushändigen?", opts:["Die Erstinformation mit seinem Status und seiner Registernummer","Sofort den Versicherungsschein","Eine Beitragsrechnung","Nichts, das ist freiwillig"], c:0, e:"Nach § 15 VersVermV ist beim ersten Geschäftskontakt eine Statusinformation in Textform zu übergeben."},
+      {q:"Was gehört nach § 61 VVG in die Beratungsdokumentation?", opts:["Wünsche und Bedürfnisse der Kundin, der erteilte Rat und die Gründe dafür","Nur die Höhe der Courtage","Nur die Unterschrift der Kundin","Eine Liste aller Mitbewerber"], c:0, e:"Die Dokumentation soll nachvollziehbar machen, warum ein bestimmtes Produkt empfohlen wurde."},
+      {q:"Frau Yilmaz schließt die BU ab. Wie lange kann sie den Vertrag widerrufen?", opts:["30 Tage","14 Tage","7 Tage","Gar nicht"], c:0, e:"Für die BU gelten die Vorschriften der Lebensversicherung entsprechend (§ 176 VVG), daher beträgt die Widerrufsfrist 30 Tage (§ 152 VVG)."}
+    ]}
+);
+
+// ===================================================================
+// Hintergrundszenen (SVG, offline, kein Bilddownload)
+// ===================================================================
 function scene(sky1,sky2,sun,layers){
   const hills = layers.map(([c,y,a])=>`<path d="M0 ${y} Q100 ${y-a} 200 ${y} T400 ${y} V800 H0Z" fill="${c}"/>`).join('');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky1}"/><stop offset="1" stop-color="${sky2}"/></linearGradient></defs><rect width="400" height="800" fill="url(#g)"/><circle cx="300" cy="190" r="48" fill="${sun}" opacity=".9"/>${hills}</svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }
 const SCENES = [
-  {n:"🏔️ Berge", bg:scene("#9fd3f0","#e9f6ee","#fff3b0",[["#8fc7a5",520,50],["#5fa88a",600,60],["#3d8570",690,40]])},
-  {n:"🌊 Meer", bg:scene("#86cfe8","#f6ecd0","#ffe7a0",[["#4fb3d1",560,25],["#2f93b8",640,30],["#1f6f96",720,20]])},
-  {n:"🌅 Abend", bg:scene("#f7b28b","#f9e2b8","#fff0c2",[["#c9788f",540,45],["#8d5a94",620,55],["#54407a",700,35]])},
-  {n:"🌲 Wald", bg:scene("#bfe3c8","#eef7df","#fffbd0",[["#7fbf8c",530,50],["#3f9a6b",610,60],["#20734f",700,40]])}
+  {n:"Berge", bg:scene("#9fd3f0","#e9f6ee","#fff3b0",[["#8fc7a5",520,50],["#5fa88a",600,60],["#3d8570",690,40]])},
+  {n:"Meer", bg:scene("#86cfe8","#f6ecd0","#ffe7a0",[["#4fb3d1",560,25],["#2f93b8",640,30],["#1f6f96",720,20]])},
+  {n:"Abend", bg:scene("#f7b28b","#f9e2b8","#fff0c2",[["#c9788f",540,45],["#8d5a94",620,55],["#54407a",700,35]])},
+  {n:"Wald", bg:scene("#bfe3c8","#eef7df","#fffbd0",[["#7fbf8c",530,50],["#3f9a6b",610,60],["#20734f",700,40]])},
+  {n:"Schlicht", bg:null}
 ];
-let sceneIdx = 0;
-try{ sceneIdx = parseInt(localStorage.getItem("quiz34d_scene")||"0")||0; }catch(e){}
-function applyScene(){
-  const s = SCENES[sceneIdx % SCENES.length];
-  document.body.style.backgroundImage = s.bg;
-  document.getElementById('themeBtn').textContent = "🎨 " + s.n;
-  try{ localStorage.setItem("quiz34d_scene", String(sceneIdx)); }catch(e){}
-}
 
+// ===================================================================
+// Hilfsfunktionen
+// ===================================================================
+const $ = sel => document.querySelector(sel);
+const appEl = () => document.getElementById('app');
+const LETTERS = "ABCDEFGH";
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
   return arr;
 }
+// Lokales Datum (nicht UTC), damit die Serie auch nach Mitternacht korrekt zählt
+function todayStr(d=new Date()){ const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`; }
+function parseDay(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function addDays(s,n){ const d=parseDay(s); d.setDate(d.getDate()+n); return todayStr(d); }
+function daysBetween(a,b){ const u=s=>{const [y,m,d]=s.split('-').map(Number); return Date.UTC(y,m-1,d);}; return Math.round((u(b)-u(a))/86400000); }
+function fmtDate(s){ const [y,m,d]=s.split('-'); return `${d}.${m}.${y}`; }
+const isDay = s => typeof s==="string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
+function plural(n,one,many){ return n===1? one : many; }
+// Kurzantworten tolerant vergleichen ("§ 34 d", "14 Tage", "34D" …)
+function normAns(s){ return String(s).toLowerCase().replace(/§|paragraph|tagen|tage|jahren|jahre|stunden|prozent|%|abs\.?/g,"").replace(/[\s.,;:'"()\-]/g,""); }
 
-// --- Persistenz (pro Gerät/Browser, nicht geteilt) ---
-const STORE_KEY = "quiz34d_progress_v1";
-function loadProgress(){
+function ring(pct,size,stroke,color){
+  const r=(size-stroke)/2, c=2*Math.PI*r, off=c*(1-Math.max(0,Math.min(100,pct))/100), h=size/2;
+  return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+    <circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="var(--line)" stroke-width="${stroke}"/>
+    <circle cx="${h}" cy="${h}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round"
+      stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 ${h} ${h})"/></svg>`;
+}
+
+let toastT=null;
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ----- Sheet / Dialoge im App-Design -----
+let sheetOnClose=null;
+function openSheet(title, html, onMount, onClose){
+  const root=$('#modalRoot');
+  root.innerHTML=`<div class="scrimbg" data-close></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <div class="sheet-head"><h2>${esc(title)}</h2><button class="iconbtn" data-close aria-label="Schließen">✕</button></div>
+      <div class="sheet-body">${html}</div>
+    </div>`;
+  root.classList.add('open');
+  sheetOnClose=onClose||null;
+  root.querySelectorAll('[data-close]').forEach(el=>el.onclick=()=>closeSheet());
+  onMount && onMount(root);
+  const f=root.querySelector('.sheet [data-autofocus]') || root.querySelector('.sheet button:not([data-close])');
+  f && f.focus({preventScroll:true});
+}
+function closeSheet(silent){
+  const root=$('#modalRoot');
+  if(!root.classList.contains('open')) return;
+  root.classList.remove('open'); root.innerHTML='';
+  const cb=sheetOnClose; sheetOnClose=null;
+  if(cb && !silent) cb();
+}
+const sheetOpen = () => $('#modalRoot').classList.contains('open');
+function confirmDialog(title, text, okLabel="OK", danger=false){
+  return new Promise(res=>{
+    openSheet(title, `<p>${text}</p><div class="row-btns"><button class="btn ghost" id="cNo">Abbrechen</button><button class="btn ${danger?'danger':'primary'}" id="cYes" data-autofocus>${esc(okLabel)}</button></div>`,
+      r=>{ r.querySelector('#cNo').onclick=()=>{closeSheet(true);res(false);}; r.querySelector('#cYes').onclick=()=>{closeSheet(true);res(true);}; },
+      ()=>res(false));
+  });
+}
+
+// ----- Kopfleiste -----
+let backAction=null;
+function setTop(title, subtitle, back){
+  $('#brandT').textContent=title||"§34d Trainer";
+  $('#brandS').textContent=subtitle||"Sachkundeprüfung Versicherungsvermittlung";
+  backAction=back||null;
+  $('#backBtn').hidden=!back;
+  if(!examMode) $('#timer').hidden=true;
+}
+$('#backBtn').onclick=()=>backAction && backAction();
+
+// Tastatur: jede Ansicht kann eigene Kürzel setzen
+let keyHandler=null;
+document.addEventListener('keydown', e=>{
+  if(sheetOpen()){ if(e.key==="Escape") closeSheet(); return; }
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  // Enter/Leertaste auf einem fokussierten Knopf löst schon dessen Klick aus – nicht doppelt reagieren
+  if((e.key==="Enter"||e.key===" ") && e.target.closest && e.target.closest('button,summary,a,label,select')) return;
+  if(e.key==="Escape" && backAction){ backAction(); return; }
+  keyHandler && keyHandler(e);
+});
+function optionKey(e){
+  const tag=(e.target.tagName||"").toLowerCase();
+  if(tag==="input"||tag==="textarea") return -1;
+  const k=e.key.toLowerCase();
+  if(/^[1-8]$/.test(k)) return parseInt(k)-1;
+  const li=LETTERS.toLowerCase().indexOf(k);
+  return li;
+}
+function render(html){
+  closeSheet(true);
+  keyHandler=null;
+  const a=appEl(); a.innerHTML=`<div class="view">${html}</div>`;
+  window.scrollTo({top:0});
+}
+
+// ===================================================================
+// Einstellungen
+// ===================================================================
+const SET_KEY="quiz34d_settings_v1";
+const settings=Object.assign({theme:"auto", scene:0, goal:20, dailyLen:15}, (()=>{
   try{
-    const raw = localStorage.getItem(STORE_KEY);
-    if(raw) return JSON.parse(raw);
+    const s=JSON.parse(localStorage.getItem(SET_KEY));
+    if(s) return s;
+    const old=localStorage.getItem("quiz34d_scene");          // Übernahme aus der alten Version
+    if(old!==null) return {scene:(parseInt(old)||0)%4};
   }catch(e){}
-  return {streak:0, lastDate:null, examDate:null, stats:{}, sr:{}, todayDate:null, todayCount:0, totalAnswered:0, totalCorrect:0, favorites:[]};
+  return {};
+})());
+function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(settings)); }catch(e){} }
+function applyTheme(){
+  const r=document.documentElement;
+  if(settings.theme==="auto") r.removeAttribute('data-theme'); else r.setAttribute('data-theme', settings.theme);
+  const s=SCENES[settings.scene] || SCENES[0];
+  r.style.setProperty('--scene', s.bg || 'none');
+  const dark = settings.theme==="dark" || (settings.theme==="auto" && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', dark? "#0f1215" : "#eef3f1");
 }
-function saveProgress(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }catch(e){}
-}
-let progress = loadProgress();
-progress.sr = progress.sr || {}; progress.todayCount = progress.todayCount || 0; progress.favorites = progress.favorites || [];
-function toggleFav(id){
-  const i = progress.favorites.indexOf(id);
-  if(i>=0) progress.favorites.splice(i,1); else progress.favorites.push(id);
-  saveProgress();
-}
-function startFavorites(){
-  view="quiz"; examMode=false; clearInterval(examTimer); activeCat="Merkliste";
-  const pool = progress.favorites.map(id=>questions[id]).filter(Boolean);
-  if(pool.length===0){ renderHome(); return; }
-  document.getElementById('catbar').style.display='none';
-  session = buildSession(pool); idx=0; answers={};
-  renderQuestion();
-}
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', applyTheme);
 
-function todayStr(){ return new Date().toISOString().slice(0,10); }
-function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+// ===================================================================
+// Fortschritt (pro Gerät/Browser)
+// ===================================================================
+const STORE_KEY="quiz34d_progress_v1";
+function emptyProgress(){ return {streak:0, bestStreak:0, lastDate:null, examDate:null, stats:{}, sr:{}, todayDate:null, todayCount:0, totalAnswered:0, totalCorrect:0, favorites:[], history:{}, cases:{}}; }
+function normalizeProgress(p){
+  const base=emptyProgress();
+  p = (p && typeof p==="object") ? p : {};
+  for(const k in base) if(p[k]===undefined || p[k]===null && typeof base[k]==="object" && base[k]!==null) p[k]=base[k];
+  if(!Array.isArray(p.favorites)) p.favorites=[];
+  if(p.examDate && !isDay(p.examDate)) p.examDate=null;
+  p.bestStreak=Math.max(p.bestStreak||0, p.streak||0);
+  return p;
+}
+function loadProgress(){
+  try{ const raw=localStorage.getItem(STORE_KEY); if(raw) return normalizeProgress(JSON.parse(raw)); }catch(e){}
+  return emptyProgress();
+}
+function saveProgress(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }catch(e){} }
+let progress=loadProgress();
 
 function registerPractice(){
-  const t = todayStr();
-  if(progress.lastDate === t) return; // schon heute gezählt
-  if(progress.lastDate && daysBetween(progress.lastDate, t)===1){ progress.streak++; }
-  else { progress.streak = 1; }
-  progress.lastDate = t;
+  const t=todayStr();
+  if(progress.lastDate===t) return;
+  progress.streak = (progress.lastDate && daysBetween(progress.lastDate,t)===1) ? progress.streak+1 : 1;
+  progress.bestStreak=Math.max(progress.bestStreak||0, progress.streak);
+  progress.lastDate=t;
   saveProgress();
+}
+// Serie gilt als unterbrochen, wenn gestern und heute nicht geübt wurde
+function currentStreak(){
+  if(!progress.lastDate) return 0;
+  return daysBetween(progress.lastDate, todayStr())<=1 ? progress.streak : 0;
 }
 
 const SR_STEPS=[1,3,7,14,30];
 function recordAnswer(qId, correct){
-  const s = progress.stats[qId] || {seen:0, correct:0};
+  const s=progress.stats[qId] || {seen:0, correct:0};
   s.seen++; if(correct) s.correct++;
-  progress.stats[qId] = s;
-  progress.totalAnswered++;
-  if(correct) progress.totalCorrect++;
+  progress.stats[qId]=s;
+  progress.totalAnswered++; if(correct) progress.totalCorrect++;
 
-  const sr = progress.sr[qId] || {step:-1};
-  if(correct){ sr.step = Math.min(sr.step+1, SR_STEPS.length-1); }
-  else { sr.step = 0; }
-  const days = SR_STEPS[Math.max(sr.step,0)];
-  const due = new Date(); due.setDate(due.getDate()+days);
-  sr.due = due.toISOString().slice(0,10);
+  const sr=progress.sr[qId] || {step:-1};
+  sr.step = correct ? Math.min(sr.step+1, SR_STEPS.length-1) : 0;
+  sr.due = addDays(todayStr(), SR_STEPS[Math.max(sr.step,0)]);
   sr.everWrong = sr.everWrong || !correct;
-  progress.sr[qId] = sr;
+  progress.sr[qId]=sr;
 
-  const t = todayStr();
-  if(progress.todayDate !== t){ progress.todayDate = t; progress.todayCount = 0; }
+  const t=todayStr();
+  if(progress.todayDate!==t){ progress.todayDate=t; progress.todayCount=0; }
   progress.todayCount++;
+  progress.history[t]=(progress.history[t]||0)+1;
+  registerPractice();          // Serie zählt ab der ersten beantworteten Frage des Tages
   saveProgress();
 }
-
-function dueReviewCount(){
-  const t = todayStr();
-  return Object.entries(progress.sr).filter(([id,s])=> s.everWrong && s.due<=t).length;
+function todayCount(){ return progress.todayDate===todayStr() ? progress.todayCount : 0; }
+function dueIds(){
+  const t=todayStr();
+  return Object.entries(progress.sr).filter(([id,s])=>s.everWrong && s.due<=t && questions[id])
+    .sort((a,b)=>a[1].due<b[1].due?-1:1).map(([id])=>parseInt(id));
+}
+// Lernstand je Frage: 0 neu · 1 lernend · 2 gefestigt · 3 gemeistert
+function level(id){
+  if(!progress.stats[id]) return 0;
+  const st=(progress.sr[id]||{step:-1}).step;
+  return st>=3?3 : st>=1?2 : 1;
+}
+function levelCounts(list){
+  const c=[0,0,0,0]; list.forEach(q=>c[level(q.id)]++); return c;
+}
+function mbar(counts, total){
+  const w=n=>total? (n/total*100).toFixed(2) : 0;
+  return `<div class="mbar" role="img" aria-label="${counts[3]} gemeistert, ${counts[2]} gefestigt, ${counts[1]} lernend, ${counts[0]} neu"><i class="l3" style="width:${w(counts[3])}%"></i><i class="l2" style="width:${w(counts[2])}%"></i><i class="l1" style="width:${w(counts[1])}%"></i></div>`;
+}
+function accOf(list){
+  let s=0,c=0; list.forEach(q=>{const st=progress.stats[q.id]; if(st){s+=st.seen;c+=st.correct;}});
+  return s? Math.round(c/s*100) : null;
+}
+function toggleFav(id){
+  const i=progress.favorites.indexOf(id);
+  if(i>=0) progress.favorites.splice(i,1); else progress.favorites.push(id);
+  saveProgress();
+  toast(i>=0? "Von der Merkliste entfernt" : "Zur Merkliste hinzugefügt ⭐");
 }
 
-function startErrorReview(){
-  view="quiz"; examMode=false; clearInterval(examTimer);
-  activeCat="Fehlerheft";
-  const t = todayStr();
-  const dueIds = Object.entries(progress.sr).filter(([id,s])=>s.everWrong && s.due<=t)
-    .sort((a,b)=> a[1].due<b[1].due?-1:1).map(([id])=>parseInt(id));
-  const pool = dueIds.map(id=>questions[id]).filter(Boolean).slice(0,25);
-  if(pool.length===0){ renderHome(); return; }
-  document.getElementById('catbar').style.display='none';
-  session = buildSession(pool);
-  idx=0; answers={};
-  renderQuestion();
-}
-
-let activeCat = "Alle";
-let session = [];
-let idx = 0;
-let answers = {};
-let view = "home";
+// ===================================================================
+// Übungsrunden
+// ===================================================================
+let activeCat="Alle", session=[], idx=0, answers={}, view="home";
+let examMode=false, examPart=0, examEnd=0, examTimer=null, examFlags={}, examWarned=false;
 
 function buildSession(pool){
   return shuffle(pool.slice()).map(item=>{
-    if(item.type==="text"){
-      return {id:item.id, cat:item.cat, q:item.q, e:item.e, type:"text", answers:item.answers};
-    }
+    if(item.type==="text") return {id:item.id, cat:item.cat, q:item.q, e:item.e, type:"text", answers:item.answers};
     if(item.type==="multi"){
-      const withFlag = item.opts.map((o,oi)=>({text:o, correct:item.cArr.includes(oi)}));
-      shuffle(withFlag);
-      return {id:item.id, cat:item.cat, q:item.q, e:item.e, type:"multi", opts:withFlag.map(o=>o.text), correctSet:withFlag.map((o,i)=>o.correct?i:-1).filter(i=>i>=0)};
+      const wf=shuffle(item.opts.map((o,oi)=>({text:o, correct:item.cArr.includes(oi)})));
+      return {id:item.id, cat:item.cat, q:item.q, e:item.e, type:"multi", opts:wf.map(o=>o.text), correctSet:wf.map((o,i)=>o.correct?i:-1).filter(i=>i>=0)};
     }
-    const withFlag = item.opts.map((o,oi)=>({text:o, correct:oi===item.c}));
-    shuffle(withFlag);
-    const correctIndex = withFlag.findIndex(o=>o.correct);
-    return {id:item.id, cat:item.cat, q:item.q, e:item.e, opts:withFlag.map(o=>o.text), c:correctIndex};
+    const wf=shuffle(item.opts.map((o,oi)=>({text:o, correct:oi===item.c})));
+    return {id:item.id, cat:item.cat, q:item.q, e:item.e, opts:wf.map(o=>o.text), c:wf.findIndex(o=>o.correct)};
   });
 }
-
-function startQuiz(cat){
-  view = "quiz";
-  activeCat = cat;
-  examMode = false; clearInterval(examTimer);
-  session = buildSession(questions.filter(q=> cat==="Alle" || q.cat===cat));
-  idx = 0; answers = {};
-  document.getElementById('catbar').style.display='flex';
-  renderCatbar();
-  renderQuestion();
-}
-
-// Tagesrunde: gewichtete Auswahl - nie gesehene und zuvor falsch beantwortete Fragen werden bevorzugt
-function startDailyRound(){
-  view = "quiz";
-  activeCat = "Tagesrunde";
-  examMode = false; clearInterval(examTimer);
-  const weighted = questions.map(q=>{
-    const s = progress.stats[q.id];
-    let w = 5; // nie gesehen
-    if(s){ w = s.correct/s.seen >= 0.8 ? 1 : (s.correct/s.seen >= 0.5 ? 3 : 6); }
-    return {q, w};
-  });
-  const pool=[];
-  weighted.forEach(({q,w})=>{ for(let k=0;k<w;k++) pool.push(q); });
-  const chosenIds = new Set();
-  const chosen = [];
-  shuffle(pool);
-  for(const q of pool){
-    if(chosen.length>=15) break;
-    if(chosenIds.has(q.id)) continue;
-    chosenIds.add(q.id); chosen.push(q);
-  }
-  session = buildSession(chosen);
-  idx = 0; answers = {};
-  document.getElementById('catbar').style.display='none';
-  renderQuestion();
-}
-
-function renderCatbar(){
-  const cats = ["Alle","A","B","C","D","E"];
-  const catbar = document.getElementById('catbar');
-  catbar.innerHTML = cats.map(c=>{
-    const color = c==="Alle" ? "#555" : CAT[c].color;
-    return `<div class="chip ${c===activeCat?'active':''}" style="--chipcolor:${color}" data-c="${c}">${c}</div>`;
-  }).join('');
-  catbar.querySelectorAll('.chip').forEach(el=>el.onclick=()=>startQuiz(el.dataset.c));
-}
-
-function examDaysLeft(){
-  if(!progress.examDate) return null;
-  return daysBetween(todayStr(), progress.examDate);
-}
-
-function renderHome(){
-  view = "home";
-  examMode = false; clearInterval(examTimer);
-  document.getElementById('catbar').style.display='none';
-  const dl = examDaysLeft();
-  const acc = progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100) : null;
-  const due = dueReviewCount();
-  const unseen = questions.length - Object.keys(progress.stats).length;
-  let planLine = "";
-  if(dl!==null && dl>0 && unseen>0){
-    planLine = `<div class="examcard" style="font-size:.85rem;">📅 Lernplan: noch <b>${dl}</b> Tage bis zur Prüfung, <b>${unseen}</b> Fragen noch nie geübt → ca. <b>${Math.ceil(unseen/dl)}</b> neue Fragen/Tag, um bis dahin einmal alles gesehen zu haben.</div>`;
-  }
-
-  document.getElementById('app').innerHTML = `
-    <div class="homegrid">
-      <div class="mini"><div class="big">🔥 ${progress.streak}</div><div class="lbl">Tage in Folge geübt</div></div>
-      <div class="mini"><div class="big">${acc!==null? acc+"%":"–"}</div><div class="lbl">Trefferquote gesamt</div></div>
-    </div>
-    <div class="examcard">
-      ${progress.examDate
-        ? `<div><b>${dl>=0? dl : 0}</b> Tage bis zur Prüfung<br><span style="color:var(--sub); font-size:.78rem;">${progress.examDate}</span></div><button class="linkbtn" id="editExam">ändern</button>`
-        : `<div style="font-size:.85rem;">Prüfungstermin (Januar) eintragen:</div><input type="date" id="examInput"><button class="linkbtn" id="saveExam">speichern</button>`
-      }
-    </div>
-    <button class="dailybtn" id="dailyBtn">
-      <div class="t1">🎯 Tagesrunde starten</div>
-      <div class="t2">15 Fragen, mit Fokus auf das, was noch schwerfällt</div>
-    </button>
-    ${planLine}
-    ${due>0 ? `<button class="btn" id="errBtn" style="width:100%; margin:0 0 14px; background:linear-gradient(135deg,#c0392b,#c9622a);">🔁 Fehlerheft – ${due} Frage${due===1?'':'n'} fällig</button>` : ''}
-    <button class="btn" id="examBtn" style="width:100%; margin:0 0 14px; background:linear-gradient(135deg,#c9622a,#a13d7c);">📝 Prüfungssimulation (Teil I + II, mit Zeitlimit)</button>
-    <div class="sectionlbl">Gezielt üben</div>
-    <div class="catgrid">
-      ${Object.entries(CAT).map(([c,v])=>`<div class="catcard" style="--catcolor:${v.color}" data-c="${c}"><div class="cn">${c}</div><div class="cs">${v.name}</div></div>`).join('')}
-    </div>
-    <button class="btn" id="allBtn" style="width:100%;">Alle Fragen (${questions.length}) am Stück</button>
-    <div class="sectionlbl" style="margin-top:16px;">Mehr</div>
-    <div class="catgrid">
-      <div class="catcard" style="--catcolor:#8a8a2f" id="caseCard"><div class="cn">📚 Fallstudien</div><div class="cs">${CASES.length} Szenarien</div></div>
-      <div class="catcard" style="--catcolor:#3b6ea5" id="glossCard"><div class="cn">📖 Glossar</div><div class="cs">${GLOSSARY.length} Begriffe</div></div>
-      <div class="catcard" style="--catcolor:#c9622a" id="favCard"><div class="cn">⭐ Merkliste</div><div class="cs">${progress.favorites.length} markiert</div></div>
-      <div class="catcard" style="--catcolor:#555" id="statsBtn2"><div class="cn">📊 Statistik</div><div class="cs">Fortschritt & Sync</div></div>
-    </div>
-  `;
-  document.getElementById('dailyBtn').onclick = startDailyRound;
-  document.getElementById('examBtn').onclick = startExam;
-  const errBtn = document.getElementById('errBtn');
-  if(errBtn) errBtn.onclick = startErrorReview;
-  document.getElementById('allBtn').onclick = ()=>startQuiz("Alle");
-  document.getElementById('statsBtn2').onclick = renderStats;
-  document.getElementById('glossCard').onclick = renderGlossary;
-  document.getElementById('favCard').onclick = startFavorites;
-  document.getElementById('caseCard').onclick = renderCaseList;
-  document.querySelectorAll('.catcard[data-c]').forEach(el=>el.onclick=()=>startQuiz(el.dataset.c));
-  const saveExam = document.getElementById('saveExam');
-  if(saveExam) saveExam.onclick = ()=>{
-    const v = document.getElementById('examInput').value;
-    if(v){ progress.examDate = v; saveProgress(); renderHome(); }
-  };
-  const editExam = document.getElementById('editExam');
-  if(editExam) editExam.onclick = ()=>{ progress.examDate = null; saveProgress(); renderHome(); };
-}
-
-function renderStats(){
-  view = "stats";
-  document.getElementById('catbar').style.display='none';
-  const byCat = {};
-  Object.entries(progress.stats).forEach(([id,s])=>{
-    const q = questions[id]; if(!q) return;
-    byCat[q.cat] = byCat[q.cat] || {seen:0, correct:0};
-    byCat[q.cat].seen += s.seen; byCat[q.cat].correct += s.correct;
-  });
-  document.getElementById('app').innerHTML = `
-    <div class="topnav"><button class="linkbtn" id="backHome">← Zur Startseite</button></div>
-    <div class="card">
-      <div class="sectionlbl" style="margin-top:0;">Gesamt</div>
-      <div class="statbar-row">
-        <div class="lbl"><span>${progress.totalAnswered} Fragen beantwortet</span><span>${progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100):0}%</span></div>
-        <div class="statbar-track"><div class="statbar-fill" style="width:${progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100):0}%; background:#2f9e7d;"></div></div>
-      </div>
-      <div class="sectionlbl">Pro Sachgebiet</div>
-      ${Object.entries(CAT).map(([c,v])=>{
-        const s = byCat[c] || {seen:0, correct:0};
-        const p = s.seen? Math.round(s.correct/s.seen*100) : 0;
-        return `<div class="statbar-row">
-          <div class="lbl"><span>${c} – ${v.name}</span><span>${s.seen? p+"% ("+s.seen+")" : "noch nicht geübt"}</span></div>
-          <div class="statbar-track"><div class="statbar-fill" style="width:${p}%; background:${v.color};"></div></div>
-        </div>`;
-      }).join('')}
-      <div class="sectionlbl">Fortschritt sichern</div>
-      <div style="font-size:.8rem; color:var(--sub); margin-bottom:8px;">Falls du das Gerät wechselst oder den Browser leerst: Code kopieren und auf dem neuen Gerät einfügen.</div>
-      <button class="linkbtn" id="expBtn">📤 Fortschritt als Code anzeigen</button>
-      <button class="linkbtn" id="impBtn" style="margin-left:14px;">📥 Code einfügen</button>
-      <textarea id="syncBox" style="display:none; width:100%; height:90px; margin-top:8px; font-size:.72rem; border:1px solid var(--border); border-radius:8px; background:transparent; color:var(--ink);"></textarea>
-      <button class="nextbtn" id="doImport" style="display:none;">Importieren</button>
-    </div>
-  `;
-  document.getElementById('backHome').onclick = renderHome;
-  document.getElementById('expBtn').onclick = ()=>{
-    const box = document.getElementById('syncBox');
-    box.style.display='block';
-    box.value = btoa(unescape(encodeURIComponent(JSON.stringify(progress))));
-    box.select();
-  };
-  document.getElementById('impBtn').onclick = ()=>{
-    const box = document.getElementById('syncBox');
-    box.style.display='block'; box.value=''; box.readOnly=false; box.focus();
-    document.getElementById('doImport').style.display='block';
-  };
-  document.getElementById('doImport').onclick = ()=>{
-    try{
-      const data = JSON.parse(decodeURIComponent(escape(atob(document.getElementById('syncBox').value.trim()))));
-      progress = Object.assign(loadProgress(), data);
-      saveProgress();
-      renderStats();
-    }catch(e){ alert('Der Code konnte nicht gelesen werden.'); }
-  };
-}
-
-function renderQuestion(){
-  const app = document.getElementById('app');
-  if(examMode){ if(idx>=session.length){ renderExamResult(); return; } renderExamQuestion(); return; }
-  if(idx >= session.length){ renderResult(); return; }
-  const item = session[idx];
-  const color = CAT[item.cat].color;
-  const pct = Math.round((idx/session.length)*100);
-  const isFav = progress.favorites.includes(item.id);
-  const starHtml = `<button class="star ${isFav?'on':''}" id="starBtn">★</button>`;
-  const backHtml = `<div class="topnav"><button class="linkbtn" id="backHomeQ">← Zur Startseite</button></div>`;
-
-  if(item.type==="text"){
-    app.innerHTML = `
-      ${backHtml}
-      <div class="bar"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
-      <div class="progress">Frage ${idx+1} von ${session.length} · Kurzantwort</div>
-      <div class="card" style="--catcolor:${color}">${starHtml}
-        <div class="tag" style="--catcolor:${color}">${item.cat} · ${CAT[item.cat].name}</div>
-        <div class="q">${item.q}</div>
-        <input class="textinput" id="txtIn" placeholder="Antwort eingeben..." autocomplete="off">
-        <button class="nextbtn" id="checkBtn">Prüfen</button>
-        <div class="expl" id="expl" style="display:none;"></div>
-      </div>`;
-    document.getElementById('starBtn').onclick=()=>{ toggleFav(item.id); renderQuestion(); };
-    document.getElementById('backHomeQ').onclick = renderHome;
-    const showTxtResult=(val)=>{
-      const richtig = item.answers.some(a=>a.toLowerCase()===val);
-      document.getElementById('txtIn').value = val;
-      document.getElementById('txtIn').disabled=true;
-      document.getElementById('checkBtn').style.display='none';
-      const expl = document.getElementById('expl');
-      expl.style.display='block';
-      expl.innerHTML = `<b>${richtig? "✅ Richtig!" : "❌ Nicht ganz – richtig wäre: " + item.answers[0]}</b>${item.e}
-        <button class="nextbtn" id="nextBtn">${idx+1 < session.length ? "Weiter →" : "Ergebnis anzeigen →"}</button>`;
-      document.getElementById('nextBtn').onclick = ()=>{ idx++; renderQuestion(); };
-    };
-    if(answers[idx]!==undefined){ showTxtResult(answers[idx]); }
-    else {
-      document.getElementById('checkBtn').onclick=()=>{
-        if(answers[idx]!==undefined) return;
-        const val = document.getElementById('txtIn').value.trim().toLowerCase();
-        answers[idx]=val;
-        recordAnswer(item.id, item.answers.some(a=>a.toLowerCase()===val));
-        showTxtResult(val);
-      };
-    }
-    return;
-  }
-
-  if(item.type==="multi"){
-    app.innerHTML = `
-      ${backHtml}
-      <div class="bar"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
-      <div class="progress">Frage ${idx+1} von ${session.length} · Mehrfachauswahl</div>
-      <div class="card" style="--catcolor:${color}">${starHtml}
-        <div class="tag" style="--catcolor:${color}">${item.cat} · ${CAT[item.cat].name}</div>
-        <div class="q">${item.q}</div>
-        ${item.opts.map((o,oi)=>`<label class="multiopt" data-oi="${oi}"><input type="checkbox" value="${oi}">${o}</label>`).join('')}
-        <button class="nextbtn" id="checkBtn">Prüfen</button>
-        <div class="expl" id="expl" style="display:none;"></div>
-      </div>`;
-    document.getElementById('starBtn').onclick=()=>{ toggleFav(item.id); renderQuestion(); };
-    document.getElementById('backHomeQ').onclick = renderHome;
-    const showMultiResult=(picked)=>{
-      const setEq = picked.length===item.correctSet.length && picked.every(p=>item.correctSet.includes(p));
-      app.querySelectorAll('.multiopt').forEach(l=>{
-        const oi=parseInt(l.dataset.oi);
-        l.querySelector('input').checked = picked.includes(oi);
-        if(item.correctSet.includes(oi)) l.classList.add('correct');
-        else if(picked.includes(oi)) l.classList.add('wrong');
-        l.querySelector('input').disabled=true;
-      });
-      document.getElementById('checkBtn').style.display='none';
-      const expl = document.getElementById('expl');
-      expl.style.display='block';
-      expl.innerHTML = `<b>${setEq? "✅ Richtig!" : "❌ Nicht ganz richtig."}</b>${item.e}
-        <button class="nextbtn" id="nextBtn">${idx+1 < session.length ? "Weiter →" : "Ergebnis anzeigen →"}</button>`;
-      document.getElementById('nextBtn').onclick = ()=>{ idx++; renderQuestion(); };
-    };
-    if(answers[idx]!==undefined){ showMultiResult(answers[idx]); }
-    else {
-      document.getElementById('checkBtn').onclick=()=>{
-        if(answers[idx]!==undefined) return;
-        const picked = Array.from(app.querySelectorAll('.multiopt input:checked')).map(i=>parseInt(i.value));
-        answers[idx]=picked;
-        recordAnswer(item.id, picked.length===item.correctSet.length && picked.every(p=>item.correctSet.includes(p)));
-        showMultiResult(picked);
-      };
-    }
-    return;
-  }
-
-  app.innerHTML = `
-    ${backHtml}
-    <div class="bar"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
-    <div class="progress">Frage ${idx+1} von ${session.length}</div>
-    <div class="card" style="--catcolor:${color}">${starHtml}
-      <div class="tag" style="--catcolor:${color}">${item.cat} · ${CAT[item.cat].name}</div>
-      <div class="q">${item.q}</div>
-      ${item.opts.map((o,oi)=>`<button class="opt" data-oi="${oi}">${o}</button>`).join('')}
-      <div class="expl" id="expl" style="display:none;"></div>
-    </div>`;
-  document.getElementById('starBtn').onclick=()=>{ toggleFav(item.id); renderQuestion(); };
-  document.getElementById('backHomeQ').onclick = renderHome;
-  const showSingleResult=(oi)=>{
-    app.querySelectorAll('.opt').forEach(b=>{
-      const bo=parseInt(b.dataset.oi);
-      if(bo===item.c) b.classList.add('correct');
-      else if(bo===oi && oi!==item.c) b.classList.add('wrong');
-      b.disabled=true;
-    });
-    const richtig = oi===item.c;
-    const expl = document.getElementById('expl');
-    expl.style.display='block';
-    expl.innerHTML = `<b>${richtig? "✅ Richtig!" : "❌ Nicht ganz – richtig wäre: " + item.opts[item.c]}</b>${item.e}
-      <button class="nextbtn" id="nextBtn">${idx+1 < session.length ? "Weiter →" : "Ergebnis anzeigen →"}</button>`;
-    document.getElementById('nextBtn').onclick = ()=>{ idx++; renderQuestion(); };
-  };
-  if(answers[idx]!==undefined){ showSingleResult(answers[idx]); }
-  else {
-    app.querySelectorAll('.opt').forEach(btn=>{
-      btn.onclick=()=>{
-        if(answers[idx]!==undefined) return;
-        const oi = parseInt(btn.dataset.oi);
-        answers[idx]=oi;
-        recordAnswer(item.id, oi===item.c);
-        showSingleResult(oi);
-      };
-    });
-  }
-}
-
-// --- Prüfungssimulation (angelehnt an den IHK-Ablauf; Fragenzahl und Zeit sind verkürzt) ---
-let examMode=false, examPart=0, examEnd=0, examTimer=null;
-const EXAM_PARTS=[
-  {name:"Teil I (A–C)", cats:["A","B","C"], minutes:50},
-  {name:"Teil II (D–E)", cats:["D","E"], minutes:35}
-];
-
-function startExam(){
-  view="quiz"; examMode=true; activeCat="Prüfung";
-  document.getElementById('catbar').style.display='none';
-  const all=[];
-  EXAM_PARTS.forEach((p,pi)=>{
-    const part=[];
-    p.cats.forEach(c=>{
-      const pool=shuffle(questions.filter(q=>q.cat===c && !q.type).slice()).slice(0,12);
-      buildSession(pool).forEach(s=>{ s.part=pi; part.push(s); });
-    });
-    shuffle(part).forEach(s=>all.push(s));
-  });
-  session=all; idx=0; answers={}; examPart=0;
-  startPartTimer();
-  renderQuestion();
-}
-
-function startPartTimer(){
-  clearInterval(examTimer);
-  examEnd=Date.now()+EXAM_PARTS[examPart].minutes*60000;
-  examTimer=setInterval(tick,1000);
-}
-
-function tick(){
-  const left=examEnd-Date.now();
-  if(left<=0){ nextPart(); return; }
-  const el=document.getElementById('timer');
-  if(el){
-    const m=Math.floor(left/60000), s=Math.floor((left%60000)/1000);
-    el.textContent="⏱ "+m+":"+String(s).padStart(2,'0');
-  }
-}
-
-function nextPart(){
-  clearInterval(examTimer);
-  const nextIdx=session.findIndex(s=>s.part>examPart);
-  if(nextIdx===-1){ idx=session.length; renderExamResult(); return; }
-  idx=nextIdx; examPart++;
-  document.getElementById('app').innerHTML=`
-    <div class="card result">
-      <div class="progress">${EXAM_PARTS[examPart-1].name} beendet</div>
-      <div class="grade">Weiter mit ${EXAM_PARTS[examPart].name}</div>
-      <div class="verdict">${EXAM_PARTS[examPart].minutes} Minuten – eine Rückkehr zu Teil I ist nicht möglich.</div>
-      <button class="btn" id="goPart">Teil starten</button>
-    </div>`;
-  document.getElementById('goPart').onclick=()=>{ startPartTimer(); renderQuestion(); };
-}
-
-function renderExamQuestion(){
-  const item=session[idx];
-  const inPart=session.filter(s=>s.part===examPart);
-  const pos=inPart.indexOf(item)+1;
-  const sel=answers[idx];
-  document.getElementById('app').innerHTML=`
-    <div class="topnav"><span class="progress">${EXAM_PARTS[examPart].name} · Frage ${pos}/${inPart.length}</span><span class="progress" id="timer"></span></div>
-    <div class="card" style="--catcolor:#555">
-      <div class="q">${item.q}</div>
-      ${item.opts.map((o,oi)=>`<button class="opt" data-oi="${oi}" ${sel===oi?'style="border-color:#3b6ea5;background:rgba(59,110,165,.14);font-weight:700;"':''}>${o}</button>`).join('')}
-      <button class="nextbtn" id="nextBtn">Weiter →</button>
-    </div>`;
-  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{ answers[idx]=parseInt(b.dataset.oi); renderExamQuestion(); });
-  document.getElementById('nextBtn').onclick=()=>{
-    if(answers[idx]!==undefined) recordAnswer(item.id, answers[idx]===item.c);
-    idx++;
-    if(idx>=session.length || session[idx].part!==examPart) nextPart(); else renderExamQuestion();
-  };
-  tick();
-}
-
-function renderExamResult(){
-  clearInterval(examTimer); registerPractice();
-  const byCat={};
-  session.forEach((s,i)=>{ const c=byCat[s.cat]=byCat[s.cat]||{tot:0,ok:0}; c.tot++; if(isCorrect(s,answers[i])) c.ok++; });
-  const rows=Object.entries(byCat).map(([c,v])=>({c,v,p:Math.round(v.ok/v.tot*100)}));
-  const n50=rows.filter(r=>r.p>=50).length;
-  const rest=rows.filter(r=>r.p<50);
-  const passed = n50===rows.length || (n50===rows.length-1 && rest[0].p>=30);
-  const total=session.length, ok=session.filter((s,i)=>isCorrect(s,answers[i])).length;
-  const pct=Math.round(ok/total*100);
-  const wrong=session.map((s,i)=>({s,i})).filter(({s,i})=>!isCorrect(s,answers[i]));
-  document.getElementById('app').innerHTML=`
-    <div class="card result" style="--catcolor:${passed?'#2f9e7d':'#c0392b'}">
-      <div class="progress">Prüfungssimulation · Ergebnis</div>
-      <div class="pct">${pct}%</div>
-      <div class="grade" style="color:${passed?'#2f9e7d':'#c0392b'}">${passed?'Bestanden':'Nicht bestanden'}</div>
-      <div class="verdict">${ok} von ${total} richtig. Kriterium: in vier von fünf Sachgebieten mind. 50 %, im übrigen mind. 30 %.</div>
-      <button class="btn" id="again">Neue Simulation</button>
-      <button class="linkbtn" id="home3" style="display:block; margin:10px auto 0;">← Zur Startseite</button>
-      <div class="byCat">
-        ${rows.map(r=>`<div class="row"><span class="dot" style="background:${CAT[r.c].color}"></span><span class="name">${r.c} – ${CAT[r.c].name}</span><span class="val" style="color:${r.p>=50?'#2f9e7d':(r.p>=30?'#c9622a':'#c0392b')}">${r.p}% (${r.v.ok}/${r.v.tot})</span></div>`).join('')}
-      </div>
-      <details style="text-align:left; margin-top:16px; font-size:.85rem;">
-        <summary style="cursor:pointer; font-weight:700;">Falsche/offene Antworten ansehen (${wrong.length})</summary>
-        ${wrong.map(({s,i})=>`<div style="margin:10px 0; padding-top:8px; border-top:1px dashed var(--border);"><b>${s.q}</b><br>Deine Antwort: ${answers[i]!==undefined?s.opts[answers[i]]:'–'}<br><span style="color:#2f9e7d;">Richtig: ${s.opts[s.c]}</span><br><span style="color:var(--sub);">${s.e}</span></div>`).join('')}
-      </details>
-    </div>`;
-  document.getElementById('again').onclick=startExam;
-  document.getElementById('home3').onclick=renderHome;
-}
-
-function renderGlossary(){
-  view="glossary";
-  document.getElementById('catbar').style.display='none';
-  document.getElementById('app').innerHTML = `
-    <div class="topnav"><button class="linkbtn" id="backHome">← Zur Startseite</button></div>
-    <div class="card">
-      ${GLOSSARY.map(g=>`<div class="glossitem"><b>${g.t}</b><br>${g.d}</div>`).join('')}
-    </div>`;
-  document.getElementById('backHome').onclick = renderHome;
-}
-
-let caseIdx=0, caseQ=0, caseAnswers=[];
-function renderCaseList(){
-  view="cases";
-  document.getElementById('catbar').style.display='none';
-  document.getElementById('app').innerHTML = `
-    <div class="topnav"><button class="linkbtn" id="backHome">← Zur Startseite</button></div>
-    ${CASES.map((c,i)=>`<div class="catcard" style="--catcolor:#8a8a2f; margin-bottom:10px; cursor:pointer;" data-i="${i}"><div class="cn">${c.title}</div><div class="cs">${c.qs.length} Teilfragen</div></div>`).join('')}
-  `;
-  document.getElementById('backHome').onclick = renderHome;
-  document.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>startCase(parseInt(el.dataset.i)));
-}
-function startCase(i){
-  caseIdx=i; caseQ=0; caseAnswers=[];
-  renderCaseQuestion();
-}
-function renderCaseQuestion(){
-  const c = CASES[caseIdx];
-  if(caseQ>=c.qs.length){
-    const ok = caseAnswers.filter((a,i)=>a===c.qs[i].c).length;
-    document.getElementById('app').innerHTML = `
-      <div class="card result">
-        <div class="progress">${c.title} · fertig</div>
-        <div class="pct">${ok}/${c.qs.length}</div>
-        <button class="btn" id="backCases">Zu den Fallstudien</button>
-      </div>`;
-    document.getElementById('backCases').onclick = renderCaseList;
-    return;
-  }
-  const q = c.qs[caseQ];
-  document.getElementById('app').innerHTML = `
-    <div class="topnav"><button class="linkbtn" id="backHomeQ">← Zur Startseite</button></div>
-    <div class="caseintro"><b>${c.title}</b><br>${c.intro}</div>
-    <div class="progress">Teilfrage ${caseQ+1} von ${c.qs.length}</div>
-    <div class="card" style="--catcolor:#8a8a2f">
-      <div class="q">${q.q}</div>
-      ${q.opts.map((o,oi)=>`<button class="opt" data-oi="${oi}">${o}</button>`).join('')}
-      <div class="expl" id="expl" style="display:none;"></div>
-    </div>`;
-  document.getElementById('backHomeQ').onclick = renderHome;
-  document.querySelectorAll('.opt').forEach(btn=>{
-    btn.onclick=()=>{
-      const oi=parseInt(btn.dataset.oi);
-      caseAnswers[caseQ]=oi;
-      document.querySelectorAll('.opt').forEach(b=>{
-        const bo=parseInt(b.dataset.oi);
-        if(bo===q.c) b.classList.add('correct'); else if(bo===oi) b.classList.add('wrong');
-        b.disabled=true;
-      });
-      const expl=document.getElementById('expl');
-      expl.style.display='block';
-      expl.innerHTML=`<b>${oi===q.c?"✅ Richtig!":"❌ Richtig wäre: "+q.opts[q.c]}</b>${q.e}<button class="nextbtn" id="nextC">Weiter →</button>`;
-      document.getElementById('nextC').onclick=()=>{ caseQ++; renderCaseQuestion(); };
-    };
-  });
-}
-
 function isCorrect(item, ans){
-  if(ans===undefined) return false;
-  if(item.type==="text") return item.answers.some(a=>a.toLowerCase()===ans);
+  if(ans===undefined || ans===null) return false;
+  if(item.type==="text") return item.answers.some(a=>normAns(a)===normAns(ans));
   if(item.type==="multi") return Array.isArray(ans) && ans.length===item.correctSet.length && ans.every(p=>item.correctSet.includes(p));
   return ans===item.c;
 }
 
+// Laufende Runde merken, damit ein Neuladen nichts kaputt macht
+const RUN_KEY="quiz34d_run_v1";
+function saveRun(){ if(examMode) return; try{ localStorage.setItem(RUN_KEY, JSON.stringify({session, idx, answers, activeCat, t:Date.now()})); }catch(e){} }
+function clearRun(){ try{ localStorage.removeItem(RUN_KEY); }catch(e){} }
+function loadRun(){
+  try{
+    const r=JSON.parse(localStorage.getItem(RUN_KEY));
+    if(r && Array.isArray(r.session) && r.session.length && r.idx<r.session.length && r.session.every(s=>questions[s.id] && CAT[s.cat])) return r;
+  }catch(e){}
+  return null;
+}
+function resumeRun(){
+  const r=loadRun(); if(!r) return renderHome();
+  stopExam(); session=r.session; idx=r.idx; answers=r.answers||{}; activeCat=r.activeCat; view="quiz";
+  renderQuestion();
+}
+
+function startRun(pool, label){
+  stopExam();
+  if(!pool.length){ toast("Hier gibt es gerade nichts zu üben."); renderHome(); return; }
+  view="quiz"; activeCat=label;
+  session=buildSession(pool); idx=0; answers={};
+  saveRun(); renderQuestion();
+}
+const startQuiz = cat => startRun(questions.filter(q=>cat==="Alle" || q.cat===cat), cat);
+const startFavorites = () => startRun(progress.favorites.map(id=>questions[id]).filter(Boolean), "Merkliste");
+const startErrorReview = () => startRun(dueIds().slice(0,25).map(id=>questions[id]), "Fehlerheft");
+const startNew = () => startRun(shuffle(questions.filter(q=>!progress.stats[q.id])).slice(0,settings.dailyLen), "Neue Fragen");
+function hardest(){
+  return questions.filter(q=>{const s=progress.stats[q.id]; return s && s.seen>=1 && s.correct/s.seen<0.6;})
+    .sort((a,b)=>{const sa=progress.stats[a.id], sb=progress.stats[b.id]; return sa.correct/sa.seen - sb.correct/sb.seen || sb.seen-sa.seen;});
+}
+const startHard = () => startRun(hardest().slice(0,20), "Schwierige Fragen");
+
+// Tagesrunde: fällige Wiederholungen zuerst, Rest gewichtet (neu & schwach bevorzugt)
+function startDailyRound(){
+  const n=settings.dailyLen;
+  const chosen=[], ids=new Set();
+  dueIds().slice(0, Math.ceil(n*0.4)).forEach(id=>{ ids.add(id); chosen.push(questions[id]); });
+  const pool=[];
+  questions.forEach(q=>{
+    if(ids.has(q.id)) return;
+    const s=progress.stats[q.id];
+    let w=5;
+    if(s){ const a=s.correct/s.seen; w = a>=0.8? 1 : a>=0.5? 3 : 6; if(level(q.id)===3) w=1; }
+    for(let k=0;k<w;k++) pool.push(q);
+  });
+  shuffle(pool);
+  for(const q of pool){ if(chosen.length>=n) break; if(ids.has(q.id)) continue; ids.add(q.id); chosen.push(q); }
+  startRun(chosen, "Tagesrunde");
+}
+function replay(){
+  if(activeCat==="Alle" || CAT[activeCat]) return startQuiz(activeCat);
+  ({"Tagesrunde":startDailyRound, "Merkliste":startFavorites, "Fehlerheft":startErrorReview, "Neue Fragen":startNew, "Schwierige Fragen":startHard}[activeCat] || startDailyRound)();
+}
+function runLabel(){ return CAT[activeCat] ? `Sachgebiet ${activeCat}` : activeCat==="Alle" ? "Alle Fragen" : activeCat; }
+
+// ===================================================================
+// Startseite
+// ===================================================================
+function greeting(){ const h=new Date().getHours(); return h<11?"Guten Morgen 👋" : h<18?"Hallo 👋" : "Guten Abend 👋"; }
+function examDaysLeft(){ return progress.examDate? daysBetween(todayStr(), progress.examDate) : null; }
+
+function renderHome(){
+  stopExam(); view="home";
+  setTop(null,null,null);
+  const total=questions.length;
+  const lc=levelCounts(questions);
+  const masteredPct=Math.round(lc[3]/total*100);
+  const seenPct=Math.round((total-lc[0])/total*100);
+  const acc=progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100) : null;
+  const due=dueIds().length, unseen=lc[0], tc=todayCount(), goal=settings.goal;
+  const dl=examDaysLeft(), run=loadRun(), hard=hardest().length;
+
+  let examLine;
+  if(dl===null) examLine=`Trag deinen Prüfungstermin ein, dann bekommst du einen Lernplan.`;
+  else if(dl>1) examLine=`Noch <b>${dl} Tage</b> bis zur Prüfung am ${fmtDate(progress.examDate)}.`;
+  else if(dl===1) examLine=`<b>Morgen</b> ist Prüfung. Heute lieber locker wiederholen.`;
+  else if(dl===0) examLine=`<b>Heute ist Prüfung</b>. Viel Erfolg! 🍀`;
+  else examLine=`Die Prüfung war am ${fmtDate(progress.examDate)}. Trag einen neuen Termin in den Einstellungen ein.`;
+
+  let plan="";
+  if(dl!==null && dl>0 && (unseen>0 || due>0)){
+    const perDay=Math.ceil(unseen/dl);
+    plan=`<div class="card plan"><span style="font-size:1.3rem">🗓️</span><div>
+      <b>Dein Lernplan</b><br><span class="muted">${unseen>0
+        ? `${unseen} Fragen hast du noch nie gesehen. Mit <b style="color:var(--ink)">${perDay} neuen Fragen pro Tag</b> bist du rechtzeitig einmal durch.`
+        : `Du hast alle Fragen schon einmal gesehen. Arbeite jetzt das Fehlerheft ab und festige die Sachgebiete mit dem niedrigsten Stand.`}
+      ${dl<=14? " In den letzten zwei Wochen: täglich eine Prüfungssimulation." : ""}</span></div></div>`;
+  }
+
+  render(`
+    ${run? `<div class="card resume"><div class="tx"><b>Weitermachen?</b><div class="small muted">${esc(runLabelFor(run))} · Frage ${run.idx+1} von ${run.session.length}</div></div><button class="btn primary sm" id="resumeBtn">Fortsetzen</button><button class="iconbtn" id="dropRun" aria-label="Runde verwerfen" style="width:36px;height:36px;">✕</button></div>` : ""}
+
+    <section class="card hero">
+      <div class="hero-main">
+        <div>
+          <div class="eyebrow">${greeting()}</div>
+          <h1>Sachkunde §34d</h1>
+          <p class="sub">${examLine}</p>
+        </div>
+        <div class="ringwrap" title="${seenPct}% aller Fragen schon gesehen">
+          ${ring(masteredPct,96,10,"var(--B)")}
+          <div class="ringlabel"><b>${masteredPct}%</b><span>gemeistert</span></div>
+        </div>
+      </div>
+      <div class="stats3">
+        <div class="stat"><b>🔥 ${currentStreak()}</b><span>${plural(currentStreak(),"Tag","Tage")} in Folge</span></div>
+        <div class="stat"><b>${tc}<span style="font-size:.75rem;color:var(--sub)">/${goal}</span></b><span>${tc>=goal?"Tagesziel ✓":"heute"}</span><div class="minibar"><i style="width:${Math.min(100,tc/goal*100)}%"></i></div></div>
+        <div class="stat"><b>${acc!==null? acc+"%" : "–"}</b><span>Trefferquote</span></div>
+      </div>
+      ${dl===null? `<div class="examset" style="margin-top:14px;"><input type="date" class="input" id="examInput" aria-label="Prüfungstermin" min="${todayStr()}"><button class="btn ghost sm" id="saveExam">Speichern</button></div>` : ""}
+    </section>
+
+    <button class="cta" id="dailyBtn">
+      <span class="ic">🎯</span>
+      <span><b>Tagesrunde starten</b><small>${settings.dailyLen} Fragen · ${due? `${Math.min(due,Math.ceil(settings.dailyLen*.4))} Wiederholungen + ` : ""}Fokus auf Schwachstellen</small></span>
+      <span class="chev">›</span>
+    </button>
+
+    <div class="list">
+      <button class="lrow" id="errBtn" ${due? "" : "disabled"}>
+        <span class="ic">🔁</span><span class="tx"><b>Fehlerheft</b><small>${due? "Falsch beantwortete Fragen, jetzt fällig" : "Gerade nichts fällig. Gut gemacht!"}</small></span>
+        <span class="badge ${due?"":"soft"}">${due}</span>
+      </button>
+      <button class="lrow" id="newBtn" ${unseen? "" : "disabled"}>
+        <span class="ic">✨</span><span class="tx"><b>Neue Fragen</b><small>${unseen? `${Math.min(unseen,settings.dailyLen)} Fragen, die du noch nie gesehen hast` : "Du hast alle Fragen schon gesehen"}</small></span>
+        <span class="badge soft">${unseen}</span>
+      </button>
+      <button class="lrow" id="hardBtn" ${hard? "" : "disabled"}>
+        <span class="ic">🧗</span><span class="tx"><b>Schwierige Fragen</b><small>${hard? "Trefferquote unter 60 %" : "Noch keine Problemfragen"}</small></span>
+        <span class="badge soft">${hard}</span>
+      </button>
+      <button class="lrow" id="examBtn">
+        <span class="ic">📝</span><span class="tx"><b>Prüfungssimulation</b><small>Teil I + II mit Zeitlimit und Bestehensregel</small></span>
+        <span class="chev" style="color:var(--sub)">›</span>
+      </button>
+    </div>
+
+    ${plan}
+
+    <h3 class="sectionlbl">Sachgebiete</h3>
+    <div class="list">
+      ${Object.entries(CAT).map(([c,v])=>{
+        const list=questions.filter(q=>q.cat===c), cnt=levelCounts(list), a=accOf(list);
+        return `<button class="lrow catrow" data-c="${c}" style="--cc:${v.color}">
+          <span class="letter">${c}</span>
+          <span class="tx"><b>${v.name}</b><small>${list.length} Fragen · ${cnt[3]} gemeistert</small>${mbar(cnt,list.length)}</span>
+          <span class="pct">${a!==null? a+"%" : "–"}</span>
+        </button>`;
+      }).join('')}
+    </div>
+    <button class="btn ghost wide" id="allBtn">Alle ${total} Fragen am Stück</button>
+
+    <h3 class="sectionlbl">Mehr</h3>
+    <div class="tiles">
+      <button class="tile" id="caseCard"><span class="ic">📚</span><b>Fallstudien</b><small>${CASES.length} Szenarien</small></button>
+      <button class="tile" id="glossCard"><span class="ic">📖</span><b>Glossar</b><small>${GLOSSARY.length} Begriffe</small></button>
+      <button class="tile" id="favCard"><span class="ic">⭐</span><b>Merkliste</b><small>${progress.favorites.length} ${plural(progress.favorites.length,"Frage","Fragen")}</small></button>
+      <button class="tile" id="statsCard"><span class="ic">📊</span><b>Statistik</b><small>Lernstand & Verlauf</small></button>
+    </div>
+  `);
+
+  const on=(id,fn)=>{ const el=document.getElementById(id); if(el) el.onclick=fn; };
+  on('resumeBtn', resumeRun);
+  on('dropRun', ()=>{ clearRun(); renderHome(); });
+  on('dailyBtn', startDailyRound);
+  on('errBtn', startErrorReview);
+  on('newBtn', startNew);
+  on('hardBtn', startHard);
+  on('examBtn', renderExamIntro);
+  on('allBtn', ()=>startQuiz("Alle"));
+  on('caseCard', renderCaseList);
+  on('glossCard', renderGlossary);
+  on('favCard', ()=> progress.favorites.length ? startFavorites() : toast("Markiere Fragen mit ☆, um sie hier zu sammeln."));
+  on('statsCard', renderStats);
+  on('saveExam', ()=>{
+    const v=$('#examInput').value;
+    if(isDay(v)){ progress.examDate=v; saveProgress(); renderHome(); toast("Prüfungstermin gespeichert"); }
+    else toast("Bitte ein Datum auswählen.");
+  });
+  document.querySelectorAll('.catrow').forEach(el=>el.onclick=()=>startQuiz(el.dataset.c));
+}
+function runLabelFor(r){ return CAT[r.activeCat] ? `Sachgebiet ${r.activeCat}` : r.activeCat==="Alle" ? "Alle Fragen" : r.activeCat; }
+
+// ===================================================================
+// Frage-Ansicht (Einfach-, Mehrfachauswahl, Kurzantwort)
+// ===================================================================
+function renderQuestion(){
+  if(examMode) return renderExamQuestion();
+  if(idx>=session.length) return renderResult();
+  const item=session[idx], color=CAT[item.cat].color;
+  const answered=answers[idx]!==undefined;
+  const isFav=progress.favorites.includes(item.id);
+  const pct=Math.round(idx/session.length*100);
+  const typeLbl = item.type==="multi" ? "Mehrfachauswahl" : item.type==="text" ? "Kurzantwort" : "";
+  const isCatRun = activeCat==="Alle" || CAT[activeCat];
+  const last = idx+1>=session.length;
+
+  let body;
+  if(item.type==="text"){
+    body=`<input class="input" id="txtIn" placeholder="Antwort eingeben …" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" ${answered?"disabled":""} value="${answered? esc(answers[idx]) : ""}">`;
+  }else{
+    body=`<div class="opts" role="${item.type==="multi"?"group":"radiogroup"}">${item.opts.map((o,oi)=>
+      `<button class="opt ${item.type==="multi"?"check":""}" data-oi="${oi}" ${item.type==="multi"?'aria-pressed="false"':""}><span class="key">${LETTERS[oi]}</span><span class="ot">${o}</span></button>`).join('')}</div>`;
+  }
+
+  setTop(runLabel(), `${session.length} Fragen`, renderHome);
+  render(`
+    ${isCatRun? `<div class="chips">${["Alle",...Object.keys(CAT)].map(c=>`<button class="chip ${c===activeCat?"active":""}" style="--cc:${c==="Alle"?"var(--ink)":CAT[c].color}" data-c="${c}">${c==="Alle"?"Alle":c+" · "+CAT[c].name.split(/[ (/]/)[0]}</button>`).join('')}</div>` : ""}
+    <div class="qprog"><div class="bar"><i style="width:${pct}%; background:${color}"></i></div><span>${idx+1} / ${session.length}</span></div>
+    <article class="card qcard" style="--cc:${color}">
+      <div class="qmeta">
+        <span class="tag">${item.cat} · ${CAT[item.cat].name}</span>
+        ${typeLbl? `<span class="qtype">${typeLbl}</span>` : ""}
+        <button class="star ${isFav?"on":""}" id="starBtn" aria-pressed="${isFav}" aria-label="Merken">${isFav?"★":"☆"}</button>
+      </div>
+      <h2 class="q">${item.q}</h2>
+      ${body}
+      <div id="fb"></div>
+    </article>
+    <div class="actionbar">
+      <button class="btn primary" id="mainBtn" ${item.type==="multi"&&!answered?"disabled":""} ${!item.type&&!answered?"hidden":""}>${item.type&&!answered? "Prüfen" : last? "Ergebnis anzeigen →" : "Weiter →"}</button>
+    </div>
+    <div class="kbd-hint">Tasten: ${item.type==="text"? "<kbd>Enter</kbd> prüfen / weiter" : "<kbd>A</kbd>–<kbd>"+LETTERS[item.opts.length-1]+"</kbd> oder <kbd>1</kbd>–<kbd>"+item.opts.length+"</kbd> wählen · <kbd>Enter</kbd> weiter"} · <kbd>M</kbd> merken</div>
+  `);
+
+  document.querySelectorAll('.chip').forEach(el=>el.onclick=()=>{ if(el.dataset.c!==activeCat) startQuiz(el.dataset.c); });
+  const starBtn=$('#starBtn');
+  starBtn.onclick=()=>{ toggleFav(item.id); const on=progress.favorites.includes(item.id); starBtn.classList.toggle('on',on); starBtn.textContent=on?"★":"☆"; starBtn.setAttribute('aria-pressed',on); };
+  const mainBtn=$('#mainBtn');
+  const next=()=>{ idx++; saveRun(); renderQuestion(); };
+
+  const showFeedback=(ok, extra)=>{
+    $('#fb').innerHTML=`<div class="feedback ${ok?"ok":"bad"}"><div class="ft">${ok? "✓ Richtig!" : "✗ Nicht ganz."}</div>${extra||""}${item.e}</div>`;
+    mainBtn.hidden=false; mainBtn.disabled=false; mainBtn.textContent= last? "Ergebnis anzeigen →" : "Weiter →";
+    mainBtn.onclick=next;
+    if(!answeredBefore) setTimeout(()=>mainBtn.scrollIntoView({block:"nearest", behavior:"smooth"}),60);
+  };
+  const answeredBefore=answered;
+
+  if(!item.type){
+    const opts=[...document.querySelectorAll('.opt')];
+    const reveal=oi=>{
+      opts.forEach(b=>{ const bo=+b.dataset.oi; b.disabled=true;
+        if(bo===item.c) b.classList.add('correct'); else if(bo===oi) b.classList.add('wrong'); else b.classList.add('dim'); });
+      showFeedback(oi===item.c, oi===item.c? "" : `<div style="margin-bottom:4px">Richtig ist: <b>${item.opts[item.c]}</b></div>`);
+    };
+    const pick=oi=>{ if(answers[idx]!==undefined) return; answers[idx]=oi; recordAnswer(item.id, oi===item.c); saveRun(); reveal(oi); };
+    if(answered) reveal(answers[idx]); else opts.forEach(b=>b.onclick=()=>pick(+b.dataset.oi));
+    keyHandler=e=>{
+      const k=optionKey(e);
+      if(k>=0 && k<item.opts.length && answers[idx]===undefined){ e.preventDefault(); pick(k); }
+      else if(e.key==="Enter" && answers[idx]!==undefined){ e.preventDefault(); next(); }
+      else if(e.key.toLowerCase()==="m") starBtn.click();
+    };
+  }
+  else if(item.type==="multi"){
+    const opts=[...document.querySelectorAll('.opt')];
+    const reveal=picked=>{
+      opts.forEach(b=>{ const bo=+b.dataset.oi; b.disabled=true;
+        if(item.correctSet.includes(bo)) b.classList.add('correct'); else if(picked.includes(bo)) b.classList.add('wrong'); else b.classList.add('dim');
+        if(picked.includes(bo)) b.querySelector('.key').textContent="✓"; });
+      showFeedback(isCorrect(item,picked), "");
+    };
+    const toggle=b=>{ if(answers[idx]!==undefined) return; const on=!b.classList.contains('sel'); b.classList.toggle('sel',on); b.setAttribute('aria-pressed',on); mainBtn.disabled=!document.querySelector('.opt.sel'); };
+    const check=()=>{
+      if(answers[idx]!==undefined) return next();
+      const picked=opts.filter(b=>b.classList.contains('sel')).map(b=>+b.dataset.oi);
+      if(!picked.length) return;
+      answers[idx]=picked; recordAnswer(item.id, isCorrect(item,picked)); saveRun(); reveal(picked);
+    };
+    if(answered) reveal(answers[idx]); else { opts.forEach(b=>b.onclick=()=>toggle(b)); mainBtn.onclick=check; }
+    keyHandler=e=>{
+      const k=optionKey(e);
+      if(k>=0 && k<opts.length){ e.preventDefault(); toggle(opts[k]); }
+      else if(e.key==="Enter"){ e.preventDefault(); check(); }
+      else if(e.key.toLowerCase()==="m") starBtn.click();
+    };
+  }
+  else {
+    const inp=$('#txtIn');
+    const reveal=val=>{
+      inp.disabled=true;
+      const ok=isCorrect(item,val);
+      inp.style.borderColor= ok? "var(--ok)" : "var(--bad)";
+      showFeedback(ok, ok? "" : `<div style="margin-bottom:4px">Richtig ist: <b>${esc(item.answers[0])}</b></div>`);
+    };
+    const check=()=>{
+      if(answers[idx]!==undefined) return next();
+      const val=inp.value.trim();
+      if(!val){ inp.focus(); return; }
+      answers[idx]=val; recordAnswer(item.id, isCorrect(item,val)); saveRun(); reveal(val);
+    };
+    if(answered) reveal(answers[idx]); else { mainBtn.onclick=check; inp.addEventListener('keydown',e=>{ if(e.key==="Enter"){ e.preventDefault(); e.stopPropagation(); check(); } }); setTimeout(()=>inp.focus({preventScroll:true}),50); }
+    keyHandler=e=>{
+      if(e.key==="Enter" && e.target!==inp){ e.preventDefault(); check(); }
+      else if(e.key.toLowerCase()==="m" && e.target!==inp) starBtn.click();
+    };
+  }
+}
+
+// ===================================================================
+// Ergebnis einer Übungsrunde
+// ===================================================================
 function gradeFor(pct){
-  if(pct>=92) return {n:"1", label:"sehr gut", color:"#2f9e7d"};
-  if(pct>=81) return {n:"2", label:"gut", color:"#3b6ea5"};
+  if(pct>=92) return {n:"1", label:"sehr gut", color:"var(--B)"};
+  if(pct>=81) return {n:"2", label:"gut", color:"var(--A)"};
   if(pct>=67) return {n:"3", label:"befriedigend", color:"#8a8a2f"};
-  if(pct>=50) return {n:"4", label:"ausreichend (bestanden)", color:"#c9622a"};
-  if(pct>=30) return {n:"5", label:"mangelhaft", color:"#c0392b"};
+  if(pct>=50) return {n:"4", label:"ausreichend", color:"var(--C)"};
+  if(pct>=30) return {n:"5", label:"mangelhaft", color:"var(--E)"};
   return {n:"6", label:"ungenügend", color:"#8e1c1c"};
+}
+function answerText(s, a){
+  if(a===undefined || a===null) return "–";
+  if(s.type==="text") return esc(a);
+  if(s.type==="multi") return a.map(i=>s.opts[i]).join(", ") || "–";
+  return s.opts[a];
+}
+function rightText(s){
+  if(s.type==="text") return esc(s.answers[0]);
+  if(s.type==="multi") return s.correctSet.map(i=>s.opts[i]).join(", ");
+  return s.opts[s.c];
+}
+function reviewList(wrong){
+  return wrong.map(({s,i})=>`<div class="review-item"><b>${s.q}</b><div class="yours">Deine Antwort: ${answerText(s,answers[i])}</div><div class="right">Richtig: ${rightText(s)}</div><div class="why">${s.e}</div></div>`).join('');
+}
+function catBars(byCat){
+  return Object.keys(CAT).filter(c=>byCat[c]).map(c=>[c,byCat[c]]).map(([c,v])=>{ const p=Math.round(v.ok/v.tot*100);
+    return `<div><div class="lbl"><span>${c} · ${CAT[c].name}</span><span>${v.ok}/${v.tot}</span></div><div class="track"><i style="width:${p}%; background:${CAT[c].color}"></i></div></div>`; }).join('');
 }
 
 function renderResult(){
-  registerPractice();
-  const total = session.length;
-  const correct = session.filter((it,i)=>isCorrect(it,answers[i])).length;
-  const pct = total? Math.round((correct/total)*100) : 0;
-  const g = gradeFor(pct);
-  const passed = pct>=50;
+  clearRun(); view="result";
+  const total=session.length;
+  const correct=session.filter((it,i)=>isCorrect(it,answers[i])).length;
+  const pct=total? Math.round(correct/total*100) : 0;
+  const g=gradeFor(pct);
+  const byCat={};
+  session.forEach((it,i)=>{ const b=byCat[it.cat]=byCat[it.cat]||{tot:0,ok:0}; b.tot++; if(isCorrect(it,answers[i])) b.ok++; });
+  const wrong=session.map((s,i)=>({s,i})).filter(({s,i})=>!isCorrect(s,answers[i]));
+  const tc=todayCount(), goal=settings.goal;
+  const msg = pct>=90? "Stark! Das sitzt. 🎉" : pct>=70? "Gute Runde, weiter so! 💪" : pct>=50? "Bestanden, aber da geht noch was." : "Dranbleiben. Die Fehler kommen ins Fehlerheft.";
 
-  const byCat = {};
-  session.forEach((it,i)=>{
-    byCat[it.cat] = byCat[it.cat] || {tot:0, ok:0};
-    byCat[it.cat].tot++;
-    if(isCorrect(it,answers[i])) byCat[it.cat].ok++;
-  });
-
-  document.getElementById('app').innerHTML = `
-    <div class="card result" style="--catcolor:${g.color}">
-      <div class="progress">Ergebnis · 🔥 ${progress.streak} Tage Serie</div>
-      <div class="pct">${pct}%</div>
-      <div class="grade" style="color:${g.color}">Note ${g.n} – ${g.label}</div>
-      <div class="verdict">${correct} von ${total} Fragen richtig ${passed? "· bestanden (Bestehensgrenze i.d.R. 50%)" : "· nicht bestanden (Bestehensgrenze meist 50%)"}</div>
-      <button class="btn" id="again">Nochmal (neu gemischt)</button>
-      <button class="linkbtn" id="home2" style="display:block; margin:10px auto 0;">← Zur Startseite</button>
-      <div class="byCat">
-        ${Object.entries(byCat).map(([c,v])=>`<div class="row"><span class="dot" style="background:${CAT[c].color}"></span><span class="name">${c} – ${CAT[c].name}</span><span class="val">${v.ok}/${v.tot}</span></div>`).join('')}
+  setTop("Ergebnis", runLabel(), renderHome);
+  render(`
+    <div class="card result" style="border-top:4px solid ${g.color}">
+      <div class="eyebrow">${runLabel()} · 🔥 ${currentStreak()} ${plural(currentStreak(),"Tag","Tage")} Serie</div>
+      <div class="ringwrap">${ring(pct,150,14,g.color)}<div class="ringlabel"><b>${pct}%</b><span>${correct} von ${total}</span></div></div>
+      <div class="grade" style="color:${g.color}">Note ${g.n} · ${g.label}</div>
+      <div class="verdict">${msg}</div>
+      ${tc>=goal? `<div class="small" style="color:var(--ok); font-weight:700; margin-top:6px;">✓ Tagesziel erreicht (${tc}/${goal})</div>` : `<div class="small muted" style="margin-top:6px;">Tagesziel: ${tc}/${goal} Fragen</div>`}
+      <div class="row-btns" style="flex-wrap:wrap;">
+        ${wrong.length? `<button class="btn warm" id="wrongAgain">${wrong.length} ${plural(wrong.length,"Fehler","Fehler")} üben</button>` : ""}
+        <button class="btn primary" id="again">Neue Runde</button>
       </div>
-    </div>`;
-  document.getElementById('again').onclick=()=>{
-    if(activeCat==="Tagesrunde") startDailyRound();
-    else if(activeCat==="Merkliste") startFavorites();
-    else if(activeCat==="Fehlerheft") startErrorReview();
-    else startQuiz(activeCat);
-  };
-  document.getElementById('home2').onclick=renderHome;
+      <button class="linkbtn" id="home2" style="margin-top:8px;">Zur Startseite</button>
+      <div class="catres">${catBars(byCat)}</div>
+      ${wrong.length? `<details class="panel review" style="margin-top:18px;"><summary>Falsche Antworten ansehen (${wrong.length})</summary>${reviewList(wrong)}</details>` : ""}
+    </div>`);
+  $('#again').onclick=replay;
+  $('#home2').onclick=renderHome;
+  const wa=$('#wrongAgain');
+  if(wa) wa.onclick=()=>{ startRun(wrong.map(({s})=>questions[s.id]), "Fehler der letzten Runde"); };
+  keyHandler=e=>{ if(e.key==="Enter"){ e.preventDefault(); replay(); } };
 }
 
-document.getElementById('themeBtn').onclick=()=>{ sceneIdx=(sceneIdx+1)%SCENES.length; applyScene(); };
-applyScene();
+// ===================================================================
+// Prüfungssimulation (angelehnt an den IHK-Ablauf, Fragenzahl und Zeit verkürzt)
+// ===================================================================
+const EXAM_PARTS=[
+  {name:"Teil I", sub:"Sachgebiete A–C", cats:["A","B","C"], minutes:50},
+  {name:"Teil II", sub:"Sachgebiete D–E", cats:["D","E"], minutes:35}
+];
+const EXAM_PER_CAT=12;
+
+function stopExam(){
+  clearInterval(examTimer); examTimer=null; examMode=false;
+  const t=$('#timer'); if(t){ t.hidden=true; t.classList.remove('low'); }
+}
+function renderExamIntro(){
+  stopExam(); view="examintro";
+  setTop("Prüfungssimulation", "Vorbereitung", renderHome);
+  const n=pi=>EXAM_PARTS[pi].cats.reduce((s,c)=>s+Math.min(EXAM_PER_CAT, questions.filter(q=>q.cat===c&&!q.type).length),0);
+  render(`
+    <div class="card">
+      <div class="eyebrow">So läuft die Simulation ab</div>
+      <h2 style="font-size:1.2rem; margin:4px 0 6px;">Zwei Teile, jeweils mit Zeitlimit</h2>
+      <ul class="rules">
+        ${EXAM_PARTS.map((p,i)=>`<li><b>${p.name}</b> (${p.sub}): ${n(i)} Fragen in ${p.minutes} Minuten</li>`).join('')}
+        <li>Innerhalb eines Teils kannst du frei springen und Fragen markieren.</li>
+        <li>Nach Abgabe eines Teils gibt es kein Zurück.</li>
+        <li>Erst am Ende siehst du, was richtig war.</li>
+        <li><b>Bestanden</b>, wenn du in vier von fünf Sachgebieten mindestens 50 % und im fünften mindestens 30 % erreichst.</li>
+      </ul>
+      <div class="row-btns"><button class="btn primary" id="go" data-autofocus>Simulation starten</button></div>
+    </div>`);
+  $('#go').onclick=startExam;
+}
+function startExam(){
+  stopExam(); view="exam"; examMode=true; activeCat="Prüfung"; examFlags={}; examWarned=false;
+  const all=[];
+  EXAM_PARTS.forEach((p,pi)=>{
+    const part=[];
+    p.cats.forEach(c=>buildSession(shuffle(questions.filter(q=>q.cat===c && !q.type)).slice(0,EXAM_PER_CAT)).forEach(s=>{ s.part=pi; part.push(s); }));
+    shuffle(part).forEach(s=>all.push(s));
+  });
+  session=all; idx=0; answers={}; examPart=0;
+  startPartTimer(); renderExamQuestion();
+}
+function partIndices(){ return session.map((s,i)=>i).filter(i=>session[i].part===examPart); }
+function startPartTimer(){
+  clearInterval(examTimer); examWarned=false;
+  examEnd=Date.now()+EXAM_PARTS[examPart].minutes*60000;
+  $('#timer').hidden=false;
+  examTimer=setInterval(tick,1000); tick();
+}
+function tick(){
+  const left=examEnd-Date.now();
+  if(left<=0){ toast("⏰ Zeit abgelaufen, der Teil wird abgegeben."); finishPart(); return; }
+  const el=$('#timer'), m=Math.floor(left/60000), s=Math.floor(left%60000/1000);
+  el.textContent=`⏱ ${m}:${String(s).padStart(2,'0')}`;
+  el.classList.toggle('low', left<5*60000);
+  if(left<5*60000 && !examWarned){ examWarned=true; toast("Noch 5 Minuten für diesen Teil"); }
+}
+async function leaveExam(){
+  if(await confirmDialog("Simulation abbrechen?", "Dein Fortschritt in dieser Simulation geht verloren.", "Abbrechen", true)) renderHome();
+}
+async function submitPart(){
+  const ids=partIndices(), open=ids.filter(i=>answers[i]===undefined).length, flagged=ids.filter(i=>examFlags[i]).length;
+  const notes=[open? `${open} ${plural(open,"Frage ist","Fragen sind")} noch unbeantwortet.` : "Alle Fragen sind beantwortet.", flagged? `${flagged} ${plural(flagged,"Frage ist","Fragen sind")} markiert.` : ""].filter(Boolean).join(" ");
+  if(await confirmDialog(`${EXAM_PARTS[examPart].name} abgeben?`, `${notes} Danach kannst du nicht mehr zurück.`, "Abgeben")) finishPart();
+}
+function finishPart(){
+  clearInterval(examTimer);
+  partIndices().forEach(i=>{ if(answers[i]!==undefined) recordAnswer(session[i].id, isCorrect(session[i],answers[i])); });
+  const nextIdx=session.findIndex(s=>s.part>examPart);
+  if(nextIdx===-1){ renderExamResult(); return; }
+  const done=EXAM_PARTS[examPart]; examPart++; idx=nextIdx;
+  const p=EXAM_PARTS[examPart];
+  $('#timer').hidden=true;
+  setTop("Prüfungssimulation", "Pause", leaveExam);
+  render(`<div class="card result">
+      <div class="eyebrow">${done.name} abgegeben ✓</div>
+      <div class="grade">Weiter mit ${p.name}</div>
+      <div class="verdict">${p.sub} · ${partIndices().length} Fragen · ${p.minutes} Minuten</div>
+      <p class="small muted">Kurz durchatmen. Die Zeit läuft erst, wenn du startest.</p>
+      <button class="btn primary" id="goPart" data-autofocus>${p.name} starten</button>
+    </div>`);
+  $('#goPart').onclick=()=>{ startPartTimer(); renderExamQuestion(); };
+}
+function renderExamQuestion(){
+  const ids=partIndices(), pos=ids.indexOf(idx), item=session[idx], sel=answers[idx];
+  const p=EXAM_PARTS[examPart], answeredN=ids.filter(i=>answers[i]!==undefined).length;
+  const isLast=pos===ids.length-1;
+  setTop(`Prüfung · ${p.name}`, `${answeredN} von ${ids.length} beantwortet`, leaveExam);
+  $('#timer').hidden=false;
+  render(`
+    <div class="qprog"><div class="bar"><i style="width:${(answeredN/ids.length*100).toFixed(1)}%; background:var(--accent)"></i></div><span>${pos+1} / ${ids.length}</span></div>
+    <article class="card qcard" style="--cc:var(--accent)">
+      <div class="qmeta"><span class="tag soft">Frage ${pos+1}</span>
+        <button class="flagbtn ${examFlags[idx]?"on":""}" id="flagBtn" aria-pressed="${!!examFlags[idx]}">⚑ ${examFlags[idx]?"Markiert":"Markieren"}</button></div>
+      <h2 class="q">${item.q}</h2>
+      <div class="opts" role="radiogroup">${item.opts.map((o,oi)=>`<button class="opt ${sel===oi?"sel":""}" data-oi="${oi}" role="radio" aria-checked="${sel===oi}"><span class="key">${LETTERS[oi]}</span><span class="ot">${o}</span></button>`).join('')}</div>
+    </article>
+    <div class="actionbar">
+      <button class="btn ghost" id="prevBtn" ${pos===0?"disabled":""}>‹ Zurück</button>
+      <button class="btn primary" id="nextBtn">${isLast? "Teil abgeben" : "Weiter ›"}</button>
+    </div>
+    <details class="card panel" id="navPanel" ${sessionStorage.getItem('navOpen')==="1"?"open":""}>
+      <summary>Übersicht ${p.name}</summary>
+      <div class="navgrid">${ids.map((i,k)=>`<button class="nav ${answers[i]!==undefined?"ans":""} ${examFlags[i]?"flag":""} ${i===idx?"cur":""}" data-i="${i}" aria-label="Frage ${k+1}">${k+1}</button>`).join('')}</div>
+      <div class="legend"><span><i></i>beantwortet</span><span><i style="background:var(--warn); border-radius:50%"></i>markiert</span></div>
+      <button class="btn ghost wide sm" id="submitBtn" style="margin-top:12px;">${p.name} jetzt abgeben</button>
+    </details>
+    <div class="kbd-hint"><kbd>A</kbd>–<kbd>D</kbd> wählen · <kbd>←</kbd> <kbd>→</kbd> blättern · <kbd>F</kbd> markieren</div>
+  `);
+  const go=i=>{ idx=i; renderExamQuestion(); };
+  const choose=oi=>{ answers[idx]=oi; document.querySelectorAll('.opt').forEach(b=>{ const on=+b.dataset.oi===oi; b.classList.toggle('sel',on); b.setAttribute('aria-checked',on); });
+    const n=ids.filter(i=>answers[i]!==undefined).length; $('#brandS').textContent=`${n} von ${ids.length} beantwortet`;
+    document.querySelector(`.nav[data-i="${idx}"]`).classList.add('ans'); document.querySelector('.qprog .bar i').style.width=(n/ids.length*100).toFixed(1)+"%"; };
+  const next=()=> isLast? submitPart() : go(ids[pos+1]);
+  const prev=()=>{ if(pos>0) go(ids[pos-1]); };
+  const flag=()=>{ examFlags[idx]=!examFlags[idx]; renderExamQuestion(); };
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(+b.dataset.oi));
+  document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+  $('#nextBtn').onclick=next; $('#prevBtn').onclick=prev; $('#flagBtn').onclick=flag; $('#submitBtn').onclick=submitPart;
+  $('#navPanel').addEventListener('toggle', e=>{ try{ sessionStorage.setItem('navOpen', e.target.open?"1":"0"); }catch(_){} });
+  keyHandler=e=>{
+    const k=optionKey(e);
+    if(k>=0 && k<item.opts.length && e.key.toLowerCase()!=="f"){ e.preventDefault(); choose(k); }
+    else if(e.key==="ArrowRight"||e.key==="Enter"){ e.preventDefault(); next(); }
+    else if(e.key==="ArrowLeft"){ e.preventDefault(); prev(); }
+    else if(e.key.toLowerCase()==="f") flag();
+  };
+}
+function renderExamResult(){
+  const total=session.length;
+  stopExam(); view="result";
+  const byCat={};
+  session.forEach((s,i)=>{ const c=byCat[s.cat]=byCat[s.cat]||{tot:0,ok:0}; c.tot++; if(isCorrect(s,answers[i])) c.ok++; });
+  const rows=Object.keys(CAT).filter(c=>byCat[c]).map(c=>[c,byCat[c]]).map(([c,v])=>({c,v,p:Math.round(v.ok/v.tot*100)}));
+  const n50=rows.filter(r=>r.p>=50).length, rest=rows.filter(r=>r.p<50);
+  const passed = n50===rows.length || (n50===rows.length-1 && rest[0].p>=30);
+  const ok=session.filter((s,i)=>isCorrect(s,answers[i])).length, pct=Math.round(ok/total*100);
+  const wrong=session.map((s,i)=>({s,i})).filter(({s,i})=>!isCorrect(s,answers[i]));
+  const col=passed?"var(--ok)":"var(--bad)";
+  setTop("Prüfungssimulation", "Ergebnis", renderHome);
+  render(`
+    <div class="card result" style="border-top:4px solid ${col}">
+      <div class="eyebrow">Prüfungssimulation · Ergebnis</div>
+      <div class="ringwrap">${ring(pct,150,14,col)}<div class="ringlabel"><b>${pct}%</b><span>${ok} von ${total}</span></div></div>
+      <div class="grade" style="color:${col}">${passed? "Bestanden 🎉" : "Nicht bestanden"}</div>
+      <div class="verdict">Kriterium: in vier von fünf Sachgebieten mindestens 50 %, im fünften mindestens 30 %.</div>
+      <div class="catres">${rows.map(r=>`<div><div class="lbl"><span>${r.c} · ${CAT[r.c].name}</span><span style="color:${r.p>=50?"var(--ok)":r.p>=30?"var(--warn)":"var(--bad)"}">${r.p}% (${r.v.ok}/${r.v.tot})</span></div><div class="track"><i style="width:${r.p}%; background:${CAT[r.c].color}"></i></div></div>`).join('')}</div>
+      <div class="row-btns" style="flex-wrap:wrap;">
+        ${wrong.length? `<button class="btn warm" id="wrongAgain">${wrong.length} Fehler üben</button>` : ""}
+        <button class="btn primary" id="again">Neue Simulation</button>
+      </div>
+      <button class="linkbtn" id="home3" style="margin-top:8px;">Zur Startseite</button>
+      ${wrong.length? `<details class="panel review" style="margin-top:18px;"><summary>Falsche und offene Antworten (${wrong.length})</summary>${reviewList(wrong)}</details>` : ""}
+    </div>`);
+  $('#again').onclick=renderExamIntro;
+  $('#home3').onclick=renderHome;
+  const wa=$('#wrongAgain'); if(wa) wa.onclick=()=>startRun(wrong.map(({s})=>questions[s.id]), "Fehler der Simulation");
+}
+
+// ===================================================================
+// Statistik
+// ===================================================================
+function heatmap(){
+  const weeks=17, t=todayStr(), now=parseDay(t);
+  const dow=(now.getDay()+6)%7;                       // Montag = 0
+  const start=addDays(t, -(weeks-1)*7 - dow);
+  const max=Math.max(1,...Object.values(progress.history||{}));
+  let cells="";
+  for(let i=0;i<weeks*7;i++){
+    const d=addDays(start,i);
+    if(d>t){ cells+=`<i class="fut"></i>`; continue; }
+    const n=(progress.history||{})[d]||0;
+    const lv= n===0?0 : n>=max*.75?4 : n>=max*.5?3 : n>=max*.25?2 : 1;
+    cells+=`<i class="${lv?"h"+lv:""}" title="${fmtDate(d)}: ${n} Fragen"></i>`;
+  }
+  return cells;
+}
+function renderStats(){
+  view="stats";
+  setTop("Statistik", "Dein Lernstand", renderHome);
+  const total=questions.length, lc=levelCounts(questions);
+  const acc=progress.totalAnswered? Math.round(progress.totalCorrect/progress.totalAnswered*100) : 0;
+  const hard=hardest().slice(0,5);
+  const days=Object.keys(progress.history||{}).length;
+  render(`
+    <div class="kpis">
+      <div class="kpi"><b>${progress.totalAnswered}</b><span>Antworten gesamt</span></div>
+      <div class="kpi"><b>${acc}%</b><span>Trefferquote</span></div>
+      <div class="kpi"><b>${lc[3]}<span style="font-size:.85rem;color:var(--sub)">/${total}</span></b><span>Fragen gemeistert</span></div>
+      <div class="kpi"><b>🔥 ${currentStreak()}</b><span>Serie · Rekord ${progress.bestStreak||0}</span></div>
+    </div>
+
+    <div class="card">
+      <div class="sectionlbl" style="margin-top:0">Lernstand gesamt</div>
+      ${mbar(lc,total).replace('class="mbar"','class="mbar" style="height:12px"')}
+      <div class="legend"><span><i class="l3" style="background:var(--accent)"></i>gemeistert ${lc[3]}</span><span><i style="opacity:.65"></i>gefestigt ${lc[2]}</span><span><i style="opacity:.35"></i>lernend ${lc[1]}</span><span><i style="background:var(--line)"></i>neu ${lc[0]}</span></div>
+      <p class="small muted" style="margin:10px 0 0;">„Gemeistert“ heißt: mehrmals hintereinander richtig, sodass die nächste Wiederholung erst in 14 Tagen oder später fällig ist.</p>
+    </div>
+
+    <div class="card">
+      <div class="sectionlbl" style="margin-top:0">Pro Sachgebiet</div>
+      <div class="catres" style="margin-top:0">
+      ${Object.entries(CAT).map(([c,v])=>{
+        const list=questions.filter(q=>q.cat===c), cnt=levelCounts(list), a=accOf(list);
+        return `<div style="--cc:${v.color}"><div class="lbl"><span>${c} · ${v.name}</span><span>${a!==null? a+"% richtig" : "noch nicht geübt"}</span></div>${mbar(cnt,list.length).replace('class="mbar"','class="mbar" style="height:9px"')}<div class="small muted" style="margin-top:4px;">${cnt[3]} gemeistert · ${cnt[2]} gefestigt · ${cnt[1]} lernend · ${cnt[0]} neu</div></div>`;
+      }).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sectionlbl" style="margin-top:0">Aktivität (letzte 17 Wochen)</div>
+      <div class="heat" role="img" aria-label="Übungsaktivität der letzten Wochen">${heatmap()}</div>
+      <div class="small muted" style="margin-top:8px;">An ${days} ${plural(days,"Tag","Tagen")} geübt · heute ${todayCount()} ${plural(todayCount(),"Frage","Fragen")}</div>
+    </div>
+
+    <div class="card">
+      <div class="sectionlbl" style="margin-top:0">Deine schwierigsten Fragen</div>
+      ${hard.length? hard.map(q=>{const s=progress.stats[q.id]; return `<div class="hard"><span class="p">${Math.round(s.correct/s.seen*100)}%</span><span>${q.q}</span></div>`;}).join('') + `<button class="btn warm wide sm" id="hardGo" style="margin-top:10px;">Diese gezielt üben</button>`
+        : `<p class="small muted" style="margin:0">Noch keine. Fragen mit weniger als 60 % Trefferquote landen hier.</p>`}
+    </div>
+    <button class="btn ghost wide" id="toSettings">⚙️ Fortschritt sichern oder übertragen</button>
+  `);
+  const hg=$('#hardGo'); if(hg) hg.onclick=startHard;
+  $('#toSettings').onclick=openSettings;
+}
+
+// ===================================================================
+// Glossar
+// ===================================================================
+function renderGlossary(){
+  view="glossary";
+  setTop("Glossar", `${GLOSSARY.length} Begriffe`, renderHome);
+  const items=GLOSSARY.slice().sort((a,b)=>a.t.localeCompare(b.t,'de'));
+  render(`
+    <input class="input" id="gSearch" type="search" placeholder="🔎  Begriff suchen …" aria-label="Glossar durchsuchen" style="margin-bottom:12px;">
+    <div class="card" id="gList"></div>`);
+  const draw=term=>{
+    const t=term.trim().toLowerCase();
+    const hl=s=>{ const e=esc(s); if(!t) return e; const i=e.toLowerCase().indexOf(esc(t)); return i<0? e : e.slice(0,i)+"<mark>"+e.slice(i,i+esc(t).length)+"</mark>"+e.slice(i+esc(t).length); };
+    const f=items.filter(g=>!t || g.t.toLowerCase().includes(t) || g.d.toLowerCase().includes(t));
+    $('#gList').innerHTML = f.length? f.map(g=>`<div class="gitem"><b>${hl(g.t)}</b>${hl(g.d)}</div>`).join('') : `<p class="muted small" style="margin:0">Kein Begriff gefunden.</p>`;
+  };
+  draw("");
+  $('#gSearch').oninput=e=>draw(e.target.value);
+}
+
+// ===================================================================
+// Fallstudien
+// ===================================================================
+let caseIdx=0, caseQ=0, caseAnswers=[];
+function renderCaseList(){
+  view="cases";
+  setTop("Fallstudien", "Praxisnahe Szenarien", renderHome);
+  render(`<div class="list">${CASES.map((c,i)=>{ const best=progress.cases[i];
+    return `<button class="lrow" data-i="${i}"><span class="ic">📚</span><span class="tx"><b>${c.title.replace(/^Fall:\s*/,"")}</b><small>${c.qs.length} Teilfragen${best!==undefined? ` · bestes Ergebnis ${best}/${c.qs.length}`:""}</small></span>${best===c.qs.length? `<span class="badge" style="background:var(--ok)">✓</span>` : `<span class="chev" style="color:var(--sub)">›</span>`}</button>`; }).join('')}</div>`);
+  document.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{ caseIdx=+el.dataset.i; caseQ=0; caseAnswers=[]; renderCaseQuestion(); });
+}
+function renderCaseQuestion(){
+  const c=CASES[caseIdx];
+  setTop("Fallstudie", c.title.replace(/^Fall:\s*/,""), renderCaseList);
+  if(caseQ>=c.qs.length){
+    const ok=caseAnswers.filter((a,i)=>a===c.qs[i].c).length;
+    progress.cases[caseIdx]=Math.max(progress.cases[caseIdx]||0, ok); saveProgress(); registerPractice();
+    const pct=Math.round(ok/c.qs.length*100);
+    render(`<div class="card result">
+        <div class="eyebrow">${c.title} · fertig</div>
+        <div class="ringwrap">${ring(pct,150,14,pct>=67?"var(--ok)":"var(--warn)")}<div class="ringlabel"><b>${ok}/${c.qs.length}</b><span>richtig</span></div></div>
+        <div class="row-btns"><button class="btn ghost" id="redo">Nochmal</button><button class="btn primary" id="backCases" data-autofocus>Weitere Fälle</button></div>
+      </div>`);
+    $('#redo').onclick=()=>{ caseQ=0; caseAnswers=[]; renderCaseQuestion(); };
+    $('#backCases').onclick=renderCaseList;
+    return;
+  }
+  // Antwortreihenfolge pro Teilfrage einmal mischen und merken
+  const q=c.qs[caseQ];
+  if(!q._order) q._order=shuffle(q.opts.map((_,i)=>i));
+  const order=q._order, last=caseQ+1>=c.qs.length;
+  render(`
+    <div class="card caseintro"><b>${c.title.replace(/^Fall:\s*/,"")}</b>${c.intro}</div>
+    <div class="qprog"><div class="bar"><i style="width:${caseQ/c.qs.length*100}%; background:#8a8a2f"></i></div><span>${caseQ+1} / ${c.qs.length}</span></div>
+    <article class="card qcard" style="--cc:#8a8a2f">
+      <h2 class="q">${q.q}</h2>
+      <div class="opts">${order.map((oi,k)=>`<button class="opt" data-oi="${oi}"><span class="key">${LETTERS[k]}</span><span class="ot">${q.opts[oi]}</span></button>`).join('')}</div>
+      <div id="fb"></div>
+    </article>
+    <div class="actionbar"><button class="btn primary" id="nextC" hidden>${last? "Auswertung →" : "Nächste Teilfrage →"}</button></div>`);
+  const opts=[...document.querySelectorAll('.opt')];
+  const next=()=>{ caseQ++; renderCaseQuestion(); };
+  const pick=oi=>{
+    if(caseAnswers[caseQ]!==undefined) return;
+    caseAnswers[caseQ]=oi;
+    opts.forEach(b=>{ const bo=+b.dataset.oi; b.disabled=true; if(bo===q.c) b.classList.add('correct'); else if(bo===oi) b.classList.add('wrong'); else b.classList.add('dim'); });
+    $('#fb').innerHTML=`<div class="feedback ${oi===q.c?"ok":"bad"}"><div class="ft">${oi===q.c?"✓ Richtig!":"✗ Nicht ganz."}</div>${oi===q.c?"":`<div style="margin-bottom:4px">Richtig ist: <b>${q.opts[q.c]}</b></div>`}${q.e}</div>`;
+    const nb=$('#nextC'); nb.hidden=false; nb.onclick=next;
+  };
+  opts.forEach(b=>b.onclick=()=>pick(+b.dataset.oi));
+  keyHandler=e=>{
+    const k=optionKey(e);
+    if(k>=0 && k<order.length && caseAnswers[caseQ]===undefined){ e.preventDefault(); pick(order[k]); }
+    else if(e.key==="Enter" && caseAnswers[caseQ]!==undefined){ e.preventDefault(); next(); }
+  };
+}
+
+// ===================================================================
+// Einstellungen & Datensicherung
+// ===================================================================
+function exportCode(){ return btoa(unescape(encodeURIComponent(JSON.stringify(progress)))); }
+function importCode(txt){
+  txt=txt.trim();
+  let data;
+  try{ data=JSON.parse(txt); }catch(e){ data=JSON.parse(decodeURIComponent(escape(atob(txt)))); }
+  if(!data || typeof data!=="object" || typeof data.stats!=="object") throw new Error("ungültig");
+  progress=normalizeProgress(Object.assign(emptyProgress(), data));
+  saveProgress();
+}
+function openSettings(){
+  const seg=(key,vals,labels)=>`<div class="seg" data-key="${key}">${vals.map((v,i)=>`<button data-v="${v}" class="${settings[key]==v?"on":""}">${labels[i]}</button>`).join('')}</div>`;
+  openSheet("Einstellungen", `
+    <div class="set-group"><h3>Darstellung</h3>${seg("theme",["auto","light","dark"],["Automatisch","Hell","Dunkel"])}</div>
+    <div class="set-group"><h3>Hintergrund</h3>
+      <div class="swatches">${SCENES.map((s,i)=>`<button class="swatch ${s.bg?"":"plain"} ${settings.scene===i?"on":""}" data-scene="${i}" style="${s.bg?esc(`--sw:${s.bg}`):""}" aria-label="${s.n}"><span style="background:var(--surface-solid); padding:0 4px; border-radius:4px;">${s.n}</span></button>`).join('')}</div>
+    </div>
+    <div class="set-group"><h3>Tagesziel (Fragen pro Tag)</h3>${seg("goal",[10,20,30,50],["10","20","30","50"])}</div>
+    <div class="set-group"><h3>Länge der Tagesrunde</h3>${seg("dailyLen",[10,15,25,40],["10","15","25","40"])}</div>
+    <div class="set-group"><h3>Prüfungstermin</h3>
+      <div class="examset"><input type="date" class="input" id="sExam" value="${progress.examDate||""}"><button class="btn ghost sm" id="sExamSave">Speichern</button>${progress.examDate?`<button class="btn ghost sm" id="sExamDel">Entfernen</button>`:""}</div>
+    </div>
+    <div class="set-group"><h3>Fortschritt sichern & übertragen</h3>
+      <p style="margin-top:0">Der Fortschritt liegt nur in diesem Browser. Für ein anderes Gerät kopierst du den Code und fügst ihn dort ein, oder du lädst eine Sicherungsdatei herunter.</p>
+      <div class="row-btns" style="margin-top:0; flex-wrap:wrap;">
+        <button class="btn ghost sm" id="copyCode">📋 Code kopieren</button>
+        <button class="btn ghost sm" id="dlFile">💾 Datei sichern</button>
+        <button class="btn ghost sm" id="showImport">📥 Importieren</button>
+      </div>
+      <div id="importBox" hidden style="margin-top:10px;">
+        <textarea class="input" id="importTxt" placeholder="Code hier einfügen …"></textarea>
+        <div class="row-btns" style="margin-top:8px;"><label class="btn ghost sm" style="cursor:pointer;">Datei wählen<input type="file" id="importFile" accept=".json,.txt,application/json,text/plain" hidden></label><button class="btn primary sm" id="doImport">Übernehmen</button></div>
+      </div>
+    </div>
+    <div class="set-group"><h3>Tastenkürzel (am Computer)</h3>
+      <div class="kbdlist"><kbd>A</kbd>–<kbd>E</kbd> / <kbd>1</kbd>–<kbd>5</kbd> Antwort wählen<br><kbd>Enter</kbd> prüfen / weiter<br><kbd>M</kbd> Frage merken · <kbd>F</kbd> in der Prüfung markieren<br><kbd>←</kbd> <kbd>→</kbd> in der Prüfung blättern · <kbd>Esc</kbd> zurück</div>
+    </div>
+    <div class="set-group"><h3>Zurücksetzen</h3><button class="btn danger sm" id="resetAll">Gesamten Fortschritt löschen</button></div>
+  `, root=>{
+    root.querySelectorAll('.seg').forEach(s=>s.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      const key=s.dataset.key, v=key==="theme"? b.dataset.v : parseInt(b.dataset.v);
+      settings[key]=v; saveSettings(); applyTheme();
+      s.querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b));
+    }));
+    root.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>{
+      settings.scene=+b.dataset.scene; saveSettings(); applyTheme();
+      root.querySelectorAll('[data-scene]').forEach(x=>x.classList.toggle('on', x===b));
+    });
+    root.querySelector('#sExamSave').onclick=()=>{ const v=root.querySelector('#sExam').value; if(!isDay(v)) return toast("Bitte ein Datum auswählen."); progress.examDate=v; saveProgress(); toast("Prüfungstermin gespeichert"); };
+    const del=root.querySelector('#sExamDel'); if(del) del.onclick=()=>{ progress.examDate=null; saveProgress(); root.querySelector('#sExam').value=""; del.remove(); toast("Prüfungstermin entfernt"); };
+    root.querySelector('#copyCode').onclick=async()=>{
+      const code=exportCode();
+      try{ await navigator.clipboard.writeText(code); toast("Code kopiert ✓"); }
+      catch(e){ root.querySelector('#importBox').hidden=false; const ta=root.querySelector('#importTxt'); ta.value=code; ta.select(); toast("Code markiert, bitte manuell kopieren"); }
+    };
+    root.querySelector('#dlFile').onclick=()=>{
+      const blob=new Blob([JSON.stringify(progress,null,1)],{type:"application/json"});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`34d-fortschritt-${todayStr()}.json`;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    };
+    root.querySelector('#showImport').onclick=()=>{ const b=root.querySelector('#importBox'); b.hidden=false; root.querySelector('#importTxt').value=""; root.querySelector('#importTxt').focus(); };
+    root.querySelector('#importFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return; f.text().then(t=>{ root.querySelector('#importTxt').value=t; }); };
+    root.querySelector('#doImport').onclick=async()=>{
+      const txt=root.querySelector('#importTxt').value;
+      if(!txt.trim()) return toast("Bitte zuerst einen Code einfügen.");
+      if(!await confirmDialog("Fortschritt übernehmen?", "Der aktuelle Fortschritt auf diesem Gerät wird durch den importierten ersetzt.", "Übernehmen")) return openSettings();
+      try{ importCode(txt); toast("Fortschritt übernommen ✓"); renderHome(); }
+      catch(e){ toast("Der Code konnte nicht gelesen werden."); openSettings(); }
+    };
+    root.querySelector('#resetAll').onclick=async()=>{
+      if(!await confirmDialog("Wirklich alles löschen?", "Serie, Statistik, Fehlerheft, Merkliste und Prüfungstermin werden unwiderruflich gelöscht. Sichere vorher am besten eine Datei.", "Alles löschen", true)) return openSettings();
+      progress=emptyProgress(); saveProgress(); clearRun(); toast("Fortschritt gelöscht"); renderHome();
+    };
+  }, ()=>{ if(view==="home") renderHome(); else if(view==="stats") renderStats(); });
+}
+$('#settingsBtn').onclick=()=>{
+  if(examMode){ toast("Einstellungen sind während der Prüfung gesperrt."); return; }
+  openSettings();
+};
+
+// ===================================================================
+// Start
+// ===================================================================
+applyTheme();
 renderHome();
 </script>
 </body>
