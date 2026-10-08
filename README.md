@@ -9,6 +9,7 @@ Lern-App zur Vorbereitung auf die Sachkundeprüfung Versicherungsvermittler (§ 
 
 - 384 selbst formulierte Übungsfragen zu den Sachgebieten A–E der §34d-Prüfung, darunter Einfach- und Mehrfachauswahl, Kurzantworten und Rechenaufgaben
 - Zusatz-Sachgebiet **F · Bausparen** mit 38 Fragen zu Grundprinzip, wohnwirtschaftlicher Verwendung, Wohnungsbauprämie, Arbeitnehmersparzulage und Geldwäschegesetz (nicht Teil der Prüfungssimulation)
+- Zusatz-Sachgebiet **G · Private Rente & Riester** mit 32 Fragen zu klassischer, fondsgebundener und hybrider Rentenversicherung, Rentengarantiezeit, Dynamik, Rating/Ranking, bestehenden Riester-Verträgen und der Altersvorsorgereform 2027 (nicht Teil der Prüfungssimulation)
 - Tagesrunde mit fälligen Wiederholungen und Fokus auf schwache Themen
 - Fehlerheft mit Wiederholung in Abständen (1, 3, 7, 14, 30 Tage)
 - Modi „Neue Fragen“ und „Schwierige Fragen“, Merkliste
