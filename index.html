@@ -16,7 +16,7 @@
   color-scheme:light;
   --bg:#eef3f1; --surface:rgba(255,255,255,.86); --surface-solid:#ffffff; --surface-2:rgba(15,30,40,.04);
   --ink:#1c2126; --sub:#5b6570; --line:rgba(20,32,44,.10); --line-strong:rgba(20,32,44,.16);
-  --A:#3b6ea5; --B:#23926f; --C:#c25a22; --D:#a13d7c; --E:#c0392b; --F:#0f7f8c; --G:#6b4fb8;
+  --A:#3b6ea5; --B:#23926f; --C:#c25a22; --D:#a13d7c; --E:#c0392b; --F:#0f7f8c; --G:#6b4fb8; --H:#a8740c;
   --accent:#3b6ea5; --accent-2:#2f9e7d; --ok:#23926f; --bad:#c0392b; --warn:#c9622a;
   --ok-bg:rgba(35,146,111,.12); --bad-bg:rgba(192,57,43,.11); --sel-bg:rgba(59,110,165,.12);
   --grad:linear-gradient(135deg,#3b6ea5 0%,#2f9e7d 100%);
@@ -32,7 +32,7 @@
     color-scheme:dark;
     --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
     --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
-    --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf; --G:#a98ef2;
+    --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf; --G:#a98ef2; --H:#e3b54d;
     --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
     --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
@@ -43,7 +43,7 @@
   color-scheme:dark;
   --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
   --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
-  --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf; --G:#a98ef2;
+  --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf; --G:#a98ef2; --H:#e3b54d;
   --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
   --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
@@ -111,7 +111,7 @@ h1,h2,h3{margin:0;}
 
 /* ===== Startseite ===== */
 .hero{padding:20px; position:relative; overflow:hidden;}
-.hero::before{content:""; position:absolute; inset:0 0 auto 0; height:5px; background:linear-gradient(90deg,var(--A),var(--B),var(--C),var(--D),var(--E),var(--F),var(--G));}
+.hero::before{content:""; position:absolute; inset:0 0 auto 0; height:5px; background:linear-gradient(90deg,var(--A),var(--B),var(--C),var(--D),var(--E),var(--F),var(--G),var(--H));}
 .hero-main{display:flex; align-items:center; gap:14px;}
 .hero-main > div:first-child{flex:1; min-width:0;}
 .hero h1{font-size:1.32rem; font-weight:800; letter-spacing:-.01em; margin:2px 0 6px;}
@@ -986,6 +986,78 @@ GLOSSARY.push(
   {t:"Höchstrechnungszins", d:"Gesetzliche Obergrenze für den Zins, mit dem garantierte Leistungen kalkuliert werden dürfen; seit 2025 1,0 %."},
   {t:"Rating / Ranking", d:"Ein Ranking ordnet nach messbaren Ergebnissen, ein Rating bewertet zusätzlich qualitative Faktoren wie Management und Finanzkraft."},
   {t:"Altersvorsorgedepot", d:"Neue staatlich geförderte private Altersvorsorge ab 2027 nach dem Altersvorsorgereformgesetz; löst die Riester-Förderung für Neuverträge ab."}
+);
+
+// ===================================================================
+// Sachgebiet H: BU, Hinterbliebene & gesetzliche Rente (selbst formuliert,
+// allgemeine Grundlagen – keine Original-Prüfungsfragen, keine Tarife einzelner Versicherer)
+// ===================================================================
+CAT.H = {name:"BU, Hinterbliebene & GRV", color:"var(--H)"};
+
+// --- Gesetzliche Rentenversicherung ---
+Q("H","Was beschreibt der Begriff Generationenvertrag?","Die heute Erwerbstätigen finanzieren mit ihren Beiträgen die Renten der heutigen Rentner (Umlageverfahren)","Ein schriftlicher Vertrag zwischen Bürger und Staat","Jeder Versicherte spart seine eigene Rente auf einem Konto an","Ein Gesetz, das eine feste Rentenhöhe garantiert","Der Generationenvertrag ist kein echter Vertrag, sondern beschreibt das Umlageverfahren der GRV.");
+Q("H","Wie wird die gesetzliche Rentenversicherung hauptsächlich finanziert?","Im Umlageverfahren aus Beiträgen der Versicherten und Arbeitgeber, ergänzt um Bundeszuschüsse","Im Kapitaldeckungsverfahren über Aktienfonds","Ausschließlich aus Steuern","Nur durch Beiträge der Rentner","Weil weniger Beitragszahler auf mehr Rentner kommen, gerät das Umlageverfahren demografisch unter Druck.");
+QM("H","Was gehört zur ersten Schicht (Basisversorgung) des Drei-Schichten-Modells? (mehrere richtig)",
+  ["Gesetzliche Rentenversicherung","Basisrente (Rürup)","Berufsständische Versorgungswerke"], ["Riester-Rente","Direktversicherung durch Entgeltumwandlung","Kapitallebensversicherung"],
+  "Riester und bAV gehören zur zweiten Schicht, Kapitallebens- und private Rentenversicherungen zur dritten.");
+Q("H","Wie hoch ist der steuerpflichtige Anteil einer gesetzlichen Rente bei Rentenbeginn im Jahr 2022?","82 %","100 %","18 %","50 %","Der steuerfreie Teil (18 %) wird als fester Euro-Betrag lebenslang festgeschrieben. Der persönliche Steuersatz spielt für den Besteuerungsanteil keine Rolle.");
+Q("H","Wie hoch ist der Besteuerungsanteil gesetzlicher Renten bei Rentenbeginn 2026?","84 %","86 %","100 %","74 %","Seit 2023 steigt der Anteil nur noch um 0,5 Prozentpunkte pro Jahr; 100 % werden erst bei Rentenbeginn 2058 erreicht.");
+Q("H","Warum reicht die gesetzliche Absicherung bei Berufsunfähigkeit für ab 1961 Geborene oft nicht aus?","Es gibt keinen Berufsschutz mehr; die Erwerbsminderungsrente prüft, ob irgendeine Tätigkeit möglich ist, und ist meist niedrig","Weil ab 1961 Geborene gar nicht rentenversichert sind","Weil die GRV dann die volle Gehaltshöhe zahlt","Weil nur Unfälle versichert sind","Wer nach dem 1.1.1961 geboren ist, erhält keine Berufsunfähigkeitsrente mehr aus der GRV, sondern nur die Erwerbsminderungsrente.");
+
+// --- Hinterbliebenenrente ---
+Q("H","Welche Wartezeit muss der verstorbene Versicherte für eine Witwen- bzw. Witwerrente erfüllt haben?","Die allgemeine Wartezeit von 5 Jahren","35 Jahre","45 Jahre","Keine","Die 5 Jahre gelten auch als erfüllt, wenn der Tod z. B. durch einen Arbeitsunfall eintritt.");
+Q("H","Wann erhält ein Hinterbliebener die große statt der kleinen Witwen- bzw. Witwerrente?","Wenn er eine Altersgrenze erreicht hat (2026: 46 Jahre und 6 Monate), ein Kind unter 18 erzieht oder erwerbsgemindert ist","Immer nach 10 Jahren Ehe","Nur, wenn der Verstorbene älter als 65 war","Nur bei Tod durch Unfall","Die Altersgrenze steigt schrittweise bis 2029 auf 47 Jahre.");
+Q("H","Wie lange wird die kleine Witwen- bzw. Witwerrente nach neuem Recht höchstens gezahlt?","24 Monate","Lebenslang","6 Monate","10 Jahre","Sie beträgt 25 % der Rente des Verstorbenen; die große Witwenrente beträgt 55 % (altes Recht 60 %).");
+Q("H","Was gilt bei einer Ehe, die weniger als ein Jahr bestanden hat, für die Witwen- bzw. Witwerrente?","Es wird eine Versorgungsehe vermutet und es gibt grundsätzlich keine Rente – außer der Tod war z. B. die Folge eines Unfalls","Es gibt immer die volle Rente","Es gibt nur bei Kindern eine Rente","Die Rente wird verdoppelt","Bei einem plötzlichen, unvorhersehbaren Tod (z. B. Unfall) gilt die Vermutung der Versorgungsehe als widerlegt.");
+Q("H","Was ist das Sterbevierteljahr in der gesetzlichen Rentenversicherung?","In den ersten drei Monaten nach dem Tod erhält der Hinterbliebene die volle Rente des Verstorbenen ohne Einkommensanrechnung","Die Wartezeit von drei Monaten vor der ersten Zahlung","Eine Pflicht, den Todesfall innerhalb von drei Monaten zu melden","Eine Einmalzahlung von drei Monatsgehältern","Danach wird die Witwenrente in Höhe von 55 % bzw. 25 % gezahlt, und eigenes Einkommen wird angerechnet.");
+
+// --- Berufsunfähigkeit ---
+Q("H","Warum ist eine private BU-Versicherung auch mit privater Unfallversicherung sinnvoll?","Die meisten Fälle von Berufsunfähigkeit entstehen durch Krankheiten (z. B. Psyche, Rücken), nicht durch Unfälle","Weil die Unfallversicherung schon alle Krankheiten abdeckt","Weil die BU nur bei Unfällen zahlt","Sie ist dann nicht sinnvoll","Die Unfallversicherung leistet nur nach einem Unfall; Krankheit ist die häufigste Ursache für Berufsunfähigkeit.");
+Q("H","Ersetzt eine private Krankenversicherung mit Krankentagegeld eine BU-Versicherung?","Nein, das Krankentagegeld endet in der Regel, sobald Berufsunfähigkeit festgestellt wird","Ja, vollständig und lebenslang","Ja, wenn das Krankentagegeld hoch genug ist","Nur bei Beamten","Krankentagegeld gilt für vorübergehende Arbeitsunfähigkeit; bei dauerhafter Berufsunfähigkeit entsteht eine Lücke.");
+Q("H","Kann eine Vorerkrankung (z. B. eine Allergie) den Abschluss einer BU-Versicherung beeinflussen?","Ja, sie kann zu einem Risikozuschlag, einem Leistungsausschluss oder selten zur Ablehnung führen; viele leichte Erkrankungen sind aber unproblematisch","Nein, Gesundheitsfragen gibt es bei der BU nicht","Ja, jede Allergie führt immer zur Ablehnung","Nur, wenn die Allergie nach Vertragsschluss auftritt","Gesundheitsfragen müssen wahrheitsgemäß beantwortet werden (§ 19 VVG); der Versicherer entscheidet nach Risikoprüfung.");
+Q("H","Was bedeutet der Prognosezeitraum in der BU-Versicherung?","Der Zeitraum, für den die Berufsunfähigkeit voraussichtlich bestehen muss, damit der Versicherer leistet","Die Wartezeit bis zum ersten Beitrag","Die Laufzeit des Vertrags","Die Frist für die Kündigung","Je kürzer der Prognosezeitraum, desto kundenfreundlicher. Marktüblich sind heute meist 6 Monate, ältere Bedingungen sahen teils längere Zeiträume vor.");
+Q("H","Was gilt in vielen BU-Bedingungen, wenn die Berufsunfähigkeit bereits 6 Monate ununterbrochen bestanden hat?","Die Fortdauer gilt von Beginn an als Berufsunfähigkeit, auch wenn sich anfangs keine Prognose stellen ließ","Der Vertrag endet automatisch","Die Leistung wird halbiert","Der Kunde muss neu Gesundheitsfragen beantworten","Diese Regel hilft, wenn Ärzte zu Beginn keine Prognose abgeben können.");
+Q("H","Was leistet eine BU-Versicherung bei einem BU-Grad unter 50 % nach den meisten Bedingungen?","In der Regel keine Rente (keine Staffelung), außer der Tarif sieht ausdrücklich eine anteilige Leistung vor","Immer die volle Rente","Immer eine Einmalzahlung","Die halbe Rente in jedem Fall","Marktüblich ist das Alles-oder-nichts-Prinzip ab 50 %; einige Tarife staffeln die Leistung.");
+QM("H","Bei welchen Ereignissen erlaubt eine Nachversicherungsgarantie typischerweise eine Erhöhung ohne neue Gesundheitsprüfung? (mehrere richtig)",
+  ["Heirat","Geburt oder Adoption eines Kindes","Erfolgreicher Abschluss einer Ausbildung oder eines Studiums","Erwerb einer selbst genutzten Immobilie"], ["Abbruch eines Studiums","Umzug in eine Mietwohnung"],
+  "Die Ereignisse sind in den Bedingungen abschließend aufgezählt; meist gelten zusätzlich Höchstgrenzen und Fristen.");
+Q("H","Ein Angestellter hat ein Nettoeinkommen von 2.400 € im Monat. Laut Renteninformation erhielte er eine volle Erwerbsminderungsrente von 1.000 €. Wie hoch ist die monatliche Versorgungslücke?","1.400 €","2.400 €","1.000 €","3.400 €","Versorgungsziel (Netto) − gesetzliche Leistung = 2.400 € − 1.000 € = 1.400 €. Bei der Beratung sind zusätzlich Steuern und Sozialabgaben auf die BU-Rente zu bedenken.");
+QT("H","Ein Kunde verdient 36.000 € netto im Jahr, die volle Erwerbsminderungsrente laut Renteninformation beträgt 1.200 € im Monat. Wie hoch ist die monatliche Lücke zum Nettoeinkommen in Euro? (nur die Zahl)",["1800","1.800","1800€","1800 €"],"36.000 € ÷ 12 = 3.000 € netto im Monat; 3.000 € − 1.200 € = 1.800 €.");
+
+// --- Beamte ---
+Q("H","Warum ist eine Dienstunfähigkeitsabsicherung gerade für Beamte auf Widerruf und auf Probe wichtig?","Sie haben bei Dienstunfähigkeit meist noch keinen Anspruch auf Ruhegehalt und werden entlassen","Weil sie bei Dienstunfähigkeit das volle Gehalt lebenslang weiter erhalten","Weil Beamte nie krank werden dürfen","Weil der Dienstherr dann automatisch eine BU-Rente zahlt","Ein Ruhegehalt gibt es grundsätzlich erst nach 5 Dienstjahren; vorher erfolgt die Entlassung mit Nachversicherung in der GRV.");
+Q("H","Was ist eine echte Dienstunfähigkeitsklausel in einer BU-Versicherung?","Der Versicherer leistet, wenn der Dienstherr den Beamten wegen Dienstunfähigkeit in den Ruhestand versetzt oder entlässt, ohne eigene Prüfung der Berufsunfähigkeit","Eine Klausel, nach der Beamte keine BU abschließen dürfen","Eine Pflichtversicherung des Dienstherrn","Eine Klausel, die nur für Angestellte gilt","Ob die Klausel schon für Beamte auf Widerruf oder erst ab Probe bzw. Lebenszeit gilt, regeln die jeweiligen Bedingungen – das ist ein wichtiger Vergleichspunkt.");
+
+// --- Riester-Förderberechtigung ---
+QM("H","Wer ist bei der Riester-Förderung (§ 10a EStG) typischerweise unmittelbar förderberechtigt? (mehrere richtig)",
+  ["In der GRV pflichtversicherte Arbeitnehmer","Beamte","Bezieher von Lohnersatzleistungen wie Arbeitslosengeld I","Eltern in der Kindererziehungszeit (pflichtversichert)"], ["Freiwillig Versicherte in der GRV","Versicherungsfrei bzw. befreit geringfügig Beschäftigte"],
+  "Entscheidend ist die Pflichtversicherung in der GRV bzw. die Beamtenbesoldung. Freiwillig Versicherte und rentenversicherungsbefreite Minijobber sind nicht unmittelbar berechtigt.");
+Q("H","Welche Zulagen erhält ein 20-jähriger lediger Auszubildender ohne Kinder, der einen Riester-Vertrag abschließt (Stand 2026)?","Die Grundzulage von 175 € pro Jahr und einmalig 200 € Berufseinsteigerbonus","Nur 175 € Grundzulage","175 € Grundzulage plus jährlich 200 € Bonus bis 25","300 € Kinderzulage","Den Berufseinsteigerbonus gibt es einmalig für Zulageberechtigte unter 25 Jahren.");
+
+// --- Todesfallabsicherung & Basisrente ---
+Q("H","Ein Ehepaar möchte sich gegenseitig für den Todesfall absichern; die Summe soll nur einmal fällig werden. Was passt?","Eine Risikolebensversicherung auf verbundene Leben","Zwei Bausparverträge","Zwei Sterbegeldversicherungen","Eine Hausratversicherung","Die Leistung wird beim ersten Todesfall fällig; das ist meist günstiger als zwei Einzelverträge. Wer beim Tod beider Partner zweimal Geld braucht, wählt zwei Verträge.");
+Q("H","Was ist der Vorteil einer Risikolebensversicherung über Kreuz bei unverheirateten Paaren?","Weil der Begünstigte zugleich Versicherungsnehmer ist, fällt im Todesfall in der Regel keine Erbschaftsteuer auf die Leistung an","Die Versicherungssumme verdoppelt sich","Es ist keine Gesundheitsprüfung nötig","Die Beiträge zahlt der Staat","Jeder Partner versichert das Leben des anderen und zahlt selbst die Beiträge.");
+Q("H","Wie viel Prozent der Basisrenten-Beiträge sind 2026 im Rahmen des Höchstbetrags als Sonderausgaben abziehbar?","100 %","98 %","94 %","50 %","Seit 2023 sind Beiträge zur Basisversorgung zu 100 % abziehbar; der Höchstbetrag 2026 beträgt 30.826 € für Alleinstehende (Verheiratete doppelt).");
+Q("H","Was mindert den Basisrenten-Höchstbetrag bei Arbeitnehmern?","Die Beiträge zur gesetzlichen Rentenversicherung (Arbeitnehmer- und Arbeitgeberanteil)","Die Kirchensteuer","Die Kfz-Steuer","Nichts","Bei Selbstständigen ohne GRV-Pflicht steht der Höchstbetrag in der Regel voll für die Basisrente zur Verfügung.");
+QT("H","Wie viel Prozent einer gesetzlichen Rente sind bei Rentenbeginn 2022 steuerpflichtig? (nur die Zahl)",["82","82%","82 %"],"Besteuerungsanteil bei Rentenbeginn 2022: 82 %.");
+
+questions.forEach((q,i)=>q.id=i);
+
+CASES.push(
+  {title:"Fall: Plötzlicher Todesfall kurz nach der Hochzeit", intro:"Sabine (48) und Thomas (51) haben vor drei Wochen geheiratet. Thomas war 25 Jahre angestellt und pflichtversichert. Er stirbt unerwartet bei einem Verkehrsunfall. Sabine arbeitet in Teilzeit, Kinder gibt es keine.",
+    qs:[
+      {q:"Wird bei Sabine eine Versorgungsehe vermutet, obwohl die Ehe kürzer als ein Jahr bestand?", opts:["Nein, bei einem Unfalltod gilt die Vermutung als widerlegt","Ja, immer","Ja, weil keine Kinder da sind","Nur, wenn Sabine Vollzeit arbeitet"], c:0, e:"Die Vermutung der Versorgungsehe gilt nicht, wenn der Tod plötzlich und unvorhersehbar eintrat, etwa durch einen Unfall."},
+      {q:"Welche Witwenrente steht Sabine zu?", opts:["Die große Witwenrente, weil sie älter als die Altersgrenze (2026: 46 Jahre und 6 Monate) ist","Die kleine Witwenrente für 24 Monate","Keine Witwenrente","Eine Waisenrente"], c:0, e:"Thomas hat die Wartezeit von 5 Jahren erfüllt, Sabine hat die Altersgrenze überschritten."},
+      {q:"Was erhält Sabine in den ersten drei Monaten nach dem Tod?", opts:["Die volle Rente von Thomas ohne Einkommensanrechnung (Sterbevierteljahr)","Gar nichts","Die halbe Rente","Eine Einmalzahlung von 10.000 €"], c:0, e:"Danach werden 55 % gezahlt, und ihr eigenes Einkommen wird oberhalb eines Freibetrags angerechnet."}
+    ]}
+);
+GLOSSARY.push(
+  {t:"Generationenvertrag", d:"Umlageverfahren der GRV: Die Beiträge der Erwerbstätigen finanzieren die laufenden Renten."},
+  {t:"Versorgungsehe", d:"Ehe von unter einem Jahr Dauer; dann wird vermutet, dass sie vorrangig zur Versorgung geschlossen wurde – kein Anspruch auf Witwenrente, außer z. B. bei Unfalltod."},
+  {t:"Sterbevierteljahr", d:"Die ersten drei Monate nach dem Tod, in denen Hinterbliebene die volle Rente ohne Einkommensanrechnung erhalten."},
+  {t:"Prognosezeitraum", d:"Zeitraum, für den die Berufsunfähigkeit voraussichtlich andauern muss, damit die BU-Versicherung leistet; marktüblich 6 Monate."},
+  {t:"Dienstunfähigkeitsklausel", d:"Klausel in der BU-Versicherung für Beamte: Leistung, wenn der Dienstherr wegen Dienstunfähigkeit entlässt oder in den Ruhestand versetzt."},
+  {t:"Besteuerungsanteil", d:"Steuerpflichtiger Prozentsatz der gesetzlichen Rente, abhängig vom Jahr des Rentenbeginns (2022: 82 %, 2026: 84 %)."}
 );
 
 // ===================================================================
