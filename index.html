@@ -16,7 +16,7 @@
   color-scheme:light;
   --bg:#eef3f1; --surface:rgba(255,255,255,.86); --surface-solid:#ffffff; --surface-2:rgba(15,30,40,.04);
   --ink:#1c2126; --sub:#5b6570; --line:rgba(20,32,44,.10); --line-strong:rgba(20,32,44,.16);
-  --A:#3b6ea5; --B:#23926f; --C:#c25a22; --D:#a13d7c; --E:#c0392b;
+  --A:#3b6ea5; --B:#23926f; --C:#c25a22; --D:#a13d7c; --E:#c0392b; --F:#0f7f8c;
   --accent:#3b6ea5; --accent-2:#2f9e7d; --ok:#23926f; --bad:#c0392b; --warn:#c9622a;
   --ok-bg:rgba(35,146,111,.12); --bad-bg:rgba(192,57,43,.11); --sel-bg:rgba(59,110,165,.12);
   --grad:linear-gradient(135deg,#3b6ea5 0%,#2f9e7d 100%);
@@ -32,7 +32,7 @@
     color-scheme:dark;
     --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
     --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
-    --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d;
+    --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf;
     --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
     --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
@@ -43,7 +43,7 @@
   color-scheme:dark;
   --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
   --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
-  --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d;
+  --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf;
   --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
   --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
@@ -111,7 +111,7 @@ h1,h2,h3{margin:0;}
 
 /* ===== Startseite ===== */
 .hero{padding:20px; position:relative; overflow:hidden;}
-.hero::before{content:""; position:absolute; inset:0 0 auto 0; height:5px; background:linear-gradient(90deg,var(--A),var(--B),var(--C),var(--D),var(--E));}
+.hero::before{content:""; position:absolute; inset:0 0 auto 0; height:5px; background:linear-gradient(90deg,var(--A),var(--B),var(--C),var(--D),var(--E),var(--F));}
 .hero-main{display:flex; align-items:center; gap:14px;}
 .hero-main > div:first-child{flex:1; min-width:0;}
 .hero h1{font-size:1.32rem; font-weight:800; letter-spacing:-.01em; margin:2px 0 6px;}
@@ -839,6 +839,86 @@ QM("E","Welche Aussagen zur Haftung von Kindern sind richtig? (mehrere richtig)"
 QT("E","Ab welchem Alter können Kinder im fließenden Straßenverkehr frühestens haften (ohne Vorsatz)? (nur die Zahl)",["10","zehn","10 jahren"],"§ 828 Abs. 2 BGB setzt die Grenze bei 10 Jahren.");
 
 questions.forEach((q,i)=>q.id=i);
+
+// ===================================================================
+// Sachgebiet F: Bausparen (selbst formuliert, allgemeine Grundlagen –
+// keine Original-Prüfungsfragen, keine tarifspezifischen Angaben einzelner Bausparkassen)
+// ===================================================================
+CAT.F = {name:"Bausparen", color:"var(--F)"};
+
+// --- Grundprinzip ---
+Q("F","Wie funktioniert das Bausparen grundsätzlich?","Eine Gemeinschaft von Sparern spart in einen gemeinsamen Topf, aus dem zugeteilte Bausparer ein zinsgünstiges Darlehen erhalten","Die Bausparkasse leiht sich Geld am Kapitalmarkt und gibt es an beliebige Kunden weiter","Der Staat zahlt das gesamte Darlehen","Es ist ein reines Tagesgeldkonto ohne Darlehensanspruch","Man spricht vom kollektiven Bausparen: Die Einzahlungen der Sparer finanzieren die Darlehen der zugeteilten Bausparer.");
+Q("F","Wer beaufsichtigt Bausparkassen in Deutschland?","Die BaFin, auf Grundlage des Bausparkassengesetzes","Die IHK","Das Finanzamt","Der Versicherungsombudsmann","Bausparkassen sind Spezialkreditinstitute; für sie gelten das Kreditwesengesetz und zusätzlich das Bausparkassengesetz.");
+Q("F","Aus welchen Teilen setzt sich die Bausparsumme zusammen?","Aus dem angesparten Guthaben und dem Bauspardarlehen","Nur aus dem Darlehen","Nur aus dem Guthaben","Aus Guthaben, Darlehen und staatlicher Förderung zu gleichen Teilen","Beispiel: Bausparsumme 50.000 €, Guthaben 20.000 € → Darlehensanspruch 30.000 €.");
+Q("F","Was ist der wichtigste Vorteil eines Bauspardarlehens?","Der Darlehenszins steht schon bei Vertragsabschluss fest","Das Darlehen muss nie zurückgezahlt werden","Es gibt kein Ansparen","Der Zins richtet sich täglich nach dem Markt","Die Zinssicherheit schützt vor steigenden Bauzinsen in der Zukunft.");
+Q("F","Was ist die Bewertungszahl beim Bausparen?","Eine Kennzahl, die aus Höhe und Dauer der Sparleistung berechnet wird und über die Reihenfolge der Zuteilung entscheidet","Die Bonität des Kunden laut Schufa","Die Anzahl der Verträge eines Kunden","Der Zinssatz des Darlehens","Wer mehr und länger spart, erreicht die Mindestbewertungszahl früher.");
+Q("F","Was bedeutet die Zuteilung eines Bausparvertrags?","Die Bausparsumme wird bereitgestellt: Guthaben plus Anspruch auf das Bauspardarlehen","Der Vertrag wird gekündigt","Der Kunde erhält einen neuen Vertrag","Die Bausparkasse zahlt eine Prämie aus","Erst nach der Zuteilung kann das Darlehen in Anspruch genommen werden.");
+QM("F","Welche Voraussetzungen müssen für eine Zuteilung typischerweise erfüllt sein? (mehrere richtig)",
+  ["Mindestsparguthaben erreicht","Mindestbewertungszahl erreicht","Mindestsparzeit abgelaufen"], ["Grundbucheintrag vorhanden","Mindestalter von 30 Jahren"],
+  "Die genauen Werte (z. B. Prozent der Bausparsumme) legen die Tarifbedingungen der jeweiligen Bausparkasse fest.");
+Q("F","Kann ein Bausparer vor der Zuteilung über sein Guthaben verfügen?","Ja, durch Kündigung des Vertrags unter Einhaltung der Kündigungsfrist; staatliche Förderung kann dann verloren gehen","Nein, niemals","Ja, jederzeit täglich wie bei einem Girokonto","Nur mit Zustimmung des Finanzamts","Bei vorzeitiger Verfügung ohne wohnwirtschaftliche Verwendung sind Wohnungsbauprämie und Arbeitnehmersparzulage meist verloren.");
+Q("F","Wie wird ein Bauspardarlehen in der Regel abgesichert?","Durch eine Grundschuld, häufig nachrangig hinter der Bankfinanzierung; kleinere Darlehen teils ohne Grundschuld","Gar nicht","Nur durch eine Bürgschaft der Eltern","Nur durch das Kfz des Kunden","Weil Bauspardarlehen oft nachrangig besichert werden können, ergänzen sie gut eine Bankfinanzierung.");
+Q("F","Wie wird ein Bausparvertrag häufig in der Baufinanzierung eingesetzt?","Zur Zinssicherung für die Anschlussfinanzierung oder als Ergänzung zum Bankdarlehen","Als Ersatz für Eigenkapital ohne Ansparen","Nur zur Absicherung gegen Berufsunfähigkeit","Als Risikolebensversicherung","Ein Bausparvertrag kann den heutigen Zins für eine Finanzierung in einigen Jahren festschreiben.");
+
+// --- Wohnwirtschaftliche Verwendung ---
+QM("F","Welche Maßnahmen gelten als wohnwirtschaftliche Verwendung? (mehrere richtig)",
+  ["Bau oder Kauf eines Hauses","Kauf einer Eigentumswohnung","Modernisierung, z. B. neue Heizung","Ablösung eines Baudarlehens"], ["Kauf eines Autos","Ablösung eines Konsumkredits"],
+  "Wohnwirtschaftlich ist alles, was dem Bau, Erwerb, Erhalt oder der Verbesserung von Wohnraum dient, einschließlich der Umschuldung von Baudarlehen.");
+Q("F","Gilt der Erwerb eines Dauerwohnrechts in einem Altenwohnheim als wohnwirtschaftliche Verwendung?","Ja","Nein, nie","Nur, wenn das Heim neu gebaut ist","Nur im Ausland","Auch der Erwerb von Dauerwohnrechten zählt nach dem Wohnungsbau-Prämiengesetz zu den begünstigten Maßnahmen.");
+Q("F","Ist der Kauf eines Wohnmobils eine wohnwirtschaftliche Verwendung?","Nein, ein Fahrzeug ist kein Wohnraum im Sinne des Bausparrechts","Ja, weil man darin wohnen kann","Ja, wenn es mehr als 50.000 € kostet","Nur bei Dauercampern mit Wohnsitz im Ausland","Begünstigt sind Gebäude und Wohnungen, keine Fahrzeuge.");
+Q("F","Ein Kunde möchte mit dem Bausparguthaben seine Geschwister bei einer geerbten Wohnung auszahlen. Ist das wohnwirtschaftlich?","Ja, die Auszahlung von Miterben für selbst genutzten oder vermieteten Wohnraum gilt als wohnwirtschaftlich","Nein, Erbschaften sind nie begünstigt","Nur wenn die Wohnung leer steht","Nur, wenn die Geschwister minderjährig sind","Der Erwerb von Anteilen an Wohneigentum (z. B. Erbauseinandersetzung) ist eine begünstigte Verwendung.");
+Q("F","Zählen energetische Sanierung und altersgerechter Umbau zur wohnwirtschaftlichen Verwendung?","Ja, auch Modernisierung und Umbau sind begünstigt","Nein, nur Neubau zählt","Nur bei Mietwohnungen","Nur, wenn der Staat zusätzlich fördert","Typische Beispiele: Dämmung, neue Fenster, Wärmepumpe, barrierefreies Bad.");
+
+// --- Wohnungsbauprämie ---
+Q("F","Wie hoch ist die Wohnungsbauprämie?","10 % der prämienbegünstigten Sparleistung","9 % der Sparleistung","20 % der Sparleistung","Ein fester Betrag von 100 € pro Jahr","Seit 2021 beträgt die Prämie 10 %.");
+Q("F","Bis zu welchem Betrag pro Jahr werden Sparleistungen bei Alleinstehenden mit der Wohnungsbauprämie gefördert?","700 €","470 €","1.400 €","2.100 €","Bei Verheirateten bzw. eingetragenen Lebenspartnern sind es 1.400 €.");
+Q("F","Welche Einkommensgrenze gilt für die Wohnungsbauprämie bei Alleinstehenden?","35.000 € zu versteuerndes Einkommen","35.000 € Bruttoeinkommen","25.600 € zu versteuerndes Einkommen","Es gibt keine Einkommensgrenze","Bei Verheirateten liegt die Grenze bei 70.000 €; maßgeblich ist das zu versteuernde Einkommen, nicht das Brutto.");
+Q("F","Wie hoch ist die Wohnungsbauprämie für Verheiratete höchstens pro Jahr?","140 €","70 €","43 €","86 €","10 % von 1.400 € = 140 €.");
+Q("F","Wie hoch muss die Sparleistung mindestens sein, damit eine Wohnungsbauprämie gezahlt wird?","50 € im Jahr","10 € im Monat","500 € im Jahr","Es gibt keine Mindestsparleistung","Unterhalb von 50 € Jahressparleistung gibt es keine Prämie.");
+Q("F","Ab welchem Alter kann man in der Regel selbst eine Wohnungsbauprämie erhalten?","Ab 16 Jahren","Ab Geburt","Ab 18 Jahren","Ab 25 Jahren","Ausnahme: Vollwaisen können die Prämie schon früher erhalten. Für Kleinkinder gibt es daher in der Regel keine Prämie.");
+Q("F","Was gilt für Bausparer, die bei Vertragsabschluss jünger als 25 Jahre waren?","Sie dürfen nach 7 Jahren einmalig auch ohne wohnwirtschaftliche Verwendung prämienunschädlich verfügen","Sie müssen das Geld immer wohnwirtschaftlich verwenden","Sie erhalten die doppelte Prämie","Sie bekommen keine Prämie","Diese Sonderregel macht das Bausparen gerade für junge Leute attraktiv.");
+Q("F","Wie wird die Wohnungsbauprämie beantragt?","Jährlich über die Bausparkasse; ausgezahlt wird sie bei Zuteilung bzw. wohnwirtschaftlicher Verwendung","Über die Krankenkasse","Automatisch ohne Antrag über den Arbeitgeber","Über die IHK","Die Bausparkasse leitet den Antrag ans Finanzamt weiter; die Prämie wird dem Vertrag bei Verwendung gutgeschrieben.");
+
+// --- Vermögenswirksame Leistungen & Arbeitnehmersparzulage ---
+Q("F","Was sind vermögenswirksame Leistungen (VL)?","Geldleistungen, die der Arbeitgeber für den Arbeitnehmer direkt in eine begünstigte Anlage einzahlt","Ein Zuschuss der Bausparkasse","Eine Steuererstattung","Eine Leistung der Rentenversicherung","Ob und wie viel der Arbeitgeber zahlt, regeln Tarif- oder Arbeitsvertrag; Arbeitnehmer können VL auch aus eigenem Lohn finanzieren.");
+Q("F","Wie hoch ist die Arbeitnehmersparzulage bei Anlage der VL in einen Bausparvertrag?","9 % auf höchstens 470 € im Jahr","20 % auf höchstens 400 € im Jahr","10 % auf höchstens 700 € im Jahr","Es gibt keine Zulage für Bausparen","Das ergibt höchstens 43 € pro Jahr. Für Aktienfonds gibt es 20 % auf höchstens 400 €.");
+Q("F","Welche Einkommensgrenze gilt seit 2024 für die Arbeitnehmersparzulage bei Alleinstehenden?","40.000 € zu versteuerndes Einkommen","17.900 € zu versteuerndes Einkommen","35.000 € Bruttoeinkommen","Es gibt keine Grenze","Für Verheiratete gilt 80.000 €. Die alten, niedrigeren Grenzen galten bis 2023.");
+Q("F","Wie lange ist ein VL-Bausparvertrag für die Arbeitnehmersparzulage gesperrt (Sperrfrist)?","7 Jahre","2 Jahre","10 Jahre","Es gibt keine Sperrfrist","Ausnahmen gelten z. B. bei wohnwirtschaftlicher Verwendung nach Zuteilung.");
+Q("F","Wie beantragt der Arbeitnehmer die Arbeitnehmersparzulage?","Mit der Einkommensteuererklärung (Anlage VL bzw. elektronische Bescheinigung der Bausparkasse)","Beim Arbeitgeber mit einem Formular","Bei der Krankenkasse","Sie wird ohne jeden Antrag ausgezahlt","Der Antrag ist bis zu vier Jahre rückwirkend möglich.");
+Q("F","Können Wohnungsbauprämie und Arbeitnehmersparzulage für denselben Bausparvertrag kombiniert werden?","Ja, aber nicht für dieselben Beiträge: VL bis 470 € erhalten die Sparzulage, weitere eigene Beiträge die Prämie","Nein, nie","Ja, beide für denselben Euro","Nur bei Beamten","Wer beides nutzt, kann bei Alleinstehenden bis zu 43 € Sparzulage plus 70 € Prämie im Jahr erhalten.");
+
+// --- Geldwäschegesetz ---
+Q("F","Wann muss die Identifizierung eines neuen Bausparkunden nach dem Geldwäschegesetz erfolgen?","Vor Begründung der Geschäftsbeziehung, also bei Vertragsabschluss","Erst bei der Darlehensauszahlung","Irgendwann innerhalb von fünf Jahren","Gar nicht, Bausparkassen sind ausgenommen","Kann die Identifizierung nicht durchgeführt werden, darf die Geschäftsbeziehung nicht begründet werden.");
+Q("F","Womit kann eine natürliche Person bei der Kontoeröffnung identifiziert werden?","Mit einem gültigen amtlichen Lichtbildausweis, z. B. Personalausweis oder Reisepass","Mit dem Führerschein eines Freundes","Mit einer Kopie der Stromrechnung","Mit selbst ausgefüllten Angaben ohne Nachweis","Abgelaufene Ausweise oder Fantasiedaten sind unzulässig; die Angaben werden geprüft und dokumentiert.");
+Q("F","Wie lange müssen die Identifizierungsunterlagen nach dem GwG mindestens aufbewahrt werden?","5 Jahre","1 Jahr","6 Monate","Gar nicht","Die Frist beginnt mit dem Ende der Geschäftsbeziehung (§ 8 GwG).");
+
+// --- Zielgruppen & Rechnen ---
+QM("F","Für welche Kunden ist ein Bausparvertrag besonders geeignet? (mehrere richtig)",
+  ["Wer in einigen Jahren Wohneigentum kaufen oder bauen möchte","Eigentümer, die sich einen festen Zins für spätere Modernisierungen sichern wollen","Arbeitnehmer, die vermögenswirksame Leistungen anlegen wollen"], ["Wer sein Geld täglich verfügbar parken möchte","Eltern, die für ihr Neugeborenes die Wohnungsbauprämie sofort nutzen wollen"],
+  "Für täglich verfügbares Geld ist Tagesgeld besser; die Wohnungsbauprämie gibt es in der Regel erst ab 16 Jahren.");
+Q("F","Ein alleinstehender Kunde (Einkommen unter der Grenze) zahlt 1.000 € im Jahr in seinen Bausparvertrag. Wie hoch ist die Wohnungsbauprämie?","70 €","100 €","140 €","43 €","Gefördert werden höchstens 700 €: 10 % von 700 € = 70 €.");
+Q("F","Bausparsumme 60.000 €, das Mindestsparguthaben liegt bei 40 %. Wie hoch ist das Bauspardarlehen nach Zuteilung?","36.000 €","24.000 €","60.000 €","40.000 €","Guthaben 40 % = 24.000 €; Darlehen = 60.000 € − 24.000 € = 36.000 €.");
+Q("F","Bausparsumme 40.000 €, Abschlussgebühr 1,6 %. Wie hoch ist die Abschlussgebühr?","640 €","400 €","1.600 €","64 €","40.000 € × 0,016 = 640 €. Sie wird meist mit den ersten Einzahlungen verrechnet.");
+QT("F","Wie viel Prozent beträgt die Wohnungsbauprämie? (nur die Zahl)",["10","10%","10 %","zehn"],"Seit 2021 beträgt sie 10 % der Sparleistung.");
+QT("F","Wie hoch ist die Arbeitnehmersparzulage für einen VL-Bausparvertrag maximal pro Jahr in Euro? (nur die Zahl)",["43","43 €","43 euro"],"9 % auf höchstens 470 € ergeben aufgerundet 43 € pro Jahr.");
+
+questions.forEach((q,i)=>q.id=i);
+
+CASES.push(
+  {title:"Fall: Der erste Bausparvertrag", intro:"Lea, 22, ledig, ist im zweiten Ausbildungsjahr und hat ein zu versteuerndes Einkommen von etwa 14.000 € im Jahr. Ihr Arbeitgeber zahlt 40 € vermögenswirksame Leistungen im Monat. In sechs bis acht Jahren möchte sie eine Eigentumswohnung kaufen.",
+    qs:[
+      {q:"Welche Förderung kann Lea für die VL nutzen, wenn sie diese in einen Bausparvertrag einzahlt?", opts:["Die Arbeitnehmersparzulage, 9 % auf höchstens 470 € im Jahr","Die Riester-Grundzulage","Keine, Auszubildende sind ausgeschlossen","Die KfW-Förderung"], c:0, e:"Ihr Einkommen liegt deutlich unter 40.000 €. 40 € × 12 = 480 €, gefördert werden 470 €; das ergibt höchstens 43 € Sparzulage."},
+      {q:"Lea zahlt zusätzlich 700 € im Jahr aus eigenem Geld ein. Welche weitere Förderung kommt infrage?", opts:["Die Wohnungsbauprämie von 10 %, also 70 €","Eine zweite Arbeitnehmersparzulage","Ein Zuschuss der IHK","Keine weitere Förderung"], c:0, e:"Eigene Beiträge bis 700 € sind bei Alleinstehenden mit 10 % prämienbegünstigt; ihr Einkommen liegt unter 35.000 €."},
+      {q:"Was ist ein besonderer Vorteil für Lea, weil sie bei Abschluss jünger als 25 ist?", opts:["Sie darf nach 7 Jahren einmalig auch ohne wohnwirtschaftliche Verwendung prämienunschädlich verfügen","Sie muss nie eine Abschlussgebühr zahlen","Sie erhält die Prämie doppelt","Sie darf das Darlehen für ein Auto nutzen"], c:0, e:"Die Sonderregel für junge Bausparer gibt Flexibilität, falls sich ihre Pläne ändern."}
+    ]}
+);
+GLOSSARY.push(
+  {t:"Bewertungszahl", d:"Kennzahl aus Höhe und Dauer der Sparleistung, die die Reihenfolge der Zuteilung von Bausparverträgen bestimmt."},
+  {t:"Zuteilung", d:"Bereitstellung der Bausparsumme (Guthaben plus Bauspardarlehen), sobald Mindestguthaben, Mindestbewertungszahl und Mindestsparzeit erreicht sind."},
+  {t:"Wohnwirtschaftliche Verwendung", d:"Einsatz von Guthaben oder Darlehen für Bau, Kauf, Modernisierung oder Entschuldung von Wohnraum. Voraussetzung für viele Förderungen."},
+  {t:"Wohnungsbauprämie", d:"Staatliche Prämie von 10 % auf Bausparbeiträge bis 700 € (Verheiratete 1.400 €) bei zu versteuerndem Einkommen bis 35.000 € (70.000 €)."},
+  {t:"Arbeitnehmersparzulage", d:"Staatliche Zulage auf vermögenswirksame Leistungen: beim Bausparen 9 % auf höchstens 470 € im Jahr, Einkommensgrenze 40.000 € (80.000 €)."}
+);
 
 // ===================================================================
 // Ergänzungen zum Inhalt
