@@ -16,7 +16,7 @@
   color-scheme:light;
   --bg:#eef3f1; --surface:rgba(255,255,255,.86); --surface-solid:#ffffff; --surface-2:rgba(15,30,40,.04);
   --ink:#1c2126; --sub:#5b6570; --line:rgba(20,32,44,.10); --line-strong:rgba(20,32,44,.16);
-  --A:#3b6ea5; --B:#23926f; --C:#c25a22; --D:#a13d7c; --E:#c0392b; --F:#0f7f8c;
+  --A:#3b6ea5; --B:#23926f; --C:#c25a22; --D:#a13d7c; --E:#c0392b; --F:#0f7f8c; --G:#6b4fb8;
   --accent:#3b6ea5; --accent-2:#2f9e7d; --ok:#23926f; --bad:#c0392b; --warn:#c9622a;
   --ok-bg:rgba(35,146,111,.12); --bad-bg:rgba(192,57,43,.11); --sel-bg:rgba(59,110,165,.12);
   --grad:linear-gradient(135deg,#3b6ea5 0%,#2f9e7d 100%);
@@ -32,7 +32,7 @@
     color-scheme:dark;
     --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
     --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
-    --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf;
+    --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf; --G:#a98ef2;
     --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
     --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
@@ -43,7 +43,7 @@
   color-scheme:dark;
   --bg:#0f1215; --surface:rgba(25,29,35,.84); --surface-solid:#1a1e24; --surface-2:rgba(255,255,255,.05);
   --ink:#eef0f2; --sub:#a3acb7; --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
-  --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf;
+  --A:#6f9fd6; --B:#4cc39e; --C:#e8864e; --D:#d173ad; --E:#ec6a5d; --F:#3fc1cf; --G:#a98ef2;
   --accent:#6f9fd6; --ok:#4cc39e; --bad:#ec6a5d; --warn:#e8864e;
   --ok-bg:rgba(76,195,158,.14); --bad-bg:rgba(236,106,93,.14); --sel-bg:rgba(111,159,214,.18);
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
@@ -111,7 +111,7 @@ h1,h2,h3{margin:0;}
 
 /* ===== Startseite ===== */
 .hero{padding:20px; position:relative; overflow:hidden;}
-.hero::before{content:""; position:absolute; inset:0 0 auto 0; height:5px; background:linear-gradient(90deg,var(--A),var(--B),var(--C),var(--D),var(--E),var(--F));}
+.hero::before{content:""; position:absolute; inset:0 0 auto 0; height:5px; background:linear-gradient(90deg,var(--A),var(--B),var(--C),var(--D),var(--E),var(--F),var(--G));}
 .hero-main{display:flex; align-items:center; gap:14px;}
 .hero-main > div:first-child{flex:1; min-width:0;}
 .hero h1{font-size:1.32rem; font-weight:800; letter-spacing:-.01em; margin:2px 0 6px;}
@@ -918,6 +918,74 @@ GLOSSARY.push(
   {t:"Wohnwirtschaftliche Verwendung", d:"Einsatz von Guthaben oder Darlehen für Bau, Kauf, Modernisierung oder Entschuldung von Wohnraum. Voraussetzung für viele Förderungen."},
   {t:"Wohnungsbauprämie", d:"Staatliche Prämie von 10 % auf Bausparbeiträge bis 700 € (Verheiratete 1.400 €) bei zu versteuerndem Einkommen bis 35.000 € (70.000 €)."},
   {t:"Arbeitnehmersparzulage", d:"Staatliche Zulage auf vermögenswirksame Leistungen: beim Bausparen 9 % auf höchstens 470 € im Jahr, Einkommensgrenze 40.000 € (80.000 €)."}
+);
+
+// ===================================================================
+// Sachgebiet G: Private Rente & Riester (selbst formuliert, allgemeine
+// Grundlagen – keine Original-Prüfungsfragen, keine Tarife einzelner Versicherer)
+// ===================================================================
+CAT.G = {name:"Private Rente & Riester", color:"var(--G)"};
+
+// --- Produktarten ---
+Q("G","Was kennzeichnet eine klassische private Rentenversicherung?","Garantierte Rente, kalkuliert mit dem Rechnungszins, plus Überschussbeteiligung; das Geld wird im Sicherungsvermögen des Versicherers angelegt","Die Rente hängt ausschließlich von Aktienkursen ab","Es gibt keinerlei Garantie","Sie wird vom Staat ausgezahlt","Die klassische Rentenversicherung bietet hohe Sicherheit, aber vergleichsweise geringe Renditechancen.");
+Q("G","Was kennzeichnet eine fondsgebundene Rentenversicherung ohne Garantie?","Die Beiträge fließen in Investmentfonds; Chancen und Risiken der Wertentwicklung trägt der Kunde","Der Versicherer garantiert jede Wertentwicklung","Das Geld wird nur auf ein Sparbuch gelegt","Sie zahlt nur im Todesfall","Ohne Garantie sind die Renditechancen am höchsten, Kursverluste sind aber möglich.");
+Q("G","Was ist eine chancenorientierte (hybride) Rentenversicherung?","Der Beitrag wird auf einen garantiebasierten Baustein und einen fondsgebundenen Baustein aufgeteilt","Eine reine Risikolebensversicherung","Eine Rentenversicherung ganz ohne Fonds","Ein Bausparvertrag mit Rentenoption","Je nach Risikobereitschaft verschiebt sich das Gewicht zwischen Sicherheit und Renditechance.");
+Q("G","Aus welchem Baustein einer hybriden Rentenversicherung stammt das garantierte Mindestkapital zum Rentenbeginn?","Aus dem garantiebasierten Baustein","Aus dem fondsgebundenen Baustein","Aus der Überschussbeteiligung","Aus der staatlichen Zulage","Der Fondsbaustein kann schwanken; garantiert ist nur, was der konventionelle Baustein zusagt.");
+Q("G","Welcher Zins wird zur Berechnung garantierter Leistungen in neuen Lebens- und Rentenversicherungen höchstens zugrunde gelegt (seit 1.1.2025)?","1,0 % (Höchstrechnungszins)","0,25 %","2,25 %","4,0 %","Der Höchstrechnungszins ist eine Obergrenze; Versicherer dürfen auch niedriger kalkulieren.");
+Q("G","Was gilt für Überschüsse bei einer Rentenversicherung?","Sie sind nicht garantiert; erst einmal zugeteilte Überschüsse erhöhen aber die Leistung","Sie sind in voller Höhe von Anfang an garantiert","Sie stehen allein dem Vermittler zu","Sie werden immer bar ausgezahlt","Die Höhe künftiger Überschüsse hängt vom Kapitalmarkt, den Kosten und der Lebenserwartung ab.");
+Q("G","Was ist ein interner Fonds eines Versicherers im Unterschied zu einem Publikumsfonds?","Ein Sondervermögen, das nur über Versicherungsverträge des Anbieters bespart werden kann und nicht an der Börse gehandelt wird","Ein Fonds, den jeder an der Börse kaufen kann","Ein Fonds, der ausschließlich von Mitarbeitern verwaltet wird","Ein Fonds ohne jede Anlagestrategie","Publikumsfonds und ETFs sind dagegen für jeden Anleger frei erhältlich.");
+Q("G","Was unterscheidet einen ETF von einem aktiv gemanagten Fonds?","Ein ETF bildet einen Index passiv nach; beim aktiven Fonds wählt ein Fondsmanager die Wertpapiere gezielt aus","Ein ETF wird täglich von Fondsmanagern neu zusammengestellt","Beide sind identisch","Ein ETF ist immer kapitalgarantiert","ETFs haben meist geringere laufende Kosten, weil kein aktives Management stattfindet.");
+
+// --- Leistungsmerkmale ---
+Q("G","Was bedeutet eine Rentengarantiezeit von 15 Jahren?","Die Rente wird ab Rentenbeginn mindestens 15 Jahre gezahlt; stirbt die versicherte Person vorher, erhalten Hinterbliebene die Rente bis zum Ablauf","Die Rente wird nur 15 Jahre lang gezahlt","Die Hinterbliebenen erhalten bei Tod in der Aufschubzeit 15 Jahre Rente","Der Versicherer garantiert 15 % Rendite","Die Garantiezeit wirkt erst nach Rentenbeginn; für die Aufschubzeit gibt es eigene Todesfallleistungen.");
+Q("G","Was leistet eine Rentenversicherung typischerweise bei Tod in der Aufschubzeit (vor Rentenbeginn)?","Je nach Vereinbarung z. B. die eingezahlten Beiträge oder das vorhandene Kapital an die Hinterbliebenen","Immer die volle lebenslange Rente","Grundsätzlich gar nichts","Eine Rente aus der Rentengarantiezeit","Häufig vereinbart ist die Beitragsrückgewähr; die Rentengarantiezeit greift erst ab Rentenbeginn.");
+Q("G","Was bedeutet das Kapitalwahlrecht?","Statt der lebenslangen Rente kann zum Rentenbeginn eine einmalige Auszahlung gewählt werden","Der Versicherer darf das Kapital frei verwenden","Der Kunde kann jederzeit seinen Versicherer wechseln","Der Kunde wählt die Höhe des Rechnungszinses","Das Wahlrecht muss meist vor Rentenbeginn innerhalb einer Frist ausgeübt werden.");
+Q("G","Was ist eine Vorauszahlung (Policendarlehen) auf eine Rentenversicherung?","Ein zu verzinsender Vorschuss auf die spätere Versicherungsleistung, begrenzt durch den Rückkaufswert","Ein Geschenk des Versicherers","Ein gesetzlicher Anspruch in beliebiger Höhe","Eine zinslose Auszahlung der künftigen Überschüsse","Ob eine Vorauszahlung gewährt wird, regeln die Bedingungen; einen allgemeinen Rechtsanspruch gibt es nicht.");
+Q("G","Wozu dient eine Beitragsdynamik in der Rentenversicherung?","Beitrag und Leistung steigen regelmäßig, um den Kaufkraftverlust durch Inflation auszugleichen","Der Beitrag sinkt jedes Jahr","Die Rente wird nach Rentenbeginn halbiert","Die Gesundheitsprüfung wird jährlich wiederholt","Die Erhöhung richtet sich je nach Vereinbarung nach einem festen Prozentsatz oder einem Index, z. B. dem GRV-Höchstbeitrag.");
+Q("G","Was passiert typischerweise, wenn ein Kunde einer Dynamikerhöhung mehrmals hintereinander widerspricht?","Das Recht auf weitere Dynamikerhöhungen kann erlöschen","Der Vertrag wird gekündigt","Der Beitrag verdoppelt sich","Nichts, Widersprüche sind unbegrenzt folgenlos","Wie oft man widersprechen darf, regeln die Bedingungen; danach ist oft eine neue Gesundheitsprüfung nötig.");
+Q("G","Wofür ist eine Nachversicherungsgarantie besonders wertvoll?","Leistungen können bei bestimmten Lebensereignissen (z. B. Heirat, Geburt) ohne neue Gesundheitsprüfung erhöht werden","Sie senkt den Beitrag automatisch","Sie ersetzt die Rentengarantiezeit","Sie verlängert die Aufschubzeit beliebig","Gerade bei mitversicherter BU oder Hinterbliebenenschutz spart sie eine erneute Risikoprüfung.");
+QM("G","Welche Zusatzversicherungen lassen sich typischerweise in eine private Rentenversicherung einschließen? (mehrere richtig)",
+  ["Berufsunfähigkeits-Zusatzversicherung","Hinterbliebenenrenten-Zusatzversicherung"], ["Arbeitslosenversicherung","Kfz-Haftpflichtversicherung"],
+  "Die Arbeitslosenversicherung ist Teil der gesetzlichen Sozialversicherung und kein Zusatzbaustein einer privaten Rentenversicherung.");
+Q("G","Wie kann eine Rentenversicherung für Berufseinsteiger mit geringem Einkommen bezahlbar gestaltet werden?","Durch einen anfangs ermäßigten Beitrag, der nach einigen Jahren auf den vollen Beitrag steigt (Starterbeitrag)","Durch Verzicht auf jede Beitragszahlung","Durch Auszahlung der Rente vor Vertragsbeginn","Gar nicht, Einsteiger dürfen nicht abschließen","Viele Anbieter haben Einsteigermodelle; Dauer und Höhe der Ermäßigung regeln die jeweiligen Tarife.");
+Q("G","Wofür eignet sich eine Ausbildungsversicherung bzw. eine Ausbildungsrente für Kinder?","Um zu einem festen Termin Kapital oder eine befristete Rente für die Ausbildung bereitzustellen, oft mit Beitragsbefreiung bei Tod des Versorgers","Um eine lebenslange Altersrente ab Geburt zu zahlen","Um die Kfz-Versicherung des Kindes zu ersetzen","Um die Kindergeldzahlung zu erhöhen","Wichtig ist der Versorgerschutz: Stirbt der zahlende Elternteil, läuft der Vertrag beitragsfrei weiter.");
+Q("G","Ein Kunde möchte vor allem Sicherheit und kaum Schwankungen. Welche Produktart passt am ehesten?","Eine klassische oder garantiestarke Rentenversicherung","Eine fondsgebundene Rentenversicherung mit reinem Aktienfonds ohne Garantie","Einzelaktien","Kryptowährungen","Bedarfsgerechte Beratung (§ 61 VVG) heißt: Die Risikobereitschaft des Kunden bestimmt die Produktwahl.");
+
+// --- Rating & Beratung ---
+Q("G","Was unterscheidet ein Rating von einem Ranking?","Ein Ranking ordnet nach messbaren Ergebnissen (z. B. Wertentwicklung); ein Rating bewertet zusätzlich qualitative Faktoren wie Management und Finanzkraft","Es gibt keinen Unterschied","Ein Ranking ist immer gründlicher als ein Rating","Ein Rating ist eine gesetzliche Pflichtprüfung","Ratings (z. B. von Ratingagenturen) beurteilen die Gesamtqualität und Stabilität eines Unternehmens.");
+Q("G","Welche Vorsorge gehört zur dritten Schicht des Drei-Schichten-Modells?","Private Renten- und Lebensversicherungen ohne besondere staatliche Förderung","Die gesetzliche Rentenversicherung","Riester-Rente und betriebliche Altersversorgung","Die Basisrente","Schicht 1: GRV und Basisrente, Schicht 2: bAV und Riester, Schicht 3: übrige private Vorsorge.");
+Q("G","Wie wird eine lebenslange Rente aus einer privaten Rentenversicherung (Schicht 3) besteuert?","Nur mit dem Ertragsanteil, der vom Alter bei Rentenbeginn abhängt","Voll mit dem persönlichen Steuersatz","Gar nicht","Mit 25 % Abgeltungsteuer auf die gesamte Rente","Bei Rentenbeginn mit 67 sind z. B. nur 17 % der Rente steuerpflichtig.");
+
+// --- Riester (bestehende Verträge) ---
+Q("G","Welche Teilkapitalauszahlung ist bei einem Riester-Vertrag zu Beginn der Auszahlungsphase förderunschädlich möglich?","Bis zu 30 % des Kapitals","Bis zu 25 % des Kapitals","Bis zu 50 % des Kapitals","Das gesamte Kapital","Der Rest muss als lebenslange Rente oder (je nach Produkt) über einen Auszahlplan ausgezahlt werden.");
+Q("G","Wie werden Leistungen aus einem Riester-Vertrag besteuert?","Nachgelagert und voll mit dem persönlichen Steuersatz, soweit sie auf geförderten Beiträgen beruhen","Nur mit dem Ertragsanteil","Gar nicht","Mit Abgeltungsteuer","Weil die Beiträge in der Ansparphase gefördert wurden, wird die Leistung im Alter voll versteuert (§ 22 Nr. 5 EStG).");
+Q("G","Wie viel des geförderten Riester-Kapitals kann für selbst genutztes Wohneigentum entnommen werden (Wohn-Riester)?","Bis zu 100 % (oder mindestens 75 %)","Höchstens 30 %","Höchstens 10 %","Gar nichts","Der entnommene Betrag wird auf einem Wohnförderkonto erfasst und im Alter nachgelagert versteuert.");
+Q("G","Wie ist gefördertes Riester-Vermögen in der Ansparphase geschützt?","Es ist grundsätzlich vor Pfändung geschützt und wird beim Bürgergeld nicht als Vermögen angerechnet","Es ist voll pfändbar","Es muss bei Arbeitslosigkeit sofort aufgelöst werden","Es ist nur bei Beamten geschützt","Dieser Schutz ist ein wichtiges Beratungsargument für Riester-Verträge.");
+Q("G","Bis zu welchem Betrag (Eigenbeitrag plus Zulagen) können Riester-Beiträge jährlich als Sonderausgaben abgezogen werden?","2.100 €","1.800 €","4.000 €","700 €","Das Finanzamt prüft automatisch, ob der Sonderausgabenabzug günstiger ist als die Zulagen (Günstigerprüfung).");
+Q("G","Wie hoch ist die Riester-Grundzulage für bestehende Verträge (Stand 2026)?","175 € pro Jahr","540 € pro Jahr","300 € pro Jahr","100 € pro Jahr","Dazu kommen Kinderzulagen von 185 € bzw. 300 € (für ab 2008 geborene Kinder) und einmalig 200 € Berufseinsteigerbonus für unter 25-Jährige.");
+Q("G","Was ändert sich durch das Altersvorsorgereformgesetz von 2026?","Ab 2027 gibt es ein neues gefördertes Altersvorsorgedepot; bestehende Riester-Verträge können weiterlaufen, ein Wechsel ist freiwillig","Alle Riester-Verträge werden 2027 automatisch aufgelöst","Die Riester-Zulagen werden rückwirkend gestrichen","Die gesetzliche Rente wird abgeschafft","Im neuen System gibt es eine gestaffelte Grundzulage (bis 540 €) und Kinderzulagen bis 300 €. Details der Umsetzung stehen teils noch aus.");
+QM("G","Welche Aussagen zu bestehenden Riester-Verträgen sind richtig? (mehrere richtig)",
+  ["Bis zu 30 % des Kapitals können zu Rentenbeginn ausgezahlt werden","Die Leistungen werden nachgelagert voll versteuert","Gefördertes Kapital kann für selbst genutztes Wohneigentum eingesetzt werden"], ["Die Rente wird nur mit dem Ertragsanteil besteuert","Das gesamte Kapital kann jederzeit förderunschädlich entnommen werden"],
+  "Eine vorzeitige Auszahlung ohne Wohnzweck ist eine schädliche Verwendung: Zulagen und Steuervorteile müssen zurückgezahlt werden.");
+QT("G","Wie viel Prozent des Riester-Kapitals dürfen zu Rentenbeginn förderunschädlich ausgezahlt werden? (nur die Zahl)",["30","30%","30 %","dreißig"],"Bis zu 30 % als Einmalbetrag, der Rest als Rente bzw. Auszahlplan.");
+QT("G","Welcher Höchstrechnungszins in Prozent gilt seit 2025 für neue Lebensversicherungen? (nur die Zahl, z. B. 0,5)",["1","1,0","1.0","1,00"],"Der Höchstrechnungszins wurde zum 1.1.2025 von 0,25 % auf 1,0 % angehoben.");
+
+questions.forEach((q,i)=>q.id=i);
+
+CASES.push(
+  {title:"Fall: Altersvorsorge mit Mitte 20", intro:"Jonas, 24, ledig, ist seit einem Jahr Industriekaufmann. Er hat keinen Vorsorgevertrag, möchte aber flexibel bleiben und hat eine mittlere Risikobereitschaft. Sein Budget liegt bei 100 € im Monat.",
+    qs:[
+      {q:"Welche Produktart passt zu seiner mittleren Risikobereitschaft am ehesten?", opts:["Eine hybride Rentenversicherung mit Garantie- und Fondsbaustein","Ausschließlich Einzelaktien","Eine Risikolebensversicherung","Ein Girokonto"], c:0, e:"Die Aufteilung auf Garantie und Fonds verbindet Sicherheit mit Renditechancen."},
+      {q:"Jonas fragt, wie seine spätere Privatrente versteuert wird. Was antworten Sie?", opts:["Eine lebenslange Rente aus Schicht 3 wird nur mit dem Ertragsanteil versteuert","Sie ist komplett steuerfrei","Sie wird voll versteuert wie Riester","Es fällt Erbschaftsteuer an"], c:0, e:"Der Ertragsanteil hängt vom Alter bei Rentenbeginn ab; bei 67 sind es 17 %."},
+      {q:"Jonas möchte, dass Beitrag und Rente mit der Inflation mitwachsen. Was empfehlen Sie?", opts:["Eine Beitragsdynamik","Eine Rentengarantiezeit von 30 Jahren","Den Verzicht auf Überschüsse","Eine Kfz-Versicherung"], c:0, e:"Die Dynamik erhöht Beitrag und Leistung regelmäßig, meist ohne neue Gesundheitsprüfung."}
+    ]}
+);
+GLOSSARY.push(
+  {t:"Hybride Rentenversicherung", d:"Rentenversicherung, deren Beitrag auf einen garantiebasierten und einen fondsgebundenen Baustein aufgeteilt wird."},
+  {t:"Rentengarantiezeit", d:"Mindestzeitraum ab Rentenbeginn, für den die Rente gezahlt wird – bei Tod der versicherten Person an die Hinterbliebenen."},
+  {t:"Höchstrechnungszins", d:"Gesetzliche Obergrenze für den Zins, mit dem garantierte Leistungen kalkuliert werden dürfen; seit 2025 1,0 %."},
+  {t:"Rating / Ranking", d:"Ein Ranking ordnet nach messbaren Ergebnissen, ein Rating bewertet zusätzlich qualitative Faktoren wie Management und Finanzkraft."},
+  {t:"Altersvorsorgedepot", d:"Neue staatlich geförderte private Altersvorsorge ab 2027 nach dem Altersvorsorgereformgesetz; löst die Riester-Förderung für Neuverträge ab."}
 );
 
 // ===================================================================
